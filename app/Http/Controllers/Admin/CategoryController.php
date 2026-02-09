@@ -20,9 +20,9 @@ class CategoryController extends Controller
     public function __construct()
     {        
         $this->data = array(
-            'title'             => 'Category',
+            'title'             => 'Privilege Category',
             'controller'        => 'CategoryController',
-            'controller_route'  => 'category',
+            'controller_route'  => 'categories',
             'primary_key'       => 'id',
         );
     }
@@ -32,10 +32,8 @@ class CategoryController extends Controller
             $title                          = $this->data['title'].' List';
             $page_name                      = 'category.list';
             $data['rows']                   = Category::select(
-                                                    'categories.*',
-                                                    'institutes.name as institute_name'
+                                                    'categories.*'
                                                 )
-                                                ->join('institutes', 'institutes.id', '=', 'categories.institute_id')
                                                 ->where('categories.status', '!=', 3)
                                                 ->orderBy('categories.id', 'DESC')
                                                 ->get();
@@ -49,12 +47,10 @@ class CategoryController extends Controller
             if($request->isMethod('post')){
                 $request->validate([
                     'name'         => 'required|string|max:255|unique:categories,name',
-                    'institute_id' => 'required',
                 ]);
 
                 Category::create([
                     'name'          => $request->name,
-                    'institute_id'  => $request->institute_id,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
@@ -63,7 +59,6 @@ class CategoryController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'category.add-edit';
             $data['row']                    = [];
-            $data['institutes']             = Institute::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -75,19 +70,16 @@ class CategoryController extends Controller
             $page_name                      = 'category.add-edit';
             $data['row']                    = Category::where($this->data['primary_key'], '=', $id)->first();
             $generalSetting                 = GeneralSetting::find('1');
-            $data['institutes']             = Institute::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
 
             if($request->isMethod('post')){
                 $member = Category::findOrFail($id);
 
                 $request->validate([
                     'name'         => 'required|string|max:255|unique:categories,name,'.$member->id,
-                    'institute_id' => 'required',
                 ]);
 
                 $member->update([
                     'name'          => $request->name,
-                    'institute_id'  => $request->institute_id,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');

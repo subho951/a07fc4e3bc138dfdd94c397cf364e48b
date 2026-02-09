@@ -39,6 +39,10 @@ $controllerRoute = $module['controller_route'];
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Designation</th>
+                <th scope="col">Photo</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -47,6 +51,16 @@ $controllerRoute = $module['controller_route'];
                 <tr>
                   <th scope="row"><?=$sl++?></th>
                   <td><?=$row->name?></td>
+                  <td><?=$row->email?></td>
+                  <td><?=$row->phone?></td>
+                  <td><?=$row->designation?></td>
+                  <td>
+                    <?php if($row->photo != ''){?>
+                      <img src="<?=env('UPLOADS_URL').'user/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                    <?php } else {?>
+                      <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                    <?php }?>
+                  </td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
                     <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a>

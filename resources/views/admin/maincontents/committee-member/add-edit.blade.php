@@ -31,7 +31,6 @@ $controllerRoute = $module['controller_route'];
     <?php
     if($row){
       $name               = $row->name;
-      $institute_id       = $row->institute_id;
       $email              = $row->email;
       $phone              = $row->phone;
       $photo              = $row->photo;
@@ -40,7 +39,6 @@ $controllerRoute = $module['controller_route'];
       $biodata            = $row->biodata;
     } else {
       $name               = '';
-      $institute_id       = '';
       $email              = '';
       $phone              = '';
       $photo              = '';
@@ -65,18 +63,6 @@ $controllerRoute = $module['controller_route'];
           <h6 class="text-danger">Star (*) marks fields are mandatory</h6>
           <form method="POST" action="" enctype="multipart/form-data">
             @csrf
-            <div class="row mb-3">
-              <label for="institute_id" class="col-md-2 col-lg-2 col-form-label">Institute <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <select name="institute_id" class="form-control" id="institute_id" required>
-                    <option value="" selected>Select Institute</option>
-                  <?php if($institutes){ foreach($institutes as $institute){?>
-                    <option value="<?= $institute->id?>" <?= (($institute->id == $institute_id)?'selected':'') ?>><?= $institute->name?></option>
-                  <?php } }?>
-                </select>
-                @error('institute_id') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
             <div class="row mb-3">
               <label for="name" class="col-md-2 col-lg-2 col-form-label">Name <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
@@ -106,20 +92,13 @@ $controllerRoute = $module['controller_route'];
               </div>
             </div>
             <div class="row mb-3">
-              <label for="dob" class="col-md-2 col-lg-2 col-form-label">DOB <span class="text-danger">*</span></label>
+              <label for="dob" class="col-md-2 col-lg-2 col-form-label">DOB</label>
               <div class="col-md-10 col-lg-10">
-                <input type="date" name="dob" class="form-control" id="dob" value="<?=$dob?>" max="<?= date('Y-m-d') ?>" required>
+                <input type="date" name="dob" class="form-control" id="dob" value="<?=$dob?>" max="<?= date('Y-m-d') ?>">
                 @error('dob') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
             
-            <div class="row mb-3">
-              <label for="password" class="col-md-2 col-lg-2 col-form-label">Password <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <input type="password" name="password" class="form-control" id="password" <?=((!empty($row))?'':'required')?> autocomplete="off">
-                <?php if($row){?><small class="text-primary">Leave blank if you dont want to update</small><?php }?>
-              </div>
-            </div>
             <div class="row mb-3">
               <label for="photo" class="col-md-2 col-lg-2 col-form-label">Photo <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
@@ -134,9 +113,9 @@ $controllerRoute = $module['controller_route'];
               </div>
             </div>
             <div class="row mb-3">
-              <label for="biodata" class="col-md-2 col-lg-2 col-form-label">Biodata <span class="text-danger">*</span></label>
+              <label for="biodata" class="col-md-2 col-lg-2 col-form-label">Biodata</label>
               <div class="col-md-10 col-lg-10">
-                <input type="file" name="biodata" class="form-control" id="biodata" <?=((!empty($row))?'':'required')?>>
+                <input type="file" name="biodata" class="form-control" id="biodata">
                 <small class="text-info">* Only PDF files are allowed</small><br>
                 <?php if($biodata != ''){?>
                   <a href="<?=env('UPLOADS_URL').'user/'.$biodata?>" target="_blank" class="badge badge-info">View file</a>

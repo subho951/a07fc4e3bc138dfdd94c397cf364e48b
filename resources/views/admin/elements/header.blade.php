@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
       </a>
     </li><!-- End Search Icon-->
     <div>
-      <a href="<?=url('/')?>" target="_blank" class="btn btn-sm" style="margin-right:10px; background-color: #ebcda0; color: #8d2328; font-weight: 600;"><i class="fa fa-globe"></i>  Visit Website</a>
+      <a href="<?=url('/')?>" target="_blank" class="btn btn-sm" style="margin-right:10px; background-color: #717171; color: #FFF; font-weight: 600;"><i class="fa fa-globe"></i>  Visit Website</a>
     </div>
     <li class="nav-item dropdown pe-3">
       <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">

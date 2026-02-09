@@ -31,10 +31,8 @@ $controllerRoute = $module['controller_route'];
     <?php
     if($row){
       $name               = $row->name;
-      $institute_id       = $row->institute_id;
     } else {
       $name               = '';
-      $institute_id       = '';
     }
     ?>
     @if ($errors->any())
@@ -53,18 +51,6 @@ $controllerRoute = $module['controller_route'];
           <h6 class="text-danger">Star (*) marks fields are mandatory</h6>
           <form method="POST" action="" enctype="multipart/form-data">
             @csrf
-            <div class="row mb-3">
-              <label for="institute_id" class="col-md-2 col-lg-2 col-form-label">Institute <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <select name="institute_id" class="form-control" id="institute_id" required>
-                    <option value="" selected>Select Institute</option>
-                  <?php if($institutes){ foreach($institutes as $institute){?>
-                    <option value="<?= $institute->id?>" <?= (($institute->id == $institute_id)?'selected':'') ?>><?= $institute->name?></option>
-                  <?php } }?>
-                </select>
-                @error('institute_id') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
             <div class="row mb-3">
               <label for="name" class="col-md-2 col-lg-2 col-form-label">Name <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">

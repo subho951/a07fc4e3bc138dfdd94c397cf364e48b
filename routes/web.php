@@ -51,20 +51,20 @@ Route::get('/', function () {
                 Route::post('shipping-settings', 'UserController@shipping_settings');
           		Route::get('test-email', 'UserController@testEmail');
             /* setting */
-            /* institute */
-                Route::get('institute/list', 'InstituteController@list');
-                Route::match(['get', 'post'], 'institute/add', 'InstituteController@add');
-                Route::match(['get', 'post'], 'institute/edit/{id}', 'InstituteController@edit');
-                Route::get('institute/delete/{id}', 'InstituteController@delete');
-                Route::get('institute/change-status/{id}', 'InstituteController@change_status');
-            /* institute */
-            /* category */
-                Route::get('category/list', 'CategoryController@list');
-                Route::match(['get', 'post'], 'category/add', 'CategoryController@add');
-                Route::match(['get', 'post'], 'category/edit/{id}', 'CategoryController@edit');
-                Route::get('category/delete/{id}', 'CategoryController@delete');
-                Route::get('category/change-status/{id}', 'CategoryController@change_status');
-            /* category */
+            /* privileges category */
+                Route::get('categories/list', 'CategoryController@list');
+                Route::match(['get', 'post'], 'categories/add', 'CategoryController@add');
+                Route::match(['get', 'post'], 'categories/edit/{id}', 'CategoryController@edit');
+                Route::get('categories/delete/{id}', 'CategoryController@delete');
+                Route::get('categories/change-status/{id}', 'CategoryController@change_status');
+            /* privileges category */
+            /* privileges */
+                Route::get('privileges/list', 'PrivilegeController@list');
+                Route::match(['get', 'post'], 'privileges/add', 'PrivilegeController@add');
+                Route::match(['get', 'post'], 'privileges/edit/{id}', 'PrivilegeController@edit');
+                Route::get('privileges/delete/{id}', 'PrivilegeController@delete');
+                Route::get('privileges/change-status/{id}', 'PrivilegeController@change_status');
+            /* privileges */
             /* society member */
                 Route::get('society-member/list', 'SocietyMemberController@list');
                 Route::match(['get', 'post'], 'society-member/add', 'SocietyMemberController@add');
@@ -79,13 +79,13 @@ Route::get('/', function () {
                 Route::get('employee-member/delete/{id}', 'EmployeeMemberController@delete');
                 Route::get('employee-member/change-status/{id}', 'EmployeeMemberController@change_status');
             /* admin & employee member */
-            /* teacher member */
-                Route::get('teacher-member/list', 'TeacherMemberController@list');
-                Route::match(['get', 'post'], 'teacher-member/add', 'TeacherMemberController@add');
-                Route::match(['get', 'post'], 'teacher-member/edit/{id}', 'TeacherMemberController@edit');
-                Route::get('teacher-member/delete/{id}', 'TeacherMemberController@delete');
-                Route::get('teacher-member/change-status/{id}', 'TeacherMemberController@change_status');
-            /* teacher member */
+            /* committee member */
+                Route::get('committee-member/list', 'CommitteeMemberController@list');
+                Route::match(['get', 'post'], 'committee-member/add', 'CommitteeMemberController@add');
+                Route::match(['get', 'post'], 'committee-member/edit/{id}', 'CommitteeMemberController@edit');
+                Route::get('committee-member/delete/{id}', 'CommitteeMemberController@delete');
+                Route::get('committee-member/change-status/{id}', 'CommitteeMemberController@change_status');
+            /* committee member */
             /* page */
                 Route::get('page/list', 'PageController@list');
                 Route::match(['get', 'post'], 'page/add', 'PageController@add');

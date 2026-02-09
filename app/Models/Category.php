@@ -14,7 +14,6 @@ class Category extends Authenticatable
     protected $table = 'categories';
 
     protected $fillable = [
-        'institute_id',
         'name',
         'status',
     ];

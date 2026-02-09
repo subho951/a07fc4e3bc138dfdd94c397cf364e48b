@@ -14,14 +14,14 @@ use Session;
 use Helper;
 use Hash;
 
-class TeacherMemberController extends Controller
+class CommitteeMemberController extends Controller
 {
     public function __construct()
     {        
         $this->data = array(
-            'title'             => 'Teacher Member',
-            'controller'        => 'TeacherMemberController',
-            'controller_route'  => 'teacher-member',
+            'title'             => 'Committee Member',
+            'controller'        => 'CommitteeMemberController',
+            'controller_route'  => 'committee-member',
             'primary_key'       => 'id',
         );
     }
@@ -29,14 +29,12 @@ class TeacherMemberController extends Controller
         public function list(){
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' List';
-            $page_name                      = 'teacher-member.list';
+            $page_name                      = 'committee-member.list';
             $data['rows']                   = User::select(
-                                                    'users.*',
-                                                    'institutes.name as institute_name'
+                                                    'users.*'
                                                 )
-                                                ->join('institutes', 'institutes.id', '=', 'users.institute_id')
                                                 ->where('users.status', '!=', 3)
-                                                ->where('users.type', 3)
+                                                ->where('users.type', 1)
                                                 ->orderBy('users.id', 'DESC')
                                                 ->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
@@ -51,12 +49,10 @@ class TeacherMemberController extends Controller
                     'name'         => 'required|string|max:255|unique:users,name',
                     'email'        => 'required|email|max:255|unique:users,email',
                     'phone'        => 'required|digits:10|unique:users,phone',
-                    'password'     => 'required|min:6',
                     'designation'  => 'required|string|max:255',
                     'photo'        => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'dob'          => 'required|date',
-                    'biodata'      => 'required|file|mimes:pdf|max:' . $generalSetting->document_size,
-                    'institute_id' => 'required',
+                    // 'dob'          => 'date',
+                    'biodata'      => 'file|mimes:pdf|max:' . $generalSetting->document_size,
                 ]);
 
                 /** Photo Upload */
@@ -64,19 +60,20 @@ class TeacherMemberController extends Controller
                 $request->photo->move(public_path('uploads/user'), $photoName);
 
                 /** biodata Upload */
-                $biodataName = time().'_'.$request->biodata->getClientOriginalName();
-                $request->biodata->move(public_path('uploads/user'), $biodataName);
+                $biodataName = '';
+                if ($request->hasFile('biodata')) {
+                    $biodataName = time().'_'.$request->biodata->getClientOriginalName();
+                    $request->biodata->move(public_path('uploads/user'), $biodataName);
+                }
 
                 User::create([
-                    'type'          => 3,
+                    'type'          => 1,
                     'name'          => $request->name,
                     'email'         => $request->email,
                     'phone'         => $request->phone,
-                    'password'      => Hash::make($request->password),
                     'designation'   => $request->designation,
                     'photo'         => $photoName,
                     'dob'           => $request->dob,
-                    'institute_id'  => $request->institute_id,
                     'biodata'       => $biodataName,
                 ]);
 
@@ -84,7 +81,7 @@ class TeacherMemberController extends Controller
             }
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' Add';
-            $page_name                      = 'teacher-member.add-edit';
+            $page_name                      = 'committee-member.add-edit';
             $data['row']                    = [];
             $data['institutes']             = Institute::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
@@ -95,7 +92,7 @@ class TeacherMemberController extends Controller
             $data['module']                 = $this->data;
             $id                             = Helper::decoded($id);
             $title                          = $this->data['title'].' Update';
-            $page_name                      = 'teacher-member.add-edit';
+            $page_name                      = 'committee-member.add-edit';
             $data['row']                    = User::where($this->data['primary_key'], '=', $id)->first();
             $generalSetting                 = GeneralSetting::find('1');
             $data['institutes']             = Institute::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
@@ -107,12 +104,10 @@ class TeacherMemberController extends Controller
                     'name'         => 'required|string|max:255|unique:users,name,'.$member->id,
                     'email'        => 'required|email|max:255|unique:users,email,'.$member->id,
                     'phone'        => 'required|digits:10|unique:users,phone,'.$member->id,
-                    'password'     => 'nullable|min:6',
                     'designation'  => 'required|string|max:255',
                     'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'dob'          => 'required|date',
+                    // 'dob'          => 'date',
                     'biodata'      => 'nullable|file|mimes:pdf|max:' . $generalSetting->document_size,
-                    'institute_id' => 'required',
                 ]);
 
                 /** Photo Update */
@@ -139,18 +134,12 @@ class TeacherMemberController extends Controller
                     $member->biodata = $biodataName;
                 }
 
-                /** Password Update */
-                if ($request->filled('password')) {
-                    $member->password = Hash::make($request->password);
-                }
-
                 $member->update([
                     'name'          => $request->name,
                     'email'         => $request->email,
                     'phone'         => $request->phone,
                     'designation'   => $request->designation,
                     'dob'           => $request->dob,
-                    'institute_id'  => $request->institute_id,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');

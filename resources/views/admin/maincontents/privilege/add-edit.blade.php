@@ -30,11 +30,15 @@ $controllerRoute = $module['controller_route'];
     </div>
     <?php
     if($row){
-      $name               = $row->name;
-      $logo              = $row->logo;
+      $category_id                = $row->category_id;
+      $name                       = $row->name;
+      $short_description          = $row->short_description;
+      $logo                       = $row->logo;
     } else {
-      $name               = '';
-      $logo              = '';
+      $category_id                = '';
+      $name                       = '';
+      $short_description          = '';
+      $logo                       = '';
     }
     ?>
     @if ($errors->any())
@@ -54,19 +58,41 @@ $controllerRoute = $module['controller_route'];
           <form method="POST" action="" enctype="multipart/form-data">
             @csrf
             <div class="row mb-3">
+              <label for="category_id" class="col-md-2 col-lg-2 col-form-label">Category <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <select name="category_id" class="form-control" id="category_id" required>
+                    <option value="" selected>Select Category</option>
+                  <?php if($cats){ foreach($cats as $cat){?>
+                    <option value="<?= $cat->id?>" <?= (($cat->id == $category_id)?'selected':'') ?>><?= $cat->name?></option>
+                  <?php } }?>
+                </select>
+                @error('category_id') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
               <label for="name" class="col-md-2 col-lg-2 col-form-label">Name <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
                 <input type="text" name="name" class="form-control" id="name" value="<?=$name?>" required>
                 @error('name') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
+
+            <div class="row mb-3">
+              <label for="short_description" class="col-md-2 col-lg-2 col-form-label">Short Description <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <textarea name="short_description" class="form-control" id="short_description" required><?=$short_description?></textarea>
+                @error('short_description') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
             <div class="row mb-3">
               <label for="logo" class="col-md-2 col-lg-2 col-form-label">Logo <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
                 <input type="file" name="logo" class="form-control" id="logo" <?=((!empty($row))?'':'required')?>>
                 <small class="text-info">* Only JPG, JPEG, ICO, SVG, PNG files are allowed</small><br>
                 <?php if($logo != ''){?>
-                  <img src="<?=env('UPLOADS_URL').'institute/'.$logo?>" class="img-thumbnail" alt="<?=$name?>" style="width: 150px; height: 150px; margin-top: 10px;">
+                  <img src="<?=env('UPLOADS_URL').'privilege/'.$logo?>" class="img-thumbnail" alt="<?=$name?>" style="width: 150px; height: 150px; margin-top: 10px;">
                 <?php } else {?>
                   <img src="<?=env('NO_IMAGE')?>" alt="<?=$name?>" class="img-thumbnail" style="width: 150px; height: 150px; margin-top: 10px;">
                 <?php }?>

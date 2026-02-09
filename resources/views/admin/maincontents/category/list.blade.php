@@ -38,7 +38,6 @@ $controllerRoute = $module['controller_route'];
             <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Institute</th>
                 <th scope="col">Name</th>
                 <th scope="col">Action</th>
               </tr>
@@ -47,7 +46,6 @@ $controllerRoute = $module['controller_route'];
               <?php if($rows){ $sl=1; foreach($rows as $row){?>
                 <tr>
                   <th scope="row"><?=$sl++?></th>
-                  <td><?=$row->institute_name?></td>
                   <td><?=$row->name?></td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
