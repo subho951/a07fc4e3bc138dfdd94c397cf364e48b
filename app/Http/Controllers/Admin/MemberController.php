@@ -8,20 +8,21 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
 use App\Models\User;
-use App\Models\Institute;
+use App\Models\UserPoint;
+
 use Auth;
 use Session;
 use Helper;
 use Hash;
 
-class CommitteeMemberController extends Controller
+class MemberController extends Controller
 {
     public function __construct()
     {        
         $this->data = array(
-            'title'             => 'Committee Member',
-            'controller'        => 'CommitteeMemberController',
-            'controller_route'  => 'committee-member',
+            'title'             => 'Member',
+            'controller'        => 'MemberController',
+            'controller_route'  => 'member',
             'primary_key'       => 'id',
         );
     }
@@ -29,12 +30,12 @@ class CommitteeMemberController extends Controller
         public function list(){
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' List';
-            $page_name                      = 'committee-member.list';
+            $page_name                      = 'member.list';
             $data['rows']                   = User::select(
                                                     'users.*'
                                                 )
                                                 ->where('users.status', '!=', 3)
-                                                ->where('users.type', 1)
+                                                ->where('users.type', 2)
                                                 ->orderBy('users.id', 'DESC')
                                                 ->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
@@ -51,37 +52,35 @@ class CommitteeMemberController extends Controller
                     'phone'        => 'required|digits:10|unique:users,phone',
                     'designation'  => 'required|string|max:255',
                     'photo'        => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    // 'dob'          => 'date',
-                    'biodata'      => 'file|mimes:pdf|max:' . $generalSetting->document_size,
+                    'dob'          => 'required|date',
+                    // 'biodata'      => 'file|mimes:pdf|max:' . $generalSetting->document_size,
                 ]);
 
                 /** Photo Upload */
                 $photoName = time().'_'.$request->photo->getClientOriginalName();
-                $request->photo->move(public_path('uploads/user'), $photoName);
-
-                /** biodata Upload */
-                $biodataName = '';
-                if ($request->hasFile('biodata')) {
-                    $biodataName = time().'_'.$request->biodata->getClientOriginalName();
-                    $request->biodata->move(public_path('uploads/user'), $biodataName);
-                }
+                $request->photo->move(public_path('uploads/user'), $photoName);                
 
                 User::create([
-                    'type'          => 1,
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'phone'         => $request->phone,
-                    'designation'   => $request->designation,
-                    'photo'         => $photoName,
-                    'dob'           => $request->dob,
-                    'biodata'       => $biodataName,
+                    'type'                          => 2,
+                    'name'                          => $request->name,
+                    'email'                         => $request->email,
+                    'phone'                         => $request->phone,
+                    'designation'                   => $request->designation,
+                    'photo'                         => $photoName,
+                    'dob'                           => $request->dob,
+                    'profession'                    => $request->profession,
+                    'hobby'                         => $request->hobby,
+                    'interest'                      => $request->interest,
+                    'address'                       => $request->address,
+                    'services_provided'             => $request->services_provided,
+                    'short_profile'                 => $request->short_profile,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
             }
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' Add';
-            $page_name                      = 'committee-member.add-edit';
+            $page_name                      = 'member.add-edit';
             $data['row']                    = [];
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
@@ -91,7 +90,7 @@ class CommitteeMemberController extends Controller
             $data['module']                 = $this->data;
             $id                             = Helper::decoded($id);
             $title                          = $this->data['title'].' Update';
-            $page_name                      = 'committee-member.add-edit';
+            $page_name                      = 'member.add-edit';
             $data['row']                    = User::where($this->data['primary_key'], '=', $id)->first();
             $generalSetting                 = GeneralSetting::find('1');
 
@@ -104,8 +103,8 @@ class CommitteeMemberController extends Controller
                     'phone'        => 'required|digits:10|unique:users,phone,'.$member->id,
                     'designation'  => 'required|string|max:255',
                     'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    // 'dob'          => 'date',
-                    'biodata'      => 'nullable|file|mimes:pdf|max:' . $generalSetting->document_size,
+                    'dob'          => 'required|date',
+                    // 'biodata'      => 'nullable|file|mimes:pdf|max:' . $generalSetting->document_size,
                 ]);
 
                 /** Photo Update */
@@ -120,24 +119,20 @@ class CommitteeMemberController extends Controller
                     $member->photo = $photoName;
                 }
 
-                /** biodata Update */
-                if ($request->hasFile('biodata')) {
-                    $oldPath2 = public_path('uploads/user/'.$member->biodata);
-                    if (File::exists($oldPath2)) {
-                        File::delete($oldPath2);
-                    }
-
-                    $biodataName = time().'_'.$request->biodata->getClientOriginalName();
-                    $request->biodata->move(public_path('uploads/user'), $biodataName);
-                    $member->biodata = $biodataName;
-                }
+                
 
                 $member->update([
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'phone'         => $request->phone,
-                    'designation'   => $request->designation,
-                    'dob'           => $request->dob,
+                    'name'                          => $request->name,
+                    'email'                         => $request->email,
+                    'phone'                         => $request->phone,
+                    'designation'                   => $request->designation,
+                    'dob'                           => $request->dob,
+                    'profession'                    => $request->profession,
+                    'hobby'                         => $request->hobby,
+                    'interest'                      => $request->interest,
+                    'address'                       => $request->address,
+                    'services_provided'             => $request->services_provided,
+                    'short_profile'                 => $request->short_profile,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
@@ -171,4 +166,16 @@ class CommitteeMemberController extends Controller
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' '.$msg.' successfully !!!');
         }
     /* change status */
+    /* member points */
+        public function points_history(Request $request, $id){
+            $data['module']                 = $this->data;
+            $id                             = Helper::decoded($id);
+            $page_name                      = 'member.points-history';
+            $data['member']                 = User::where($this->data['primary_key'], '=', $id)->first();
+            $title                          = $this->data['title'].' Points History : ' . (($data['member'])?$data['member']->name . '('. $data['member']->phone .')':'');
+            $data['rows']                   = UserPoint::where('member_id', '=', $id)->orderBy('id', 'DESC')->get();
+
+            echo $this->admin_after_login_layout($title,$page_name,$data);
+        }
+    /* member points */
 }

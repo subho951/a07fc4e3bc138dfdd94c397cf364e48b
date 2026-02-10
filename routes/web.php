@@ -65,20 +65,6 @@ Route::get('/', function () {
                 Route::get('privileges/delete/{id}', 'PrivilegeController@delete');
                 Route::get('privileges/change-status/{id}', 'PrivilegeController@change_status');
             /* privileges */
-            /* society member */
-                Route::get('society-member/list', 'SocietyMemberController@list');
-                Route::match(['get', 'post'], 'society-member/add', 'SocietyMemberController@add');
-                Route::match(['get', 'post'], 'society-member/edit/{id}', 'SocietyMemberController@edit');
-                Route::get('society-member/delete/{id}', 'SocietyMemberController@delete');
-                Route::get('society-member/change-status/{id}', 'SocietyMemberController@change_status');
-            /* society member */
-            /* admin & employee member */
-                Route::get('employee-member/list', 'EmployeeMemberController@list');
-                Route::match(['get', 'post'], 'employee-member/add', 'EmployeeMemberController@add');
-                Route::match(['get', 'post'], 'employee-member/edit/{id}', 'EmployeeMemberController@edit');
-                Route::get('employee-member/delete/{id}', 'EmployeeMemberController@delete');
-                Route::get('employee-member/change-status/{id}', 'EmployeeMemberController@change_status');
-            /* admin & employee member */
             /* committee member */
                 Route::get('committee-member/list', 'CommitteeMemberController@list');
                 Route::match(['get', 'post'], 'committee-member/add', 'CommitteeMemberController@add');
@@ -86,6 +72,14 @@ Route::get('/', function () {
                 Route::get('committee-member/delete/{id}', 'CommitteeMemberController@delete');
                 Route::get('committee-member/change-status/{id}', 'CommitteeMemberController@change_status');
             /* committee member */
+            /* member */
+                Route::get('member/list', 'MemberController@list');
+                Route::match(['get', 'post'], 'member/add', 'MemberController@add');
+                Route::match(['get', 'post'], 'member/edit/{id}', 'MemberController@edit');
+                Route::get('member/delete/{id}', 'MemberController@delete');
+                Route::get('member/change-status/{id}', 'MemberController@change_status');
+                Route::get('member/points-history/{id}', 'MemberController@points_history');
+            /* member */
             /* page */
                 Route::get('page/list', 'PageController@list');
                 Route::match(['get', 'post'], 'page/add', 'PageController@add');

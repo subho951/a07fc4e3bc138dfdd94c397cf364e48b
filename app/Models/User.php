@@ -42,7 +42,14 @@ class User extends Authenticatable
         'photo',
         'designation',
         'dob',
+        'profession',
+        'hobby',
+        'interest',
+        'address',
+        'services_provided',
         'short_profile',
+        'biodata',
+        'points',
         'status'
     ];
 

@@ -41,6 +41,13 @@ if(!empty($parameters)){
   </li><!-- End Teacher Members Nav -->
 
   <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'member')?'active':'')?>" href="{{ url('admin/member/list') }}">
+      <i class="fa fa-users"></i>
+      <span>Members</span>
+    </a>
+  </li><!-- End Teacher Members Nav -->
+
+  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'event')?'active':'')?>" href="{{ url('admin/event/list') }}">
       <i class="fa fa-calendar"></i>
       <span>Events</span>
