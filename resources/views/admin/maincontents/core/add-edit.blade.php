@@ -31,12 +31,10 @@ $controllerRoute = $module['controller_route'];
     <?php
     if($row){
       $name               = $row->name;
-      $news_date          = $row->news_date;
       $description        = $row->description;
       $photo              = $row->photo;
     } else {
       $name               = '';
-      $news_date          = '';
       $description        = '';
       $photo              = '';
     }
@@ -66,14 +64,6 @@ $controllerRoute = $module['controller_route'];
             </div>
 
             <div class="row mb-3">
-              <label for="news_date" class="col-md-2 col-lg-2 col-form-label">Date <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <input type="date" name="news_date" class="form-control" id="news_date" value="<?=$news_date?>" max="<?= date('Y-m-d') ?>" required>
-                @error('news_date') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-
-            <div class="row mb-3">
               <label for="description" class="col-md-2 col-lg-2 col-form-label">Description <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
                 <textarea name="description" class="form-control" id="description" rows="3" required><?=$description?></textarea>
@@ -87,7 +77,7 @@ $controllerRoute = $module['controller_route'];
                 <input type="file" name="photo" class="form-control" id="photo" <?=((!empty($row))?'':'required')?>>
                 <small class="text-info">* Only JPG, JPEG, ICO, SVG, PNG files are allowed</small><br>
                 <?php if($photo != ''){?>
-                  <img src="<?=env('UPLOADS_URL').'news/'.$photo?>" class="img-thumbnail" alt="<?=$name?>" style="width: 150px; height: 150px; margin-top: 10px;">
+                  <img src="<?=env('UPLOADS_URL').'core/'.$photo?>" class="img-thumbnail" alt="<?=$name?>" style="width: 150px; height: 150px; margin-top: 10px;">
                 <?php } else {?>
                   <img src="<?=env('NO_IMAGE')?>" alt="<?=$name?>" class="img-thumbnail" style="width: 150px; height: 150px; margin-top: 10px;">
                 <?php }?>

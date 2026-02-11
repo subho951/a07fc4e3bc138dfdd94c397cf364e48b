@@ -7,15 +7,15 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class News extends Authenticatable
+class Core extends Authenticatable
 {
     use SoftDeletes;
 
-    protected $table = 'news';
+    protected $table = 'cores';
 
     protected $fillable = [
         'name',
-        'news_date',
+        'points',
         'photo',
         'description',
         'status',

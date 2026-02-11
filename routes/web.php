@@ -88,13 +88,13 @@ Route::get('/', function () {
                 Route::get('page/change-status/{id}', 'PageController@change_status');
             /* page */
 
-            /* news */
-                Route::get('news/list', 'NewsController@list');
-                Route::match(['get', 'post'], 'news/add', 'NewsController@add');
-                Route::match(['get', 'post'], 'news/edit/{id}', 'NewsController@edit');
-                Route::get('news/delete/{id}', 'NewsController@delete');
-                Route::get('news/change-status/{id}', 'NewsController@change_status');
-            /* news */
+            /* core */
+                Route::get('core/list', 'CoreController@list');
+                Route::match(['get', 'post'], 'core/add', 'CoreController@add');
+                Route::match(['get', 'post'], 'core/edit/{id}', 'CoreController@edit');
+                Route::get('core/delete/{id}', 'CoreController@delete');
+                Route::get('core/change-status/{id}', 'CoreController@change_status');
+            /* core */
             /* magazine */
                 Route::get('magazine/list', 'MagazineController@list');
                 Route::match(['get', 'post'], 'magazine/add', 'MagazineController@add');

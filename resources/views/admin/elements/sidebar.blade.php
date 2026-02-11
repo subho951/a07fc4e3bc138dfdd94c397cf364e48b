@@ -69,6 +69,13 @@ if(!empty($parameters)){
   </li><!-- End Privileges Nav -->
 
   <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'core')?'active':'')?>" href="{{ url('admin/core/list') }}">
+      <i class="fa-solid fa-people-group"></i>
+      <span>Cores</span>
+    </a>
+  </li><!-- End News Nav -->
+
+  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'page')?'active':'')?>" href="{{ url('admin/page/list') }}">
       <i class="fa fa-file-text"></i>
       <span>Pages</span>
@@ -124,12 +131,7 @@ if(!empty($parameters)){
     </a>
   </li>End Society Members Nav -->  
 
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'news')?'active':'')?>" href="{{ url('admin/news/list') }}">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <span>News</span>
-    </a>
-  </li>End News Nav -->
+  
 
   <!-- <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'magazine')?'active':'')?>" href="{{ url('admin/magazine/list') }}">

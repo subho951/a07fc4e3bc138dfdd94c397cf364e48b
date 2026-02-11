@@ -8,20 +8,20 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
 use App\Models\User;
-use App\Models\News;
+use App\Models\Core;
 use Auth;
 use Session;
 use Helper;
 use Hash;
 
-class NewsController extends Controller
+class CoreController extends Controller
 {
     public function __construct()
     {        
         $this->data = array(
-            'title'             => 'News',
-            'controller'        => 'NewsController',
-            'controller_route'  => 'news',
+            'title'             => 'Core',
+            'controller'        => 'CoreController',
+            'controller_route'  => 'core',
             'primary_key'       => 'id',
         );
     }
@@ -29,8 +29,8 @@ class NewsController extends Controller
         public function list(){
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' List';
-            $page_name                      = 'news.list';
-            $data['rows']                   = News::where('status', '!=', 3)->orderBy('id', 'DESC')->get();
+            $page_name                      = 'core.list';
+            $data['rows']                   = Core::where('status', '!=', 3)->orderBy('id', 'DESC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* list */
@@ -42,18 +42,16 @@ class NewsController extends Controller
             if($request->isMethod('post')){
                 $request->validate([
                     'name'          => 'required|string|max:255|unique:users,name',
-                    'news_date'     => 'required|date',
                     'photo'         => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'description'   => 'required|string|max:500',
                 ]);
 
                 /** Photo Upload */
                 $photoName = time().'_'.$request->photo->getClientOriginalName();
-                $request->photo->move(public_path('uploads/news'), $photoName);
+                $request->photo->move(public_path('uploads/core'), $photoName);
 
-                News::create([
+                Core::create([
                     'name'              => $request->name,
-                    'news_date'         => $request->news_date,
                     'photo'             => $photoName,
                     'description'       => $request->description,
                 ]);
@@ -62,7 +60,7 @@ class NewsController extends Controller
             }
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' Add';
-            $page_name                      = 'news.add-edit';
+            $page_name                      = 'core.add-edit';
             $data['row']                    = [];
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
@@ -72,16 +70,15 @@ class NewsController extends Controller
             $data['module']                 = $this->data;
             $id                             = Helper::decoded($id);
             $title                          = $this->data['title'].' Update';
-            $page_name                      = 'news.add-edit';
-            $data['row']                    = News::where($this->data['primary_key'], '=', $id)->first();
+            $page_name                      = 'core.add-edit';
+            $data['row']                    = Core::where($this->data['primary_key'], '=', $id)->first();
             $generalSetting                 = GeneralSetting::find('1');
 
             if($request->isMethod('post')){
-                $member = News::findOrFail($id);
+                $member = Core::findOrFail($id);
 
                 $request->validate([
                     'name'          => 'required|string|max:255|unique:users,name',
-                    'news_date'     => 'required|date',
                     'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'description'   => 'required|string|max:500',
                 ]);
@@ -94,13 +91,12 @@ class NewsController extends Controller
                     }
 
                     $photoName = time().'_'.$request->photo->getClientOriginalName();
-                    $request->photo->move(public_path('uploads/news'), $photoName);
+                    $request->photo->move(public_path('uploads/core'), $photoName);
                     $member->photo = $photoName;
                 }
 
                 $member->update([
                     'name'              => $request->name,
-                    'news_date'         => $request->news_date,
                     'description'       => $request->description,
                 ]);
 
@@ -115,14 +111,14 @@ class NewsController extends Controller
             $fields = [
                 'status'             => 3
             ];
-            News::where($this->data['primary_key'], '=', $id)->update($fields);
+            Core::where($this->data['primary_key'], '=', $id)->update($fields);
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' deleted successfully !!!');
         }
     /* delete */
     /* change status */
         public function change_status(Request $request, $id){
             $id                             = Helper::decoded($id);
-            $model                          = News::find($id);
+            $model                          = Core::find($id);
             if ($model->status == 1)
             {
                 $model->status  = 0;
