@@ -26,6 +26,10 @@ use App\Models\OrderDetail;
 use Auth;
 use Mail;
 use App\Mail\ForgotPwdMail;
+use App\Models\Core;
+use App\Models\CoreMember;
+use App\Models\Event;
+use App\Models\Privilege;
 use Session;
 use Helper;
 use Hash;
@@ -211,67 +215,19 @@ class UserController extends Controller
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
         public function dashboard(Request $request){
-            $data['filter_keyword']                                     = '';
-            $data['filter_keyword_text']                                = 'All Time';
+            $data['committee_member_count']                                 = User::where('type', '=', 1)->where('status', '=', 1)->count();
+            $data['normal_member_count']                                    = User::where('type', '=', 2)->where('status', '=', 1)->count();
 
-            $title                                                      = 'Dashboard New';
-            $page_name                                                  = 'dashboard';
-            echo $this->admin_after_login_layout($title,$page_name,$data);
-        }
-        public function stats(Request $request){
-            $data['total_view']                                         = UserView::count();
-            $data['total_visit']                                        = UserVisit::count();
-            $data['total_active_products']                              = Product::where('status', '=', 1)->count();
-            $data['total_deactive_products']                            = Product::where('status', '=', 0)->count();
-            $data['total_draft_products']                               = Product::where('status', '=', 2)->count();
+            $data['core_count']                                             = Core::where('status', '=', 1)->count();
+            $data['core_member_count']                                      = CoreMember::where('status', '=', 1)->count();
 
-            $data['total_sales']                                        = Order::sum('net_amt');
-            $data['total_orders']                                       = Order::count();
-            $data['total_new_orders']                                   = Order::where('status', '=', 1)->count();
-            $data['total_processing_orders']                            = Order::where('status', '=', 2)->count();
-            $data['total_incomplete_orders']                            = Order::where('status', '=', 3)->count();
-            $data['total_shipped_orders']                               = Order::where('status', '=', 4)->count();
-            $data['total_complete_orders']                              = Order::where('status', '=', 5)->count();
-            $data['total_rejected_orders']                              = Order::where('status', '=', 6)->count();
-            $data['total_cancelled_orders']                             = Order::where('status', '=', 7)->count();
+            $data['event_count']                                            = Event::where('status', '=', 1)->count();
+            $data['privilege_count']                                        = Privilege::where('status', '=', 1)->count();
 
-            $data['total_wishlist']                                     = UserWishlist::count();
-            $data['total_review']                                       = UserReview::count();
-            $data['total_cart']                                         = OrderDetail::where('is_cart', '=', 1)->count();
+            $data['cores']                                                  = Core::select('name', 'points')->where('status', '=', 1)->orderBy('points', 'DESC')->get();
 
-            $data['recent_activities']                                  = DB::table('user_website_activities')
-                                                                                ->join('users', 'user_website_activities.user_id', '=', 'users.id')
-                                                                                ->select('user_website_activities.*', 'users.profile_image')
-                                                                                ->orderBy('user_website_activities.id', 'DESC')
-                                                                                ->limit(10)
-                                                                                ->get();
-
-            $data['products']                                           = DB::table('products')
-                                                                            ->select('products.id', 'products.name', 'products.cover_image')
-                                                                            ->where('products.status', '!=', 3)
-                                                                            ->orderBy('products.id', 'DESC')
-                                                                            ->paginate(10);
-
-            $data['filter_keyword']                                     = '';
-            $data['filter_keyword_text']                                = 'All Time';
-
-            $data['viewCounts'] = [];
-            $data['viewMonths'] = [];
-            $startDate = '2024-12-01'; // Replace with your starting date
-            $monthYearArray = $this->getMonthYearList($startDate);
-            $viewCounts = [];
-            $viewMonths = [];
-            if(!empty($monthYearArray)){
-                for($k=0;$k<count($monthYearArray);$k++){
-                    $fDate = $monthYearArray[$k]['year'] . '-' . $monthYearArray[$k]['month'] . '-01';
-                    $tDate = $monthYearArray[$k]['year'] . '-' . $monthYearArray[$k]['month'] . '-31';
-                    $data['viewCounts'][] = UserView::where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->count();
-                    $data['viewMonths'][] = "'".$monthYearArray[$k]['month_name'] . "-" . $monthYearArray[$k]['year']."'";
-                }
-            }
-            
-            $title                                                      = 'Stats';
-            $page_name                                                  = 'stats';
+            $title                                                      = 'Dashboard';
+            $page_name                                                  = 'dashboard-new';
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
         public function getMonthYearList($startDate) {

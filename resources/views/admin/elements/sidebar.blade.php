@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 $routeName    = Route::current();
 $pageName     = explode("/", $routeName->uri());
 $pageSegment  = $pageName[1];
-$pageFunction = ((count($pageName)>2)?$pageName[1]:'');
+$pageFunction = ((count($pageName)>2)?$pageName[2]:'');
 $parameters   = $routeName->parameters();
 // dd($routeName);
 if(!empty($parameters)){
@@ -73,14 +73,28 @@ if(!empty($parameters)){
       <i class="fa-solid fa-people-group"></i>
       <span>Cores</span>
     </a>
-  </li><!-- End News Nav -->
+  </li><!-- End Cores Nav -->
+
+  <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'leader-board' && $pageFunction == 'core')?'active':'')?>" href="{{ url('admin/leader-board/core') }}">
+      <i class="fa-solid fa-medal"></i>
+      <span>Core Leader Board</span>
+    </a>
+  </li><!-- End Core Leader Board Nav -->
+
+  <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'leader-board' && $pageFunction == 'member')?'active':'')?>" href="{{ url('admin/leader-board/member') }}">
+      <i class="fa-solid fa-trophy"></i>
+      <span>Member Leader Board</span>
+    </a>
+  </li><!-- End Core Leader Board Nav -->
 
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'page')?'active':'')?>" href="{{ url('admin/page/list') }}">
       <i class="fa fa-file-text"></i>
       <span>Pages</span>
     </a>
-  </li><!-- End Teacher Members Nav -->
+  </li><!-- End Pages Nav -->
 
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'email-logs')?'active':'')?>" href="{{ url('admin/email-logs') }}">

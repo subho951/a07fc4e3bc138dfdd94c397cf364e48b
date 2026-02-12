@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Event;
+use App\Models\EventQuestion;
+use App\Models\UserRegEvent;
+use App\Models\UserRegEventAnswer;
+
 use Auth;
 use Session;
 use Helper;

@@ -96,20 +96,10 @@ Route::get('/', function () {
                 Route::get('core/change-status/{id}', 'CoreController@change_status');
                 Route::get('core/core-members/{id}', 'CoreController@core_members');
             /* core */
-            /* magazine */
-                Route::get('magazine/list', 'MagazineController@list');
-                Route::match(['get', 'post'], 'magazine/add', 'MagazineController@add');
-                Route::match(['get', 'post'], 'magazine/edit/{id}', 'MagazineController@edit');
-                Route::get('magazine/delete/{id}', 'MagazineController@delete');
-                Route::get('magazine/change-status/{id}', 'MagazineController@change_status');
-            /* magazine */
-            /* achievement */
-                Route::get('achievement/list', 'AchievementController@list');
-                Route::match(['get', 'post'], 'achievement/add', 'AchievementController@add');
-                Route::match(['get', 'post'], 'achievement/edit/{id}', 'AchievementController@edit');
-                Route::get('achievement/delete/{id}', 'AchievementController@delete');
-                Route::get('achievement/change-status/{id}', 'AchievementController@change_status');
-            /* achievement */
+            /* leader board */
+                Route::get('leader-board/core', 'LeaderboardController@core');
+                Route::get('leader-board/member', 'LeaderboardController@member');
+            /* leader board */
             /* event */
                 Route::get('event/list', 'EventController@list');
                 Route::match(['get', 'post'], 'event/add', 'EventController@add');
@@ -117,18 +107,6 @@ Route::get('/', function () {
                 Route::get('event/delete/{id}', 'EventController@delete');
                 Route::get('event/change-status/{id}', 'EventController@change_status');
             /* event */
-            /* media */
-                Route::get('media/institute-list', 'MediaController@list');
-                Route::get('media/category-list/{id}', 'MediaController@categoryList');
-                Route::get('media/media-list/{id}/{id2}', 'MediaController@mediaList');
-                Route::post('media/media-list/{id}/{id2}', 'MediaController@mediaList');
-                Route::get('media/delete/{id}', 'MediaController@delete');
-
-                Route::match(['get', 'post'], 'media/add', 'MediaController@add');
-                Route::match(['get', 'post'], 'media/edit/{id}', 'MediaController@edit');
-                Route::get('media/delete/{id}', 'MediaController@delete');
-                Route::get('media/change-status/{id}', 'MediaController@change_status');
-            /* media */
         });
     });
 /* Admin Panel */
