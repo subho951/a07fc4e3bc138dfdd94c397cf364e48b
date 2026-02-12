@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Core;
+use App\Models\CoreMember;
+
 use Auth;
 use Session;
 use Helper;
@@ -50,11 +52,24 @@ class CoreController extends Controller
                 $photoName = time().'_'.$request->photo->getClientOriginalName();
                 $request->photo->move(public_path('uploads/core'), $photoName);
 
-                Core::create([
-                    'name'              => $request->name,
-                    'photo'             => $photoName,
-                    'description'       => $request->description,
+                $core = Core::create([
+                    'name'        => $request->name,
+                    'photo'       => $photoName,
+                    'description' => $request->description,
                 ]);
+                $core_id = $core->id;
+
+                $member_id = $request->member_id;
+                CoreMember::where('core_id', '=', $core_id)->delete();
+                if(!empty($member_id)){
+                    for($m=0;$m<count($member_id);$m++){
+                        $fields = [
+                            'core_id' => $core_id,
+                            'member_id' => $member_id[$m],
+                        ];
+                        CoreMember::insert($fields);
+                    }
+                }
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
             }
@@ -62,6 +77,8 @@ class CoreController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'core.add-edit';
             $data['row']                    = [];
+            $data['memberIDs']              = [];
+            $data['members']                = User::select('id', 'name', 'type')->where('status', '=', 1)->orderBy('name', 'ASc')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -72,6 +89,16 @@ class CoreController extends Controller
             $title                          = $this->data['title'].' Update';
             $page_name                      = 'core.add-edit';
             $data['row']                    = Core::where($this->data['primary_key'], '=', $id)->first();
+            $data['members']                = User::select('id', 'name', 'type')->where('status', '=', 1)->orderBy('name', 'ASc')->get();
+            $core_members                   = CoreMember::select('member_id')->where('status', '=', 1)->where('core_id', '=', $id)->get();
+
+            $coreMembers                    = [];
+            if($core_members){
+                foreach($core_members as $core_member){
+                    $coreMembers[] = $core_member->member_id;
+                }
+            }
+            $data['memberIDs']              = $coreMembers;
             $generalSetting                 = GeneralSetting::find('1');
 
             if($request->isMethod('post')){
@@ -81,6 +108,7 @@ class CoreController extends Controller
                     'name'          => 'required|string|max:255|unique:users,name',
                     'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'description'   => 'required|string|max:500',
+                    'member_id'     => 'required|array',
                 ]);
 
                 /** Photo Update */
@@ -99,6 +127,18 @@ class CoreController extends Controller
                     'name'              => $request->name,
                     'description'       => $request->description,
                 ]);
+
+                $member_id = $request->member_id;
+                CoreMember::where('core_id', '=', $id)->delete();
+                if(!empty($member_id)){
+                    for($m=0;$m<count($member_id);$m++){
+                        $fields = [
+                            'core_id' => $id,
+                            'member_id' => $member_id[$m],
+                        ];
+                        CoreMember::insert($fields);
+                    }
+                }
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
             }
@@ -131,4 +171,19 @@ class CoreController extends Controller
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' '.$msg.' successfully !!!');
         }
     /* change status */
+    public function core_members($core_id){
+        $core_id                        = Helper::decoded($core_id);
+        $data['module']                 = $this->data;
+        $data['core']                   = Core::where($this->data['primary_key'], '=', $core_id)->first();
+        $title                          = $this->data['title'].' Member List : ' . (($data['core'])?$data['core']->name:'');
+        $page_name                      = 'core.core-members';
+        $data['rows']                   = CoreMember::select('users.*')
+                                                    ->join('users', 'users.id', '=', 'core_members.member_id')
+                                                    ->where('core_members.status', '=', 1)
+                                                    ->where('core_members.core_id', '=', $core_id)
+                                                    ->orderBy('core_members.id', 'DESC')
+                                                    ->get();
+        // Helper::pr($data['rows']);
+        echo $this->admin_after_login_layout($title,$page_name,$data);
+    }
 }

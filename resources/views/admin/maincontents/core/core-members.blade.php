@@ -1,5 +1,4 @@
 <?php
-use App\Models\CoreMember;
 use App\Helpers\Helper;
 $controllerRoute = $module['controller_route'];
 ?>
@@ -31,19 +30,16 @@ $controllerRoute = $module['controller_route'];
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title pt-0">
-            <a href="<?=url('admin/' . $controllerRoute . '/add/')?>" class="btn btn-outline-success btn-sm">Add <?=$module['title']?></a>
-          </h5>
-          <!-- Table with stripped rows -->
           <table class="table datatable global_table">
             <thead>
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">Description</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Designation</th>
                 <th scope="col">Photo</th>
                 <th scope="col">Points</th>
-                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -51,29 +47,17 @@ $controllerRoute = $module['controller_route'];
                 <tr>
                   <th scope="row"><?=$sl++?></th>
                   <td><?=$row->name?></td>
-                  <td><?=$row->description?></td>
+                  <td><?=$row->email?></td>
+                  <td><?=$row->phone?></td>
+                  <td><?=$row->designation?></td>
                   <td>
                     <?php if($row->photo != ''){?>
-                      <img src="<?=env('UPLOADS_URL').'core/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                      <img src="<?=env('UPLOADS_URL').'user/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
                     <?php } else {?>
                       <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
                     <?php }?>
                   </td>
                   <td><?=$row->points?></td>
-                  <td>
-                    <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
-                    <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a>
-                    <?php if($row->status){?>
-                      <a href="<?=url('admin/' . $controllerRoute . '/change-status/'.Helper::encoded($row->id))?>" class="btn btn-outline-success btn-sm" title="Activate <?=$module['title']?>"><i class="fa fa-check"></i></a>
-                    <?php } else {?>
-                      <a href="<?=url('admin/' . $controllerRoute . '/change-status/'.Helper::encoded($row->id))?>" class="btn btn-outline-warning btn-sm" title="Deactivate <?=$module['title']?>"><i class="fa fa-times"></i></a>
-                    <?php }?>
-                    <br><br>
-                    <?php
-                    $getMemberCount = CoreMember::where('status', '=', 1)->where('core_id', '=', $row->id)->count();
-                    ?>
-                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/core-members/'.Helper::encoded($row->id))?>" class="btn btn-info btn-sm" title="<?=$module['title']?> Points History"><i class="fa-solid fa-ranking-star"></i> Core Members (<?= $getMemberCount ?>)</a>
-                  </td>
                 </tr>
               <?php } }?>
             </tbody>
