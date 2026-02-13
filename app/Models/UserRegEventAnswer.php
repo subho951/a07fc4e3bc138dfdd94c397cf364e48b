@@ -14,7 +14,7 @@ class UserRegEventAnswer extends Authenticatable
     protected $fillable = [
         'userid',
         'eventid',
-        'event_question',
+        'event_question_id',
         'event_answer_type',
         'event_answer',
         'status',

@@ -106,6 +106,7 @@ Route::get('/', function () {
                 Route::match(['get', 'post'], 'event/edit/{id}', 'EventController@edit');
                 Route::get('event/delete/{id}', 'EventController@delete');
                 Route::get('event/change-status/{id}', 'EventController@change_status');
+                Route::get('event/registered-users/{id}', 'EventController@registered_users');
             /* event */
         });
     });

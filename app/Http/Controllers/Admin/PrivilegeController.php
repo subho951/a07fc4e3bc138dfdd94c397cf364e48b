@@ -31,7 +31,7 @@ class PrivilegeController extends Controller
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' List';
             $page_name                      = 'privilege.list';
-             $data['rows']                   = Privilege::select(
+            $data['rows']                   = Privilege::select(
                                                     'privileges.*',
                                                     'categories.name as category_name'
                                                 )

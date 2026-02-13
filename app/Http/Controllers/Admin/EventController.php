@@ -65,6 +65,7 @@ class EventController extends Controller
                     'description'       => $request->description,
                     'venue'             => $request->venue,
                     'event_date'        => $request->event_date,
+                    'seat_capacity'     => $request->seat_capacity,
                     'photo'             => $photoName,
                     'video'             => $videoName,
                 ]);
@@ -75,6 +76,7 @@ class EventController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'event.add-edit';
             $data['row']                    = [];
+            $data['eventQuestions']         = [];
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -85,6 +87,7 @@ class EventController extends Controller
             $title                          = $this->data['title'].' Update';
             $page_name                      = 'event.add-edit';
             $data['row']                    = Event::where($this->data['primary_key'], '=', $id)->first();
+            $data['eventQuestions']         = EventQuestion::where('event_id', '=', $id)->get();
             $generalSetting                 = GeneralSetting::find('1');
 
             if($request->isMethod('post')){
@@ -128,7 +131,33 @@ class EventController extends Controller
                     'description'       => $request->description,
                     'venue'             => $request->venue,
                     'event_date'        => $request->event_date,
+                    'seat_capacity'     => $request->seat_capacity,
                 ]);
+
+                $event_id               = $id;
+                $event_question_id      = $request->event_question_id;
+                $event_question         = $request->event_question;
+                $event_answer_type      = $request->event_answer_type;
+                $event_answer_options   = $request->event_answer_options;
+
+                if(!empty($event_question)){
+                    for($q=0;$q<count($event_question);$q++){
+                        $fields = [
+                            'event_id'              => $event_id,
+                            'event_question'        => $event_question[$q],
+                            'event_answer_type'     => $event_answer_type[$q],
+                            'event_answer_options'  => $event_answer_options[$q],
+                        ];
+
+                        if($event_question_id[$q] > 0){
+                            // edit
+                            EventQuestion::where('id', '=', $event_question_id[$q])->update($fields);
+                        } else {
+                            // add
+                            EventQuestion::insert($fields);
+                        }
+                    }
+                }
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
             }
@@ -161,4 +190,29 @@ class EventController extends Controller
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' '.$msg.' successfully !!!');
         }
     /* change status */
+    public function registered_users(Request $request, $id){
+            $data['module']                 = $this->data;
+            $id                             = Helper::decoded($id);
+            $page_name                      = 'event.registered-users';
+            $data['event_id']               = $id;
+            $data['event']                  = Event::where($this->data['primary_key'], '=', $id)->first();
+            $data['eventQuestions']         = EventQuestion::where('event_id', '=', $id)->get();
+            $generalSetting                 = GeneralSetting::find('1');
+            $title                          = $this->data['title'].' Registered User : ' . (($data['event'])?$data['event']->title:'');
+
+            $data['eventUsers']             = UserRegEvent::select(
+                                                    'user_reg_events.*',
+                                                    'users.name as user_name',
+                                                    'users.email as user_email',
+                                                    'users.phone as user_phone',
+                                                    'users.photo as user_photo',
+                                                )
+                                                ->join('users', 'users.id', '=', 'user_reg_events.userid')
+                                                ->where('user_reg_events.status', '!=', 3)
+                                                ->where('user_reg_events.eventid', '=', $id)
+                                                ->orderBy('user_reg_events.id', 'DESC')
+                                                ->get();
+            
+            echo $this->admin_after_login_layout($title,$page_name,$data);
+        }
 }

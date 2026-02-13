@@ -1,4 +1,6 @@
 <?php
+use App\Models\EventQuestion;
+use App\Models\UserRegEvent;
 use App\Helpers\Helper;
 $controllerRoute = $module['controller_route'];
 ?>
@@ -41,6 +43,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Title</th>
                 <th scope="col">Venue</th>
                 <th scope="col">Date</th>
+                <th scope="col">Questions Count</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -50,7 +53,12 @@ $controllerRoute = $module['controller_route'];
                   <th scope="row"><?=$sl++?></th>
                   <td><?=$row->title?></td>
                   <td><?=$row->venue?></td>
-                  <td><?=$row->event_date?></td>
+                  <td><?=date_format(date_create($row->event_date), "d-m-Y")?></td>
+                  <td>
+                    <?php
+                    echo $questionCount = EventQuestion::where('event_id', '=', $row->id)->count();
+                    ?>
+                  </td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
                     <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a>
@@ -59,6 +67,11 @@ $controllerRoute = $module['controller_route'];
                     <?php } else {?>
                       <a href="<?=url('admin/' . $controllerRoute . '/change-status/'.Helper::encoded($row->id))?>" class="btn btn-outline-warning btn-sm" title="Deactivate <?=$module['title']?>"><i class="fa fa-times"></i></a>
                     <?php }?>
+                    <br><br>
+                    <?php
+                    $userCount = UserRegEvent::where('eventid', '=', $row->id)->where('status', '=', 1)->count();
+                    ?>
+                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/registered-users/'.Helper::encoded($row->id))?>" class="btn btn-info btn-sm" title="<?=$module['title']?> Registered Users"><i class="fa fa-users"></i> Registered Users (<?= $userCount ?>)</a>
                   </td>
                 </tr>
               <?php } }?>
