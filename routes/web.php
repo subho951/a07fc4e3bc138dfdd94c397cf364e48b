@@ -51,6 +51,21 @@ Route::get('/', function () {
                 Route::post('shipping-settings', 'UserController@shipping_settings');
           		Route::get('test-email', 'UserController@testEmail');
             /* setting */
+
+            /* industry */
+                Route::get('industry/list', 'IndustryController@list');
+                Route::match(['get', 'post'], 'industry/add', 'IndustryController@add');
+                Route::match(['get', 'post'], 'industry/edit/{id}', 'IndustryController@edit');
+                Route::get('industry/delete/{id}', 'IndustryController@delete');
+                Route::get('industry/change-status/{id}', 'IndustryController@change_status');
+            /* industry */
+            /* interest */
+                Route::get('interest/list', 'InterestController@list');
+                Route::match(['get', 'post'], 'interest/add', 'InterestController@add');
+                Route::match(['get', 'post'], 'interest/edit/{id}', 'InterestController@edit');
+                Route::get('interest/delete/{id}', 'InterestController@delete');
+                Route::get('interest/change-status/{id}', 'InterestController@change_status');
+            /* interest */
             /* privileges category */
                 Route::get('categories/list', 'CategoryController@list');
                 Route::match(['get', 'post'], 'categories/add', 'CategoryController@add');

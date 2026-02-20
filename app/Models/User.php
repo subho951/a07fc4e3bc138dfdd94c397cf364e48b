@@ -32,7 +32,6 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'type',
-        'institute_id',
         'committee_category_id',
         'committee_member_type',
         'name',
@@ -42,15 +41,18 @@ class User extends Authenticatable
          'password',
         // 'remember_token',
         'photo',
+        'company_name',
         'designation',
         'dob',
+        'doj',
+        'doa',
+        'core_id',
+        'spouse_name',
         'profession',
-        'hobby',
-        'interest',
+        'alumni',
+        'industry_id',
+        'interest_id',
         'address',
-        'services_provided',
-        'short_profile',
-        'biodata',
         'points',
         'status'
     ];

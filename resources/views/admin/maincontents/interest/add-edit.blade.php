@@ -30,11 +30,9 @@ $controllerRoute = $module['controller_route'];
     </div>
     <?php
     if($row){
-      $name                             = $row->name;
-      $short_description                = $row->short_description;
+      $name               = $row->name;
     } else {
-      $name                             = '';
-      $short_description                = '';
+      $name               = '';
     }
     ?>
     @if ($errors->any())
@@ -58,13 +56,6 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <input type="text" name="name" class="form-control" id="name" value="<?=$name?>" required>
                 @error('name') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label for="short_description" class="col-md-2 col-lg-2 col-form-label">Short Description <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <textarea name="short_description" class="form-control" id="short_description" required><?=$short_description?></textarea>
-                @error('short_description') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
             <div class="text-center">

@@ -1,12 +1,15 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
+use App\Models\Core;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
+use App\Models\Industry;
+use App\Models\Interest;
 use App\Models\User;
 use App\Models\UserPoint;
 
@@ -50,10 +53,13 @@ class MemberController extends Controller
                     'name'         => 'required|string|max:255|unique:users,name',
                     'email'        => 'required|email|max:255|unique:users,email',
                     'phone'        => 'required|digits:10|unique:users,phone',
+                    'company_name' => 'required|string|max:255',
                     'designation'  => 'required|string|max:255',
-                    'photo'        => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
+                    'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'dob'          => 'required|date',
-                    // 'biodata'      => 'file|mimes:pdf|max:' . $generalSetting->document_size,
+                    'doj'          => 'required',
+                    'profession'   => 'required',
+                    'address'      => 'required',
                 ]);
 
                 /** Photo Upload */
@@ -65,15 +71,19 @@ class MemberController extends Controller
                     'name'                          => $request->name,
                     'email'                         => $request->email,
                     'phone'                         => $request->phone,
+                    'company_name'                  => $request->company_name,
                     'designation'                   => $request->designation,
                     'photo'                         => $photoName,
                     'dob'                           => $request->dob,
+                    'doj'                           => $request->doj,
+                    'doa'                           => $request->doa,
+                    'core_id'                       => $request->core_id,
+                    'spouse_name'                   => $request->spouse_name,
                     'profession'                    => $request->profession,
-                    'hobby'                         => $request->hobby,
-                    'interest'                      => $request->interest,
+                    'alumni'                        => $request->alumni,
+                    'industry_id'                   => (($request->industry_id != '')?json_encode($request->industry_id):[]),
+                    'interest_id'                   => (($request->interest_id != '')?json_encode($request->interest_id):[]),
                     'address'                       => $request->address,
-                    'services_provided'             => $request->services_provided,
-                    'short_profile'                 => $request->short_profile,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
@@ -82,6 +92,9 @@ class MemberController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'member.add-edit';
             $data['row']                    = [];
+            $data['cores']                  = Core::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+            $data['industries']             = Industry::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+            $data['interests']              = Interest::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -93,6 +106,9 @@ class MemberController extends Controller
             $page_name                      = 'member.add-edit';
             $data['row']                    = User::where($this->data['primary_key'], '=', $id)->first();
             $generalSetting                 = GeneralSetting::find('1');
+            $data['cores']                  = Core::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+            $data['industries']             = Industry::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+            $data['interests']              = Interest::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
 
             if($request->isMethod('post')){
                 $member = User::findOrFail($id);
@@ -101,10 +117,13 @@ class MemberController extends Controller
                     'name'         => 'required|string|max:255|unique:users,name,'.$member->id,
                     'email'        => 'required|email|max:255|unique:users,email,'.$member->id,
                     'phone'        => 'required|digits:10|unique:users,phone,'.$member->id,
+                    'company_name' => 'required|string|max:255',
                     'designation'  => 'required|string|max:255',
                     'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'dob'          => 'required|date',
-                    // 'biodata'      => 'nullable|file|mimes:pdf|max:' . $generalSetting->document_size,
+                    'doj'          => 'required',
+                    'profession'   => 'required',
+                    'address'      => 'required',
                 ]);
 
                 /** Photo Update */
@@ -123,14 +142,18 @@ class MemberController extends Controller
                     'name'                          => $request->name,
                     'email'                         => $request->email,
                     'phone'                         => $request->phone,
+                    'company_name'                  => $request->company_name,
                     'designation'                   => $request->designation,
                     'dob'                           => $request->dob,
+                    'doj'                           => $request->doj,
+                    'doa'                           => $request->doa,
+                    'core_id'                       => $request->core_id,
+                    'spouse_name'                   => $request->spouse_name,
                     'profession'                    => $request->profession,
-                    'hobby'                         => $request->hobby,
-                    'interest'                      => $request->interest,
+                    'alumni'                        => $request->alumni,
+                    'industry_id'                   => (($request->industry_id != '')?json_encode($request->industry_id):[]),
+                    'interest_id'                   => (($request->interest_id != '')?json_encode($request->interest_id):[]),
                     'address'                       => $request->address,
-                    'services_provided'             => $request->services_provided,
-                    'short_profile'                 => $request->short_profile,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');

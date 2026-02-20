@@ -2,6 +2,26 @@
 use App\Helpers\Helper;
 $controllerRoute = $module['controller_route'];
 ?>
+<!-- Bootstrap CSS -->
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+
+<style type="text/css">
+    /* highlight searched value */
+    /* .highlight {
+    background-color: orange;
+    padding: 0 1px;
+    border-radius: 3px;
+    } */
+
+    .choices__list--multiple .choices__item {
+        background-color: #48974e;
+        border: 1px solid #48974e;
+    }
+</style>
 <div class="pagetitle">
   <h1><?=$page_header?></h1>
   <nav>
@@ -34,28 +54,35 @@ $controllerRoute = $module['controller_route'];
       $email              = $row->email;
       $phone              = $row->phone;
       $photo              = $row->photo;
+      $company_name       = $row->company_name;
       $designation        = $row->designation;
       $dob                = $row->dob;
+      $doj                = $row->doj;
+      $doa                = $row->doa;
+      $core_id            = $row->core_id;
+      $spouse_name        = $row->spouse_name;
       $profession         = $row->profession;
-      $hobby              = $row->hobby;
-      $interest           = $row->interest;
+      $alumni             = $row->alumni;
+      $industry_id        = (($row->industry_id != '')?json_decode($row->industry_id):[]);
+      $interest_id        = (($row->interest_id != '')?json_decode($row->interest_id):[]);
       $address            = $row->address;
-      $services_provided  = $row->services_provided;
-      $short_profile      = $row->short_profile;
     } else {
       $name               = '';
       $email              = '';
       $phone              = '';
       $photo              = '';
+      $company_name       = '';
       $designation        = '';
       $dob                = '';
+      $doj                = '';
+      $doa                = '';
+      $core_id            = '';
+      $spouse_name        = '';
       $profession         = '';
-      $hobby              = '';
-      $profession         = '';
-      $interest           = '';
+      $alumni             = '';
+      $industry_id        = [];
+      $interest_id        = [];
       $address            = '';
-      $services_provided  = '';
-      $short_profile      = '';
     }
     ?>
     @if ($errors->any())
@@ -96,6 +123,13 @@ $controllerRoute = $module['controller_route'];
               </div>
             </div>
             <div class="row mb-3">
+              <label for="company_name" class="col-md-2 col-lg-2 col-form-label">Company Name <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="company_name" class="form-control" id="company_name" value="<?=$company_name?>" required>
+                @error('company_name') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+            <div class="row mb-3">
               <label for="designation" class="col-md-2 col-lg-2 col-form-label">Designation <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
                 <input type="text" name="designation" class="form-control" id="designation" value="<?=$designation?>" required>
@@ -103,10 +137,51 @@ $controllerRoute = $module['controller_route'];
               </div>
             </div>
             <div class="row mb-3">
-              <label for="dob" class="col-md-2 col-lg-2 col-form-label">DOB</label>
+              <label for="dob" class="col-md-2 col-lg-2 col-form-label">Date of Birth <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
                 <input type="date" name="dob" class="form-control" id="dob" value="<?=$dob?>" max="<?= date('Y-m-d') ?>" required>
                 @error('dob') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label for="doj" class="col-md-2 col-lg-2 col-form-label">Member Since <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <select name="doj" class="form-control" id="doj" required>
+                  <option value="" selected>Member Since</option>
+                  <?php for($k=1980;$k<date('Y');$k++){?>
+                    <option value="<?= $k?>" <?= (($doj == $k)?'selected':'') ?>><?= $k?></option>
+                  <?php }?>
+                </select>
+                @error('doj') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="doa" class="col-md-2 col-lg-2 col-form-label">Date of Anniversary</label>
+              <div class="col-md-10 col-lg-10">
+                <input type="date" name="doa" class="form-control" id="doa" value="<?=$doa?>" max="<?= date('Y-m-d') ?>">
+                @error('doa') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="core_id" class="col-md-2 col-lg-2 col-form-label">Core</label>
+              <div class="col-md-10 col-lg-10">
+                <select name="core_id" class="form-control" id="core_id">
+                    <option value="" selected>Select Core</option>
+                  <?php if($cores){ foreach($cores as $core){?>
+                    <option value="<?= $core->id?>" <?= (($core->id == $core_id)?'selected':'') ?>><?= $core->name?></option>
+                  <?php } }?>
+                </select>
+                @error('core_id') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="spouse_name" class="col-md-2 col-lg-2 col-form-label">Spouse Name</label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="spouse_name" class="form-control" id="spouse_name" value="<?=$spouse_name?>">
+                @error('spouse_name') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
             
@@ -125,50 +200,50 @@ $controllerRoute = $module['controller_route'];
             </div>
             
             <div class="row mb-3">
-              <label for="profession" class="col-md-2 col-lg-2 col-form-label">Profession</label>
+              <label for="profession" class="col-md-2 col-lg-2 col-form-label">Profession <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="profession" class="form-control" id="profession" value="<?=$profession?>">
+                <input type="text" name="profession" class="form-control" id="profession" value="<?=$profession?>" required>
                 @error('profession') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 
             <div class="row mb-3">
-              <label for="hobby" class="col-md-2 col-lg-2 col-form-label">Hobby</label>
+              <label for="alumni" class="col-md-2 col-lg-2 col-form-label">Alumni</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="hobby" class="form-control" id="hobby" value="<?=$hobby?>">
-                @error('hobby') <span class="text-danger">{{ $message }}</span> @enderror
+                <input type="text" name="alumni" class="form-control" id="alumni" value="<?=$alumni?>">
+                @error('alumni') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 
             <div class="row mb-3">
-              <label for="interest" class="col-md-2 col-lg-2 col-form-label">Interest</label>
+              <label for="industry_id" class="col-md-2 col-lg-2 col-form-label">Industry</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="interest" class="form-control" id="interest" value="<?=$interest?>">
-                @error('interest') <span class="text-danger">{{ $message }}</span> @enderror
+                <select name="industry_id[]" class="form-control" id="choices-multiple-remove-button" multiple>
+                  <?php if($industries){ foreach($industries as $industry){?>
+                    <option value="<?= $industry->id?>" <?= ((in_array($industry->id, $industry_id))?'selected':'') ?>><?= $industry->name?></option>
+                  <?php } }?>
+                </select>
+                @error('industry_id') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 
             <div class="row mb-3">
-              <label for="address" class="col-md-2 col-lg-2 col-form-label">Address</label>
+              <label for="interest_id" class="col-md-2 col-lg-2 col-form-label">Interest</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="address" class="form-control" id="address" value="<?=$address?>">
+                <select name="interest_id[]" class="form-control" id="choices-multiple-remove-button" multiple>
+                  <?php if($interests){ foreach($interests as $interest){?>
+                    <option value="<?= $interest->id?>" <?= ((in_array($interest->id, $interest_id))?'selected':'') ?>><?= $interest->name?></option>
+                  <?php } }?>
+                </select>
+                @error('interest_id') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="address" class="col-md-2 col-lg-2 col-form-label">Address <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="address" class="form-control" id="address" value="<?=$address?>" required>
                 @error('address') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <label for="services_provided" class="col-md-2 col-lg-2 col-form-label">Services Provided</label>
-              <div class="col-md-10 col-lg-10">
-                <textarea name="services_provided" class="form-control" id="services_provided"><?=$services_provided?></textarea>
-                @error('services_provided') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <label for="short_profile" class="col-md-2 col-lg-2 col-form-label">Short Profile</label>
-              <div class="col-md-10 col-lg-10">
-                <textarea name="short_profile" class="form-control" id="short_profile"><?=$short_profile?></textarea>
-                @error('short_profile') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 
@@ -183,3 +258,13 @@ $controllerRoute = $module['controller_route'];
 </section>
 <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+            removeItemButton: true,
+            maxItemCount: 30,
+            searchResultLimit: 30,
+            renderChoiceLimit: 30
+        });
+    });
+</script>

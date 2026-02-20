@@ -34,6 +34,20 @@ if(!empty($parameters)){
   </li><!-- End Dashboard Nav -->
 
   <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'industry')?'active':'')?>" href="{{ url('admin/industry/list') }}">
+      <i class="fa fa-building"></i>
+      <span>Industry</span>
+    </a>
+  </li><!-- End Industry Nav -->
+
+  <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'interest')?'active':'')?>" href="{{ url('admin/interest/list') }}">
+      <i class="fa-solid fa-people-arrows"></i>
+      <span>Interest</span>
+    </a>
+  </li><!-- End Interest Nav -->
+
+  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'member')?'active':'')?>" href="{{ url('admin/member/list') }}">
       <i class="fa fa-users"></i>
       <span>Members</span>

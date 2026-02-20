@@ -9,20 +9,20 @@ use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Institute;
-use App\Models\CommitteeCategory;
+use App\Models\Interest;
 use Auth;
 use Session;
 use Helper;
 use Hash;
 
-class CommitteeCategoryController extends Controller
+class InterestController extends Controller
 {
     public function __construct()
     {        
         $this->data = array(
-            'title'             => 'Committee Category',
-            'controller'        => 'CommitteeCategoryController',
-            'controller_route'  => 'committee-category',
+            'title'             => 'Interest',
+            'controller'        => 'InterestController',
+            'controller_route'  => 'interest',
             'primary_key'       => 'id',
         );
     }
@@ -30,8 +30,13 @@ class CommitteeCategoryController extends Controller
         public function list(){
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' List';
-            $page_name                      = 'committee-category.list';
-            $data['rows']                   = CommitteeCategory::where('status', '!=', 3)->orderBy('id', 'DESC')->get();
+            $page_name                      = 'interest.list';
+            $data['rows']                   = Interest::select(
+                                                    'interests.*'
+                                                )
+                                                ->where('interests.status', '!=', 3)
+                                                ->orderBy('interests.id', 'DESC')
+                                                ->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* list */
@@ -41,20 +46,18 @@ class CommitteeCategoryController extends Controller
             $data['module']             = $this->data;
             if($request->isMethod('post')){
                 $request->validate([
-                    'name'                          => 'required|string|max:255|unique:committee_categories,name',
-                    'short_description'             => 'required|string',
+                    'name'         => 'required|string|max:255|unique:interests,name',
                 ]);
 
-                CommitteeCategory::create([
-                    'name'                          => $request->name,
-                    'short_description'             => $request->short_description,
+                Interest::create([
+                    'name'          => $request->name,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
             }
             $data['module']                 = $this->data;
             $title                          = $this->data['title'].' Add';
-            $page_name                      = 'committee-category.add-edit';
+            $page_name                      = 'interest.add-edit';
             $data['row']                    = [];
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
@@ -64,21 +67,19 @@ class CommitteeCategoryController extends Controller
             $data['module']                 = $this->data;
             $id                             = Helper::decoded($id);
             $title                          = $this->data['title'].' Update';
-            $page_name                      = 'committee-category.add-edit';
-            $data['row']                    = CommitteeCategory::where($this->data['primary_key'], '=', $id)->first();
+            $page_name                      = 'interest.add-edit';
+            $data['row']                    = Interest::where($this->data['primary_key'], '=', $id)->first();
             $generalSetting                 = GeneralSetting::find('1');
 
             if($request->isMethod('post')){
-                $member = CommitteeCategory::findOrFail($id);
+                $member = Interest::findOrFail($id);
 
                 $request->validate([
-                    'name'                          => 'required|string|max:255|unique:committee_categories,name,'.$member->id,
-                    'short_description'             => 'required|string',
+                    'name'         => 'required|string|max:255|unique:interests,name,'.$member->id,
                 ]);
 
                 $member->update([
-                    'name'                          => $request->name,
-                    'short_description'             => $request->short_description,
+                    'name'          => $request->name,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
@@ -92,14 +93,14 @@ class CommitteeCategoryController extends Controller
             $fields = [
                 'status'             => 3
             ];
-            CommitteeCategory::where($this->data['primary_key'], '=', $id)->update($fields);
+            Interest::where($this->data['primary_key'], '=', $id)->update($fields);
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' deleted successfully !!!');
         }
     /* delete */
     /* change status */
         public function change_status(Request $request, $id){
             $id                             = Helper::decoded($id);
-            $model                          = CommitteeCategory::find($id);
+            $model                          = Interest::find($id);
             if ($model->status == 1)
             {
                 $model->status  = 0;
