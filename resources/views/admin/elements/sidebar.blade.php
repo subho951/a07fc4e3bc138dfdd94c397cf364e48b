@@ -34,25 +34,32 @@ if(!empty($parameters)){
   </li><!-- End Dashboard Nav -->
 
   <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'committee-member')?'active':'')?>" href="{{ url('admin/committee-member/list') }}">
-      <i class="fa fa-users"></i>
-      <span>Committee Members</span>
-    </a>
-  </li><!-- End Teacher Members Nav -->
-
-  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'member')?'active':'')?>" href="{{ url('admin/member/list') }}">
       <i class="fa fa-users"></i>
       <span>Members</span>
     </a>
-  </li><!-- End Teacher Members Nav -->
+  </li><!-- End Members Nav -->
+
+  <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'committee-category')?'active':'')?>" href="{{ url('admin/committee-category/list') }}">
+      <i class="fa fa-list"></i>
+      <span>Committee Categories</span>
+    </a>
+  </li><!-- End Committee Categories Nav -->
+
+  <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'committee-member')?'active':'')?>" href="{{ url('admin/committee-member/list') }}">
+      <i class="fa fa-users"></i>
+      <span>Committee Members</span>
+    </a>
+  </li><!-- End Committee Members Nav -->
 
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'event')?'active':'')?>" href="{{ url('admin/event/list') }}">
       <i class="fa fa-calendar"></i>
       <span>Events</span>
     </a>
-  </li><!-- End Teacher Members Nav -->
+  </li><!-- End Events Nav -->
 
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'categories')?'active':'')?>" href="{{ url('admin/categories/list') }}">
@@ -87,7 +94,7 @@ if(!empty($parameters)){
       <i class="fa-solid fa-trophy"></i>
       <span>Member Leader Board</span>
     </a>
-  </li><!-- End Core Leader Board Nav -->
+  </li><!-- End Member Leader Board Nav -->
 
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'page')?'active':'')?>" href="{{ url('admin/page/list') }}">
@@ -115,58 +122,5 @@ if(!empty($parameters)){
       <i class="fa fa-cogs"></i>
       <span>Account Settings</span>
     </a>
-  </li><!-- End Account Settings Nav -->
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'institute')?'active':'')?>" href="{{ url('admin/institute/list') }}">
-      <i class="fa fa-university"></i>
-      <span>Institutes</span>
-    </a>
-  </li>End Institutes Nav -->
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'category')?'active':'')?>" href="{{ url('admin/category/list') }}">
-      <i class="fa fa-list-alt"></i>
-      <span>Categories</span>
-    </a>
-  </li>End Institutes Nav -->
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'society-member')?'active':'')?>" href="{{ url('admin/society-member/list') }}">
-      <i class="fa fa-users"></i>
-      <span>Society Members</span>
-    </a>
-  </li>End Society Members Nav -->
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'employee-member')?'active':'')?>" href="{{ url('admin/employee-member/list') }}">
-      <i class="fa fa-users"></i>
-      <span>Admin & Employee Members</span>
-    </a>
-  </li>End Society Members Nav -->  
-
-  
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'magazine')?'active':'')?>" href="{{ url('admin/magazine/list') }}">
-      <i class="fa fa-newspaper"></i>
-      <span>Magazines</span>
-    </a>
-  </li>End Magazines Nav -->
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'achievement')?'active':'')?>" href="{{ url('admin/achievement/list') }}">
-      <i class="fa fa-award"></i>
-      <span>Achievements</span>
-    </a>
-  </li>End Achievements Nav -->
-
-  <!-- <li class="nav-item">
-    <a class="nav-link <?=(($pageSegment == 'media')?'active':'')?>" href="{{ url('admin/media/institute-list') }}">
-      <i class="fa-solid fa-image"></i>
-      <span>Media</span>
-    </a>
-  </li>End Achievements Nav -->
-
-  
+  </li><!-- End Account Settings Nav -->  
 </ul>

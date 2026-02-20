@@ -35,7 +35,7 @@ class MemberController extends Controller
                                                     'users.*'
                                                 )
                                                 ->where('users.status', '!=', 3)
-                                                ->where('users.type', 2)
+                                                ->where('users.type', 1)
                                                 ->orderBy('users.id', 'DESC')
                                                 ->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
@@ -61,7 +61,7 @@ class MemberController extends Controller
                 $request->photo->move(public_path('uploads/user'), $photoName);                
 
                 User::create([
-                    'type'                          => 2,
+                    'type'                          => 1,
                     'name'                          => $request->name,
                     'email'                         => $request->email,
                     'phone'                         => $request->phone,
@@ -118,8 +118,6 @@ class MemberController extends Controller
                     $request->photo->move(public_path('uploads/user'), $photoName);
                     $member->photo = $photoName;
                 }
-
-                
 
                 $member->update([
                     'name'                          => $request->name,

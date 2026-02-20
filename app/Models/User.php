@@ -33,6 +33,8 @@ class User extends Authenticatable
     protected $fillable = [
         'type',
         'institute_id',
+        'committee_category_id',
+        'committee_member_type',
         'name',
         'email',
         'email_verified_at',

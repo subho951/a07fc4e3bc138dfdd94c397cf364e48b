@@ -65,6 +65,13 @@ Route::get('/', function () {
                 Route::get('privileges/delete/{id}', 'PrivilegeController@delete');
                 Route::get('privileges/change-status/{id}', 'PrivilegeController@change_status');
             /* privileges */
+            /* committee category */
+                Route::get('committee-category/list', 'CommitteeCategoryController@list');
+                Route::match(['get', 'post'], 'committee-category/add', 'CommitteeCategoryController@add');
+                Route::match(['get', 'post'], 'committee-category/edit/{id}', 'CommitteeCategoryController@edit');
+                Route::get('committee-category/delete/{id}', 'CommitteeCategoryController@delete');
+                Route::get('committee-category/change-status/{id}', 'CommitteeCategoryController@change_status');
+            /* committee category */
             /* committee member */
                 Route::get('committee-member/list', 'CommitteeMemberController@list');
                 Route::match(['get', 'post'], 'committee-member/add', 'CommitteeMemberController@add');

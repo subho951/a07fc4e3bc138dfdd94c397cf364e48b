@@ -30,21 +30,13 @@ $controllerRoute = $module['controller_route'];
     </div>
     <?php
     if($row){
-      $name               = $row->name;
-      $email              = $row->email;
-      $phone              = $row->phone;
-      $photo              = $row->photo;
-      $designation        = $row->designation;
-      $dob                = $row->dob;
-      $biodata            = $row->biodata;
+      $committee_category_id              = $row->committee_category_id;
+      $member_id                          = $row->id;
+      $committee_member_type              = $row->committee_member_type;
     } else {
-      $name               = '';
-      $email              = '';
-      $phone              = '';
-      $photo              = '';
-      $designation        = '';
-      $dob                = '';
-      $biodata            = '';
+      $committee_category_id              = '';
+      $member_id                          = '';
+      $committee_member_type              = '';
     }
     ?>
     @if ($errors->any())
@@ -63,66 +55,42 @@ $controllerRoute = $module['controller_route'];
           <h6 class="text-danger">Star (*) marks fields are mandatory</h6>
           <form method="POST" action="" enctype="multipart/form-data">
             @csrf
+
             <div class="row mb-3">
-              <label for="name" class="col-md-2 col-lg-2 col-form-label">Name <span class="text-danger">*</span></label>
+              <label for="committee_category_id" class="col-md-2 col-lg-2 col-form-label">Committee Category <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="name" class="form-control" id="name" value="<?=$name?>" required>
-                @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+                <select name="committee_category_id" class="form-control" id="committee_category_id" required>
+                    <option value="" selected>Select Committee Category</option>
+                  <?php if($cats){ foreach($cats as $cat){?>
+                    <option value="<?= $cat->id?>" <?= (($committee_category_id == $cat->id)?'selected':'') ?>><?= $cat->name?></option>
+                  <?php } }?>
+                </select>
+                @error('committee_category_id') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
+
             <div class="row mb-3">
-              <label for="email" class="col-md-2 col-lg-2 col-form-label">Email <span class="text-danger">*</span></label>
+              <label for="member_id" class="col-md-2 col-lg-2 col-form-label">Member <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <input type="email" name="email" class="form-control" id="email" value="<?=$email?>" required>
-                @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+                <select name="member_id" class="form-control" id="member_id" required>
+                    <option value="" selected>Select Member</option>
+                  <?php if($members){ foreach($members as $member){?>
+                    <option value="<?= $member->id?>" <?= (($member_id == $member->id)?'selected':'') ?>><?= $member->name?></option>
+                  <?php } }?>
+                </select>
+                @error('member_id') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
+
             <div class="row mb-3">
-              <label for="phone" class="col-md-2 col-lg-2 col-form-label">Phone <span class="text-danger">*</span></label>
+              <label for="committee_member_type" class="col-md-2 col-lg-2 col-form-label">Type <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="phone" class="form-control" id="phone" value="<?=$phone?>" maxlength="10" minlength="10" required>
-                @error('phone') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label for="designation" class="col-md-2 col-lg-2 col-form-label">Designation <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <input type="text" name="designation" class="form-control" id="designation" value="<?=$designation?>" required>
-                @error('designation') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label for="dob" class="col-md-2 col-lg-2 col-form-label">DOB</label>
-              <div class="col-md-10 col-lg-10">
-                <input type="date" name="dob" class="form-control" id="dob" value="<?=$dob?>" max="<?= date('Y-m-d') ?>">
-                @error('dob') <span class="text-danger">{{ $message }}</span> @enderror
+                <input type="radio" name="committee_member_type" id="type1" value="1" <?= (($committee_member_type == 1)?'checked':'') ?> required>&nbsp;<label for="type1">Committee Members</label>
+                <input type="radio" name="committee_member_type" id="type2" value="0" <?= (($committee_member_type == 0)?'checked':'') ?> required>&nbsp;<label for="type2">Sub Committee Members</label>
+                @error('committee_member_type') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
             
-            <div class="row mb-3">
-              <label for="photo" class="col-md-2 col-lg-2 col-form-label">Photo <span class="text-danger">*</span></label>
-              <div class="col-md-10 col-lg-10">
-                <input type="file" name="photo" class="form-control" id="photo" <?=((!empty($row))?'':'required')?>>
-                <small class="text-info">* Only JPG, JPEG, ICO, SVG, PNG files are allowed</small><br>
-                <?php if($photo != ''){?>
-                  <img src="<?=env('UPLOADS_URL').'user/'.$photo?>" class="img-thumbnail" alt="<?=$name?>" style="width: 150px; height: 150px; margin-top: 10px;">
-                <?php } else {?>
-                  <img src="<?=env('NO_IMAGE')?>" alt="<?=$name?>" class="img-thumbnail" style="width: 150px; height: 150px; margin-top: 10px;">
-                <?php }?>
-                @error('photo') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label for="biodata" class="col-md-2 col-lg-2 col-form-label">Biodata</label>
-              <div class="col-md-10 col-lg-10">
-                <input type="file" name="biodata" class="form-control" id="biodata">
-                <small class="text-info">* Only PDF files are allowed</small><br>
-                <?php if($biodata != ''){?>
-                  <a href="<?=env('UPLOADS_URL').'user/'.$biodata?>" target="_blank" class="badge badge-info">View file</a>
-                <?php }?>
-                @error('biodata') <span class="text-danger">{{ $message }}</span> @enderror
-              </div>
-            </div>
             <div class="text-center">
               <button type="submit" class="btn btn-primary"><?=(($row)?'Save':'Add')?></button>
             </div>

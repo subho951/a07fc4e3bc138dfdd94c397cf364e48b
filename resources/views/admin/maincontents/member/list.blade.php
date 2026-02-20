@@ -57,9 +57,9 @@ $controllerRoute = $module['controller_route'];
                   <td><?=$row->designation?></td>
                   <td>
                     <?php if($row->photo != ''){?>
-                      <img src="<?=env('UPLOADS_URL').'user/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                      <img src="<?=env('UPLOADS_URL').'user/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 75px; height: 75px; margin-top: 10px;">
                     <?php } else {?>
-                      <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                      <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 75px; height: 75px; margin-top: 10px;">
                     <?php }?>
                   </td>
                   <td><?=$row->points?></td>
@@ -72,9 +72,9 @@ $controllerRoute = $module['controller_route'];
                       <a href="<?=url('admin/' . $controllerRoute . '/change-status/'.Helper::encoded($row->id))?>" class="btn btn-outline-warning btn-sm" title="Deactivate <?=$module['title']?>"><i class="fa fa-times"></i></a>
                     <?php }?>
                     <br><br>
-                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/points-history/'.Helper::encoded($row->id))?>" class="btn btn-info btn-sm" title="<?=$module['title']?> Points History"><i class="fa-solid fa-ranking-star"></i> Points History</a>
+                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/points-history/'.Helper::encoded($row->id))?>" class="badge badge-info" title="<?=$module['title']?> Points History"><i class="fa-solid fa-ranking-star"></i>&nbsp;Points History</a>
                     <br><br>
-                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/digital-card/'.Helper::encoded($row->id))?>" class="btn btn-warning btn-sm" title="<?=$module['title']?> Digital Card"><i class="fa-solid fa-id-card"></i> Digital Card</a>
+                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/digital-card/'.Helper::encoded($row->id))?>" class="badge badge-warning" title="<?=$module['title']?> Digital Card"><i class="fa-solid fa-id-card"></i>&nbsp;Digital Card</a>
                   </td>
                 </tr>
               <?php } }?>

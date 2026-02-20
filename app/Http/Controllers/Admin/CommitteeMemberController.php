@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\File;
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Institute;
+use App\Models\CommitteeCategory;
+
 use Auth;
 use Session;
 use Helper;
@@ -31,10 +33,13 @@ class CommitteeMemberController extends Controller
             $title                          = $this->data['title'].' List';
             $page_name                      = 'committee-member.list';
             $data['rows']                   = User::select(
-                                                    'users.*'
+                                                    'users.*',
+                                                    'committee_categories.name as committee_category_name'
                                                 )
+                                                ->join('committee_categories', 'committee_categories.id', '=', 'users.committee_category_id')
                                                 ->where('users.status', '!=', 3)
-                                                ->where('users.type', 1)
+                                                ->where('users.type', '=', 1)
+                                                ->where('users.committee_category_id', '>', 0)
                                                 ->orderBy('users.id', 'DESC')
                                                 ->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
@@ -46,36 +51,17 @@ class CommitteeMemberController extends Controller
             $data['module']             = $this->data;
             if($request->isMethod('post')){
                 $request->validate([
-                    'name'         => 'required|string|max:255|unique:users,name',
-                    'email'        => 'required|email|max:255|unique:users,email',
-                    'phone'        => 'required|digits:10|unique:users,phone',
-                    'designation'  => 'required|string|max:255',
-                    'photo'        => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    // 'dob'          => 'date',
-                    'biodata'      => 'file|mimes:pdf|max:' . $generalSetting->document_size,
+                    'committee_category_id'             => 'required|integer',
+                    'member_id'                         => 'required|integer',
+                    'committee_member_type'             => 'required|integer',
                 ]);
 
-                /** Photo Upload */
-                $photoName = time().'_'.$request->photo->getClientOriginalName();
-                $request->photo->move(public_path('uploads/user'), $photoName);
-
-                /** biodata Upload */
-                $biodataName = '';
-                if ($request->hasFile('biodata')) {
-                    $biodataName = time().'_'.$request->biodata->getClientOriginalName();
-                    $request->biodata->move(public_path('uploads/user'), $biodataName);
-                }
-
-                User::create([
-                    'type'          => 1,
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'phone'         => $request->phone,
-                    'designation'   => $request->designation,
-                    'photo'         => $photoName,
-                    'dob'           => $request->dob,
-                    'biodata'       => $biodataName,
-                ]);
+                $member = User::findOrFail($request->member_id);
+                $fields = [
+                    'committee_category_id' => $request->committee_category_id,
+                    'committee_member_type' => $request->committee_member_type,
+                ];
+                $member->update($fields);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
             }
@@ -83,6 +69,8 @@ class CommitteeMemberController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'committee-member.add-edit';
             $data['row']                    = [];
+            $data['cats']                   = CommitteeCategory::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+            $data['members']                = User::select('id', 'name')->where('status', '=', 1)->whereNull('committee_category_id')->orderBy('name', 'ASC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -93,52 +81,23 @@ class CommitteeMemberController extends Controller
             $title                          = $this->data['title'].' Update';
             $page_name                      = 'committee-member.add-edit';
             $data['row']                    = User::where($this->data['primary_key'], '=', $id)->first();
+            $data['cats']                   = CommitteeCategory::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+            $data['members']                = User::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
             $generalSetting                 = GeneralSetting::find('1');
 
             if($request->isMethod('post')){
-                $member = User::findOrFail($id);
-
                 $request->validate([
-                    'name'         => 'required|string|max:255|unique:users,name,'.$member->id,
-                    'email'        => 'required|email|max:255|unique:users,email,'.$member->id,
-                    'phone'        => 'required|digits:10|unique:users,phone,'.$member->id,
-                    'designation'  => 'required|string|max:255',
-                    'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    // 'dob'          => 'date',
-                    'biodata'      => 'nullable|file|mimes:pdf|max:' . $generalSetting->document_size,
+                    'committee_category_id'             => 'required|integer',
+                    'member_id'                         => 'required|integer',
+                    'committee_member_type'             => 'required|integer',
                 ]);
 
-                /** Photo Update */
-                if ($request->hasFile('photo')) {
-                    $oldPath = public_path('uploads/user/'.$member->photo);
-                    if (File::exists($oldPath)) {
-                        File::delete($oldPath);
-                    }
-
-                    $photoName = time().'_'.$request->photo->getClientOriginalName();
-                    $request->photo->move(public_path('uploads/user'), $photoName);
-                    $member->photo = $photoName;
-                }
-
-                /** biodata Update */
-                if ($request->hasFile('biodata')) {
-                    $oldPath2 = public_path('uploads/user/'.$member->biodata);
-                    if (File::exists($oldPath2)) {
-                        File::delete($oldPath2);
-                    }
-
-                    $biodataName = time().'_'.$request->biodata->getClientOriginalName();
-                    $request->biodata->move(public_path('uploads/user'), $biodataName);
-                    $member->biodata = $biodataName;
-                }
-
-                $member->update([
-                    'name'          => $request->name,
-                    'email'         => $request->email,
-                    'phone'         => $request->phone,
-                    'designation'   => $request->designation,
-                    'dob'           => $request->dob,
-                ]);
+                $member = User::findOrFail($request->member_id);
+                $fields = [
+                    'committee_category_id' => $request->committee_category_id,
+                    'committee_member_type' => $request->committee_member_type,
+                ];
+                $member->update($fields);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
             }
@@ -149,7 +108,8 @@ class CommitteeMemberController extends Controller
         public function delete(Request $request, $id){
             $id                             = Helper::decoded($id);
             $fields = [
-                'status'             => 3
+                'committee_category_id'             => null,
+                'committee_member_type'             => null,
             ];
             User::where($this->data['primary_key'], '=', $id)->update($fields);
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' deleted successfully !!!');
