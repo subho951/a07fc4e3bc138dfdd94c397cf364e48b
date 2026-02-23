@@ -149,6 +149,8 @@ Route::get('/', function () {
             Route::match(['post'], '/get-static-pages', 'ApiController@getStaticPages');
 
             Route::match(['post'], '/signin-with-email', 'ApiController@signinWithEmail');
+            Route::match(['post'], '/signin-validate-otp', 'ApiController@signinValidateOTP');
+
             Route::match(['post'], '/forgot-password', 'ApiController@forgotPassword');
             Route::match(['post'], '/validate-otp', 'ApiController@validateOtp');
             Route::match(['post'], '/resend-otp', 'ApiController@resendOtp');

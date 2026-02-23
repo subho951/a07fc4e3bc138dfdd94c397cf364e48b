@@ -385,7 +385,7 @@ class ApiController extends Controller
             }
             if ($headerData['key'][0] == env('PROJECT_KEY')) {
                 $getUser = User::where('id', '=', $requestData['id'])->first();
-                $roleName = PermissionRole::where('id', '=', $getUser->role_id)->first();
+                
                 if ($getUser) {
                     $remember_token = $getUser->remember_token;
                     $device_type = $headerData['source'][0];
@@ -429,7 +429,7 @@ class ApiController extends Controller
                         $fields101 = [
                             'user_email' => $getUser->email,
                             'user_name' => $getUser->name,
-                            'user_type' => $roleName->role_name,
+                            'user_type' => 'USER',
                             'ip_address' => $ipAddress,
                             'activity_type' => 1,
                             'activity_details' => 'Signin Success !!!',
@@ -456,7 +456,7 @@ class ApiController extends Controller
                         $fields101 = [
                             'user_email' => $getUser->email,
                             'user_name' => $getUser->name,
-                            'user_type' => $roleName->role_name,
+                            'user_type' => 'USER',
                             'ip_address' => $ipAddress,
                             'activity_type' => 0,
                             'activity_details' => 'Otp Mismatched !!!',
@@ -481,7 +481,7 @@ class ApiController extends Controller
                     $fields101 = [
                         'user_email' => '',
                         'user_name' => '',
-                        'user_type' => (($roleName) ? $roleName->role_name : ''),
+                        'user_type' => 'USER',
                         'ip_address' => $ipAddress,
                         'activity_type' => 0,
                         'activity_details' => 'User Not Found !!!',
