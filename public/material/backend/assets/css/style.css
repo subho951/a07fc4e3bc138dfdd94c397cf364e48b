@@ -2065,13 +2065,13 @@ a.nav-link.active{
     display: inline-flex !important;
     align-items: center !important;
     margin: 2px !important;
-    background-color: #dfcdaf !important;
-    color: #8B2525 !important;
+    background-color: #fcc312 !important;
+    color: #fff !important;
 }
 .datatable-pagination .datatable-active a, .datatable-pagination .datatable-active a:focus, .datatable-pagination .datatable-active a:hover,
 .datatable-pagination a:hover{
-    background-color: #dfcdaf !important;
-    color: #8B2525;
+    background-color: #fcc312 !important;
+    color: #fff;
 }
 
 /* surajit css */
