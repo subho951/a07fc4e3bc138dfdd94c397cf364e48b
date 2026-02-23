@@ -5,6 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 class UserDevice extends Model
 {
     use HasFactory;
+
+    protected $table = 'user_points';
+    
     protected $fillable = [
         'user_id',
         'device_type',
