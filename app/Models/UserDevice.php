@@ -6,8 +6,8 @@ class UserDevice extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_points';
-    
+    protected $table = 'user_devices';
+
     protected $fillable = [
         'user_id',
         'device_type',
