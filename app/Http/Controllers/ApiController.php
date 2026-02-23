@@ -309,7 +309,7 @@ class ApiController extends Controller
                             $fields101 = [
                                 'user_email' => $requestData['email'],
                                 'user_name' => '',
-                                'user_type' => '',
+                                'user_type' => 'USER',
                                 'ip_address' => $ipAddress,
                                 'activity_type' => 0,
                                 'activity_details' => 'Your account is deactiveted please contact admin !!!',
@@ -337,7 +337,7 @@ class ApiController extends Controller
                         $fields101 = [
                             'user_email' => $requestData['email'],
                             'user_name' => '',
-                            'user_type' => '',
+                            'user_type' => 'USER',
                             'ip_address' => $ipAddress,
                             'activity_type' => 0,
                             'activity_details' => 'We Don\'t Recognize You !!!',
