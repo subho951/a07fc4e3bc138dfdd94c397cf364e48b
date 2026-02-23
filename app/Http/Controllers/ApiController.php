@@ -794,18 +794,7 @@ class ApiController extends Controller
                 $checkUserTokenExist        = UserDevice::where('app_access_token', '=', $app_access_token)->where('published', '=', 1)->first();
                 if($checkUserTokenExist){
                     UserDevice::where('app_access_token', '=', $app_access_token)->delete();
-                    /* view analytics track */
-                        $userAgent                      = $request->header('User-Agent', 'unknown');
-                        $acceptLanguage                 = $request->header('Accept-Language', 'en');
-                        $clientIp                       = $request->ip();
-                        $deviceId                       = $this->createDeviceFingerprint($userAgent, $acceptLanguage, $clientIp);
-                        $viewData = [
-                            'device_id'     => $deviceId,
-                            'page'          => 'signout',
-                            'product_id'    => 0,
-                        ];
-                        UserView::insert($viewData);
-                    /* view analytics track */
+                    
                     $apiStatus                      = TRUE;
                     $apiMessage                     = 'Signout Successfully !!!';
                 } else {

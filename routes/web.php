@@ -155,50 +155,14 @@ Route::get('/', function () {
             Route::match(['post'], '/validate-otp', 'ApiController@validateOtp');
             Route::match(['post'], '/resend-otp', 'ApiController@resendOtp');
             Route::match(['post'], '/reset-password', 'ApiController@resetPassword');
-            Route::match(['get'], '/get-home', 'ApiController@getHome');
-            Route::match(['get'], '/faq', 'ApiController@faq');
-            Route::match(['post'], '/contact-us', 'ApiController@contactUs');
-            Route::match(['post'], '/submit-subscriber', 'ApiController@submitSubscriber');
-            Route::match(['get'], '/get-parent-category', 'ApiController@getParentCategory');
-            Route::match(['post'], '/get-child-category', 'ApiController@getChildCategory');
-            Route::match(['post'], '/get-product-list-by-parent-category', 'ApiController@getProductListByParentCategory');
-            Route::match(['get'], '/get-all-product-list', 'ApiController@getAllProductList');
-            Route::match(['post'], '/product-filter', 'ApiController@productFilter');
-            Route::match(['post'], '/product-details', 'ApiController@productDetails');
-            Route::match(['post'], '/select-variation', 'ApiController@selectVariation');
-            Route::match(['post'], '/add-cart', 'ApiController@addCart');
-            Route::match(['get'], '/get-cart', 'ApiController@getCart');
-            Route::match(['post'], '/cart-item-remove', 'ApiController@cartItemRemove');
-            Route::match(['post'], '/update-cart-item', 'ApiController@updateCartItem');
-            Route::match(['post'], '/search-product', 'ApiController@searchProduct');
-            Route::match(['post'], '/search-suggestion', 'ApiController@searchSuggestion');
-            Route::match(['post'], '/apply-coupon', 'ApiController@applyCoupon');
-            Route::match(['get'], '/remove-coupon', 'ApiController@removeCoupon');
-            Route::match(['post'], '/payment-process', 'ApiController@paymentProcess');
         /* before login */
         /* after login */
             Route::match(['get'], '/signout', 'ApiController@signout');
             Route::match(['get'], '/dashboard', 'ApiController@dashboard');
             Route::match(['post'], '/change-password', 'ApiController@changePassword');
             Route::match(['get'], '/get-profile', 'ApiController@getProfile');
-            Route::match(['get'], '/edit-profile', 'ApiController@editProfile');
             Route::match(['post'], '/update-profile', 'ApiController@updateProfile');
             Route::match(['post'], '/upload-profile-image', 'ApiController@uploadProfileImage');
-            Route::match(['get'], '/get-address', 'ApiController@getAddress');
-            Route::match(['post'], '/add-address', 'ApiController@addAddress');
-            Route::match(['post'], '/delete-address', 'ApiController@deleteAddress');
-            Route::match(['get'], '/get-reviews', 'ApiController@getReview');
-            Route::match(['get'], '/get-wishlist', 'ApiController@getWishlist');
-            Route::match(['post'], '/delete-wishlist', 'ApiController@deleteWishlist');
-            Route::match(['post'], '/add-wishlist', 'ApiController@addWishlist');
-            Route::match(['post'], '/add-review', 'ApiController@addReview');
-            Route::match(['get'], '/checkout', 'ApiController@checkout');
-            Route::match(['post'], '/place-order', 'ApiController@placeOrder');
-            Route::match(['get'], '/order-list', 'ApiController@orderList');
-            Route::match(['post'], '/order-details', 'ApiController@orderDetails');
-            Route::match(['post'], '/print-invoice', 'ApiController@printInvoice');
-            Route::match(['get'], '/cancel-order-reason', 'ApiController@cancelOrderReason');
-            Route::match(['post'], '/cancel-order', 'ApiController@cancelOrder');
         /* after login */
     });
 /* Api */
