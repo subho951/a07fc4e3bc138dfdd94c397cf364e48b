@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 20, 2026 at 02:55 PM
+-- Generation Time: Feb 23, 2026 at 05:44 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -172,6 +172,35 @@ INSERT INTO `cores` (`id`, `name`, `points`, `photo`, `description`, `deleted_at
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `core_meetings`
+--
+
+CREATE TABLE `core_meetings` (
+  `id` int(11) NOT NULL,
+  `core_id` int(11) NOT NULL DEFAULT 0,
+  `meeting_type` enum('INBOUND','LOCAL INBOUND','OUTBOUND') DEFAULT NULL,
+  `from_date` text DEFAULT NULL,
+  `to_date` text DEFAULT NULL,
+  `venue` text DEFAULT NULL,
+  `short_description` longtext DEFAULT NULL,
+  `attendance` int(11) NOT NULL DEFAULT 0,
+  `quorum_percent` float(10,2) NOT NULL DEFAULT 0.00,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `core_meetings`
+--
+
+INSERT INTO `core_meetings` (`id`, `core_id`, `meeting_type`, `from_date`, `to_date`, `venue`, `short_description`, `attendance`, `quorum_percent`, `deleted_at`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'INBOUND', '2026-02-23', '2026-02-23', 'Kolkata', 'Short description goes here updated', 0, 0.00, NULL, 1, '2026-02-22 23:11:07', '2026-02-22 23:11:32');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `core_members`
 --
 
@@ -272,32 +301,32 @@ INSERT INTO `event_questions` (`id`, `event_id`, `event_question`, `event_answer
 
 CREATE TABLE `general_settings` (
   `id` int(11) NOT NULL,
-  `site_name` varchar(250) DEFAULT NULL,
-  `site_phone` varchar(255) DEFAULT NULL,
-  `site_mail` varchar(255) DEFAULT NULL,
-  `system_email` varchar(250) DEFAULT NULL,
-  `site_url` varchar(255) DEFAULT NULL,
+  `site_name` text DEFAULT NULL,
+  `site_phone` text DEFAULT NULL,
+  `site_mail` text DEFAULT NULL,
+  `system_email` text DEFAULT NULL,
+  `site_url` text DEFAULT NULL,
   `description` longtext DEFAULT NULL,
   `timing` longtext DEFAULT NULL,
-  `site_logo` varchar(255) DEFAULT NULL,
-  `site_footer_logo` varchar(250) DEFAULT NULL,
-  `site_favicon` varchar(250) DEFAULT NULL,
-  `theme_color` varchar(250) DEFAULT NULL,
-  `font_color` varchar(250) DEFAULT NULL,
-  `twitter_profile` varchar(250) DEFAULT NULL,
-  `facebook_profile` varchar(250) DEFAULT NULL,
-  `instagram_profile` varchar(250) DEFAULT NULL,
-  `linkedin_profile` varchar(250) DEFAULT NULL,
-  `youtube_profile` varchar(250) DEFAULT NULL,
-  `sms_authentication_key` varchar(250) DEFAULT NULL,
-  `sms_sender_id` varchar(250) DEFAULT NULL,
-  `sms_base_url` varchar(250) DEFAULT NULL,
-  `from_email` varchar(250) DEFAULT NULL,
-  `from_name` varchar(250) DEFAULT NULL,
-  `smtp_host` varchar(250) DEFAULT NULL,
-  `smtp_username` varchar(250) DEFAULT NULL,
-  `smtp_password` varchar(250) DEFAULT NULL,
-  `smtp_port` varchar(250) DEFAULT NULL,
+  `site_logo` text DEFAULT NULL,
+  `site_footer_logo` text DEFAULT NULL,
+  `site_favicon` text DEFAULT NULL,
+  `theme_color` text DEFAULT NULL,
+  `font_color` text DEFAULT NULL,
+  `twitter_profile` text DEFAULT NULL,
+  `facebook_profile` text DEFAULT NULL,
+  `instagram_profile` text DEFAULT NULL,
+  `linkedin_profile` text DEFAULT NULL,
+  `youtube_profile` text DEFAULT NULL,
+  `sms_authentication_key` text DEFAULT NULL,
+  `sms_sender_id` text DEFAULT NULL,
+  `sms_base_url` text DEFAULT NULL,
+  `from_email` text DEFAULT NULL,
+  `from_name` text DEFAULT NULL,
+  `smtp_host` text DEFAULT NULL,
+  `smtp_username` text DEFAULT NULL,
+  `smtp_password` text DEFAULT NULL,
+  `smtp_port` text DEFAULT NULL,
   `email_template_forgot_password` longtext DEFAULT NULL,
   `email_template_change_password` longtext DEFAULT NULL,
   `email_template_failed_login` longtext DEFAULT NULL,
@@ -307,6 +336,14 @@ CREATE TABLE `general_settings` (
   `document_size` int(11) NOT NULL DEFAULT 0,
   `photo_size` int(11) NOT NULL DEFAULT 0,
   `video_size` int(11) NOT NULL DEFAULT 0,
+  `individual_attn_point` text DEFAULT NULL,
+  `individual_backtoback_attn_count` text DEFAULT NULL,
+  `individual_backtoback_attn_point` int(11) DEFAULT NULL,
+  `individual_not_attn` text DEFAULT NULL,
+  `core_meeting_inbound_point` text DEFAULT NULL,
+  `core_meeting_min_attn_percent` text DEFAULT NULL,
+  `core_meeting_local_outbound_point` text DEFAULT NULL,
+  `core_meeting_outbound_point` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `published` tinyint(1) NOT NULL DEFAULT 1
@@ -316,8 +353,8 @@ CREATE TABLE `general_settings` (
 -- Dumping data for table `general_settings`
 --
 
-INSERT INTO `general_settings` (`id`, `site_name`, `site_phone`, `site_mail`, `system_email`, `site_url`, `description`, `timing`, `site_logo`, `site_footer_logo`, `site_favicon`, `theme_color`, `font_color`, `twitter_profile`, `facebook_profile`, `instagram_profile`, `linkedin_profile`, `youtube_profile`, `sms_authentication_key`, `sms_sender_id`, `sms_base_url`, `from_email`, `from_name`, `smtp_host`, `smtp_username`, `smtp_password`, `smtp_port`, `email_template_forgot_password`, `email_template_change_password`, `email_template_failed_login`, `meta_title`, `meta_description`, `meta_keywords`, `document_size`, `photo_size`, `video_size`, `created_at`, `updated_at`, `published`) VALUES
-(1, 'ALFA NETWORK', '+916289339520', 'subhomoysamanta1989@gmail.com', 'subhomoysamanta1989@gmail.com', 'http://localhost/a07fc4e3bc138dfdd94c397cf364e48b/', 'Test address', NULL, '1770457454ALFA-Logo-Yellow-scaled-2048x754.png', '1770457454ALFA-Logo-Yellow-scaled-2048x754.png', '1770457454ALFA-Logo-Yellow-scaled-2048x754.png', '#f1d30e', '#ffffff', NULL, NULL, NULL, '#', NULL, NULL, NULL, NULL, NULL, 'ALFA NETWORK', NULL, NULL, NULL, '587', NULL, NULL, NULL, NULL, NULL, NULL, 5000, 200, 10000, '0000-00-00 00:00:00', '2026-02-07 04:15:21', 1);
+INSERT INTO `general_settings` (`id`, `site_name`, `site_phone`, `site_mail`, `system_email`, `site_url`, `description`, `timing`, `site_logo`, `site_footer_logo`, `site_favicon`, `theme_color`, `font_color`, `twitter_profile`, `facebook_profile`, `instagram_profile`, `linkedin_profile`, `youtube_profile`, `sms_authentication_key`, `sms_sender_id`, `sms_base_url`, `from_email`, `from_name`, `smtp_host`, `smtp_username`, `smtp_password`, `smtp_port`, `email_template_forgot_password`, `email_template_change_password`, `email_template_failed_login`, `meta_title`, `meta_description`, `meta_keywords`, `document_size`, `photo_size`, `video_size`, `individual_attn_point`, `individual_backtoback_attn_count`, `individual_backtoback_attn_point`, `individual_not_attn`, `core_meeting_inbound_point`, `core_meeting_min_attn_percent`, `core_meeting_local_outbound_point`, `core_meeting_outbound_point`, `created_at`, `updated_at`, `published`) VALUES
+(1, 'ALFA NETWORK', '+916289339520', 'subhomoysamanta1989@gmail.com', 'subhomoysamanta1989@gmail.com', 'http://localhost/a07fc4e3bc138dfdd94c397cf364e48b/', 'Test address', NULL, '1770457454ALFA-Logo-Yellow-scaled-2048x754.png', '1770457454ALFA-Logo-Yellow-scaled-2048x754.png', '1770457454ALFA-Logo-Yellow-scaled-2048x754.png', '#f1d30e', '#ffffff', NULL, NULL, NULL, '#', NULL, NULL, NULL, NULL, NULL, 'ALFA NETWORK', NULL, NULL, NULL, '587', NULL, NULL, NULL, NULL, NULL, NULL, 5000, 200, 10000, '10', '3', 5, '-5', '10', '60', '20', '40', '0000-00-00 00:00:00', '2026-02-22 22:41:48', 1);
 
 -- --------------------------------------------------------
 
@@ -687,7 +724,10 @@ INSERT INTO `user_activities` (`activity_id`, `user_email`, `user_name`, `user_t
 (37, 'pratimt@gmail.com', 'Super Admin', 'ADMIN', '::1', 0, 'Invalid Email Or Password !!!', 'WEB', '2026-02-20 08:46:48', '2026-02-20 08:46:48'),
 (38, 'admin@gmail.com', 'Master Admin', 'ADMIN', '::1', 1, 'Login Success !!!', 'WEB', '2026-02-20 08:46:55', '2026-02-20 08:46:55'),
 (39, 'admin@gmail.com', 'Master Admin', 'ADMIN', '::1', 1, 'Login Success !!!', 'WEB', '2026-02-20 13:06:56', '2026-02-20 13:06:56'),
-(40, 'admin@gmail.com', 'Master Admin', 'ADMIN', '::1', 2, 'You Are Successfully Logged Out !!!', 'WEB', '2026-02-20 13:55:32', '2026-02-20 13:55:32');
+(40, 'admin@gmail.com', 'Master Admin', 'ADMIN', '::1', 2, 'You Are Successfully Logged Out !!!', 'WEB', '2026-02-20 13:55:32', '2026-02-20 13:55:32'),
+(41, 'pratimt@gmail.com', 'Super Admin', 'ADMIN', '::1', 0, 'Invalid Email Or Password !!!', 'WEB', '2026-02-23 03:38:17', '2026-02-23 03:38:17'),
+(42, 'admin@gmail.com', 'Master Admin', 'ADMIN', '::1', 1, 'Login Success !!!', 'WEB', '2026-02-23 03:38:24', '2026-02-23 03:38:24'),
+(43, 'admin@gmail.com', 'Master Admin', 'ADMIN', '::1', 2, 'You Are Successfully Logged Out !!!', 'WEB', '2026-02-23 04:43:57', '2026-02-23 04:43:57');
 
 -- --------------------------------------------------------
 
@@ -792,6 +832,12 @@ ALTER TABLE `committee_categories`
 -- Indexes for table `cores`
 --
 ALTER TABLE `cores`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `core_meetings`
+--
+ALTER TABLE `core_meetings`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -938,6 +984,12 @@ ALTER TABLE `cores`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `core_meetings`
+--
+ALTER TABLE `core_meetings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `core_members`
 --
 ALTER TABLE `core_members`
@@ -1019,7 +1071,7 @@ ALTER TABLE `user_accesses`
 -- AUTO_INCREMENT for table `user_activities`
 --
 ALTER TABLE `user_activities`
-  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `user_points`

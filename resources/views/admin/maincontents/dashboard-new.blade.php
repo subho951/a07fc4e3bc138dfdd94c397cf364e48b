@@ -17,7 +17,17 @@
 <section class="section dashboard">
    <div class="row align-items-center">
       <div class="col-lg-4">
-         <div class="card mb-1">
+         <div class="card mb-3">
+            <a href="<?= url('admin/committee-category/list') ?>">
+               <div class="card-body">
+                  <h6>Committee Categories</h6>
+                  <b><?= $committee_category_count ?></b>
+               </div>
+            </a>
+         </div>
+      </div>
+      <div class="col-lg-4">
+         <div class="card mb-3">
             <a href="<?= url('admin/committee-member/list') ?>">
                <div class="card-body">
                   <h6>Committee Members</h6>
@@ -27,7 +37,7 @@
          </div>
       </div>
       <div class="col-lg-4">
-         <div class="card mb-1">
+         <div class="card mb-3">
             <a href="<?= url('admin/member/list') ?>">
                <div class="card-body">
                   <h6>Members</h6>
@@ -36,8 +46,9 @@
             </a>
          </div>
       </div>
+
       <div class="col-lg-4">
-         <div class="card mb-1">
+         <div class="card mb-3">
             <a href="<?= url('admin/core/list') ?>">
                <div class="card-body">
                   <h6>Cores</h6>
@@ -47,7 +58,7 @@
          </div>
       </div>
       <div class="col-lg-4">
-         <div class="card mb-1">
+         <div class="card mb-3">
             <a href="<?= url('admin/core/list') ?>">
                <div class="card-body">
                   <h6>Core Members</h6>
@@ -57,21 +68,74 @@
          </div>
       </div>
       <div class="col-lg-4">
-         <div class="card mb-1">
-            <a href="<?= url('admin/event/list') ?>">
+         <div class="card mb-3">
+            <a href="<?= url('admin/core-meeting/list') ?>">
                <div class="card-body">
-                  <h6>Events</h6>
-                  <b><?= $event_count ?></b>
+                  <h6>Core Meetings</h6>
+                  <b><?= $core_meeting_count ?></b>
                </div>
             </a>
          </div>
       </div>
-      <div class="col-lg-4">
-         <div class="card mb-1">
+
+      <div class="col-lg-6">
+         <div class="card mb-3">
+            <a href="<?= url('admin/event/list') ?>">
+               <div class="card-body">
+                  <h6>Upcoming Events</h6>
+                  <b><?= $upcoming_event_count ?></b>
+               </div>
+            </a>
+         </div>
+      </div>
+      <div class="col-lg-6">
+         <div class="card mb-3">
+            <a href="<?= url('admin/event/list') ?>">
+               <div class="card-body">
+                  <h6>Past Events</h6>
+                  <b><?= $past_event_count ?></b>
+               </div>
+            </a>
+         </div>
+      </div>
+
+      <div class="col-lg-6">
+         <div class="card mb-3">
+            <a href="<?= url('admin/categories/list') ?>">
+               <div class="card-body">
+                  <h6>Privilege Categories</h6>
+                  <b><?= $privilege_category_count ?></b>
+               </div>
+            </a>
+         </div>
+      </div>
+      <div class="col-lg-6">
+         <div class="card mb-3">
             <a href="<?= url('admin/privileges/list') ?>">
                <div class="card-body">
                   <h6>Privileges</h6>
                   <b><?= $privilege_count ?></b>
+               </div>
+            </a>
+         </div>
+      </div>
+
+      <div class="col-lg-6">
+         <div class="card mb-3">
+            <a href="<?= url('admin/industry/list') ?>">
+               <div class="card-body">
+                  <h6>Industries</h6>
+                  <b><?= $industry_count ?></b>
+               </div>
+            </a>
+         </div>
+      </div>
+      <div class="col-lg-6">
+         <div class="card mb-3">
+            <a href="<?= url('admin/interest/list') ?>">
+               <div class="card-body">
+                  <h6>Interests</h6>
+                  <b><?= $interest_count ?></b>
                </div>
             </a>
          </div>
@@ -83,7 +147,7 @@
       <?php if ($cores) {
          foreach ($cores as $core) { ?>
             <div class="col-lg-4">
-               <div class="card mb-1">
+               <div class="card mb-3">
                   <a href="<?= url('admin/core/list') ?>">
                      <div class="card-body">
                         <h6><?= $core->name ?></h6>

@@ -97,6 +97,13 @@ if(!empty($parameters)){
   </li><!-- End Cores Nav -->
 
   <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'core-meeting')?'active':'')?>" href="{{ url('admin/core-meeting/list') }}">
+      <i class="fa-brands fa-meetup"></i>
+      <span>Core Meetings</span>
+    </a>
+  </li><!-- End Cores Nav -->
+
+  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'leader-board' && $pageFunction == 'core')?'active':'')?>" href="{{ url('admin/leader-board/core') }}">
       <i class="fa-solid fa-medal"></i>
       <span>Core Leader Board</span>

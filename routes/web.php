@@ -49,6 +49,7 @@ Route::get('/', function () {
                 Route::post('seo-settings', 'UserController@seo_settings');
                 Route::post('payment-settings', 'UserController@payment_settings');
                 Route::post('shipping-settings', 'UserController@shipping_settings');
+                Route::post('application-settings', 'UserController@application_settings');
           		Route::get('test-email', 'UserController@testEmail');
             /* setting */
 
@@ -118,6 +119,13 @@ Route::get('/', function () {
                 Route::get('core/change-status/{id}', 'CoreController@change_status');
                 Route::get('core/core-members/{id}', 'CoreController@core_members');
             /* core */
+            /* core meeting */
+                Route::get('core-meeting/list', 'CoreMeetingController@list');
+                Route::match(['get', 'post'], 'core-meeting/add', 'CoreMeetingController@add');
+                Route::match(['get', 'post'], 'core-meeting/edit/{id}', 'CoreMeetingController@edit');
+                Route::get('core-meeting/delete/{id}', 'CoreMeetingController@delete');
+                Route::get('core-meeting/change-status/{id}', 'CoreMeetingController@change_status');
+            /* core meeting */
             /* leader board */
                 Route::get('leader-board/core', 'LeaderboardController@core');
                 Route::get('leader-board/member', 'LeaderboardController@member');

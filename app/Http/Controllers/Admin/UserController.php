@@ -26,9 +26,14 @@ use App\Models\OrderDetail;
 use Auth;
 use Mail;
 use App\Mail\ForgotPwdMail;
+use App\Models\Category;
+use App\Models\CommitteeCategory;
 use App\Models\Core;
+use App\Models\CoreMeeting;
 use App\Models\CoreMember;
 use App\Models\Event;
+use App\Models\Industry;
+use App\Models\Interest;
 use App\Models\Privilege;
 use Session;
 use Helper;
@@ -215,14 +220,22 @@ class UserController extends Controller
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
         public function dashboard(Request $request){
+            $data['committee_category_count']                               = CommitteeCategory::where('status', '!=', 3)->count();
             $data['committee_member_count']                                 = User::where('type', '=', 1)->where('status', '=', 1)->count();
             $data['normal_member_count']                                    = User::where('type', '=', 2)->where('status', '=', 1)->count();
 
             $data['core_count']                                             = Core::where('status', '=', 1)->count();
             $data['core_member_count']                                      = CoreMember::where('status', '=', 1)->count();
+            $data['core_meeting_count']                                     = CoreMeeting::where('status', '=', 1)->count();
 
-            $data['event_count']                                            = Event::where('status', '=', 1)->count();
-            $data['privilege_count']                                        = Privilege::where('status', '=', 1)->count();
+            $data['upcoming_event_count']                                   = Event::where('status', '=', 1)->where('event_date', '>', date('Y-m-d'))->count();
+            $data['past_event_count']                                       = Event::where('status', '=', 1)->where('event_date', '<', date('Y-m-d'))->count();
+
+            $data['privilege_category_count']                               = Category::where('status', '!=', 3)->count();
+            $data['privilege_count']                                        = Privilege::where('status', '!=', 3)->count();
+
+            $data['industry_count']                                         = Industry::where('status', '!=', 3)->count();
+            $data['interest_count']                                         = Interest::where('status', '!=', 3)->count();
 
             $data['cores']                                                  = Core::select('name', 'points')->where('status', '=', 1)->orderBy('points', 'DESC')->get();
 
@@ -248,113 +261,6 @@ class UserController extends Controller
             }
 
             return $monthYearList;
-        }
-        public function message(Request $request){
-            $data = [];
-            $title                                                      = 'Message';
-            $page_name                                                  = 'message';
-            echo $this->admin_after_login_layout($title,$page_name,$data);
-        }
-        public function userAllActivity(Request $request){
-            $data['rows']                                               = DB::table('user_website_activities')
-                                                                                ->join('users', 'user_website_activities.user_id', '=', 'users.id')
-                                                                                ->select('user_website_activities.*', 'users.profile_image')
-                                                                                ->orderBy('user_website_activities.id', 'DESC')
-                                                                                ->get();
-            $title                                                      = 'User All Activity';
-            $page_name                                                  = 'user-all-activity';
-            echo $this->admin_after_login_layout($title,$page_name,$data);
-        }
-        public function dashboardFilter(Request $request){
-            $postData = $request->all();
-            $fDate = '';
-            $tDate = '';
-            if($postData['filter_keyword'] == 'today'){
-                $fDate          = date('Y-m-d');
-                $tDate          = date('Y-m-d');
-                $filter_keyword_text = 'Today';
-            }
-            if($postData['filter_keyword'] == 'yesterday'){
-                $fDate          = date('Y-m-d',strtotime("-1 days"));
-                $tDate          = date('Y-m-d',strtotime("-1 days"));
-                $filter_keyword_text = 'Yesterday';
-            }
-            if($postData['filter_keyword'] == 'this_month'){
-                $fDate          = date('Y-m')."-01";
-                $tDate          = date('Y-m-d');
-                $filter_keyword_text = 'This Month';
-            }
-            if($postData['filter_keyword'] == 'last_month'){
-                $fDate          = date("Y-m-d", mktime(0, 0, 0, date("m")-1, 1));
-                $tDate          = date("Y-m-d", mktime(0, 0, 0, date("m"), 0));
-                $filter_keyword_text = 'Last Month';
-            }
-            if($postData['filter_keyword'] == 'last_7_days'){
-                $fDate          = date('Y-m-d', strtotime('-7 days'));
-                $tDate          = date('Y-m-d',strtotime("-1 days"));
-                $filter_keyword_text = 'Last 7 Days';
-            }
-            if($postData['filter_keyword'] == 'last_30_days'){
-                $fDate          = date('Y-m-d', strtotime('-30 days'));
-                $tDate          = date('Y-m-d',strtotime("-1 days"));
-                $filter_keyword_text = 'Last 30 Days';
-            }
-            if($postData['filter_keyword'] == 'this_year'){
-                $fDate          = date('Y')."-01-01";
-                $tDate          = date('Y')."-12-31";
-                $filter_keyword_text = 'This Year';
-            }
-            if($postData['filter_keyword'] == 'last_year'){
-                $fDate          = (date('Y') - 1)."-01-01";
-                $tDate          = (date('Y') - 1)."-12-31";
-                $filter_keyword_text = 'Last Year';
-            }
-            if($postData['filter_keyword'] == ''){
-                return redirect()->to('/admin/dashboard');
-            }
-            $data['filter_keyword']                                     = $postData['filter_keyword'];
-            $data['filter_keyword_text']                                = $filter_keyword_text;
-
-            // $data['total_products']                                     = Product::where('status', '!=', 3)->where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->count();
-            // $data['total_new_products']                                 = Product::where('status', '!=', 3)->where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->where('is_new', '=', 1)->count();
-            // $data['total_active_products']                              = Product::where('status', '=', 1)->where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->count();
-
-            // $data['total_orders']                                       = Order::count();
-            // $data['total_new_orders']                                   = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->where('status', '=', 1)->count();
-            // $data['total_rejected_orders']                              = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->where('status', '=', 6)->count();
-            // $data['total_cancelled_orders']                             = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->where('status', '=', 7)->count();
-
-            // $data['total_customers']                                    = User::where('status', '!=', 3)->where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->count();
-            // $data['total_sales']                                        = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->sum('net_amt');
-            // $data['total_refunds']                                      = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->where('is_refund', '=', 1)->sum('refund_amount');
-
-            $data['total_view']                                         = UserView::where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->count();
-            $data['total_visit']                                        = UserVisit::where('created_at', '>=', $fDate)->where('created_at', '<=', $tDate)->count();
-            $data['total_sales']                                        = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->sum('net_amt');
-            $data['total_orders']                                       = Order::where('order_date', '>=', $fDate)->where('order_date', '<=', $tDate)->count();
-
-            $data['total_active_products']                              = Product::where('status', '=', 1)->count();
-            $data['total_deactive_products']                            = Product::where('status', '=', 0)->count();
-            $data['total_draft_products']                               = Product::where('status', '=', 2)->count();
-
-            $data['total_new_orders']                                   = Order::where('status', '=', 1)->count();
-            $data['total_processing_orders']                            = Order::where('status', '=', 2)->count();
-            $data['total_incomplete_orders']                            = Order::where('status', '=', 3)->count();
-            $data['total_shipped_orders']                               = Order::where('status', '=', 4)->count();
-            $data['total_complete_orders']                              = Order::where('status', '=', 5)->count();
-            $data['total_rejected_orders']                              = Order::where('status', '=', 6)->count();
-            $data['total_cancelled_orders']                             = Order::where('status', '=', 7)->count();
-
-            $data['recent_activities']                                  = DB::table('user_website_activities')
-                                                                                ->join('users', 'user_website_activities.user_id', '=', 'users.id')
-                                                                                ->select('user_website_activities.*', 'users.profile_image')
-                                                                                ->orderBy('user_website_activities.id', 'DESC')
-                                                                                ->limit(10)
-                                                                                ->get();
-
-            $title                                                      = 'Dashboard';
-            $page_name                                                  = 'dashboard-new';
-            echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* dashboard */
     /* settings */
@@ -753,6 +659,35 @@ class UserController extends Controller
                 ];
                 GeneralSetting::where('id', '=', 1)->update($fields);
                 return redirect()->back()->with('success_message', 'Tax & Shipping Settings Updated Successfully !!!');
+            } else {
+                return redirect()->back()->with('error_message', 'All Fields Required !!!');
+            }
+        }
+        public function application_settings(Request $request){
+            $postData = $request->all();
+            $rules = [
+                'individual_attn_point'                     => 'required',
+                'individual_backtoback_attn_count'          => 'required',
+                'individual_backtoback_attn_point'          => 'required',
+                'individual_not_attn'                       => 'required',
+                'core_meeting_inbound_point'                => 'required',
+                'core_meeting_min_attn_percent'             => 'required',
+                'core_meeting_local_outbound_point'         => 'required',
+                'core_meeting_outbound_point'               => 'required',
+            ];
+            if($this->validate($request, $rules)){
+                $fields = [
+                    'individual_attn_point'                         => $postData['individual_attn_point'],
+                    'individual_backtoback_attn_count'              => $postData['individual_backtoback_attn_count'],
+                    'individual_backtoback_attn_point'              => $postData['individual_backtoback_attn_point'],
+                    'individual_not_attn'                           => $postData['individual_not_attn'],
+                    'core_meeting_inbound_point'                    => $postData['core_meeting_inbound_point'],
+                    'core_meeting_min_attn_percent'                 => $postData['core_meeting_min_attn_percent'],
+                    'core_meeting_local_outbound_point'             => $postData['core_meeting_local_outbound_point'],
+                    'core_meeting_outbound_point'                   => $postData['core_meeting_outbound_point'],
+                ];
+                GeneralSetting::where('id', '=', 1)->update($fields);
+                return redirect()->back()->with('success_message', 'Application Settings Updated Successfully !!!');
             } else {
                 return redirect()->back()->with('error_message', 'All Fields Required !!!');
             }

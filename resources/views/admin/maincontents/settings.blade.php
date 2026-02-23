@@ -51,6 +51,9 @@ $user_type = session('type');
               <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab2">General</button>
               </li>
+              <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab10">Application</button>
+              </li>
             <?php }?>
             <li class="nav-item">
               <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab3">Change Password</button>
@@ -62,9 +65,6 @@ $user_type = session('type');
               <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab9">Email Templates</button>
               </li>
-              <!-- <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab7">SEO</button>
-              </li> -->
             <?php }?>
           </ul>
           <div class="tab-content pt-2">
@@ -402,6 +402,63 @@ $user_type = session('type');
                   <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
               </form><!-- End seo settings Form -->
+            </div>
+            <div class="tab-pane fade pt-3" id="tab10">
+              <!-- application settings Form -->
+              <form method="POST" action="{{ url('admin/application-settings') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="row mb-3">
+                  <label for="individual_attn_point" class="col-md-4 col-lg-3 col-form-label">Individual Attendance Point</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="individual_attn_point" class="form-control" id="individual_attn_point" value="<?=$setting->individual_attn_point?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="individual_backtoback_attn_count" class="col-md-4 col-lg-3 col-form-label">Individual Back To Back Attendance Count</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="individual_backtoback_attn_count" class="form-control" id="individual_backtoback_attn_count" value="<?=$setting->individual_backtoback_attn_count?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="individual_backtoback_attn_point" class="col-md-4 col-lg-3 col-form-label">Individual Back To Back Attendance Bonus Point</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="individual_backtoback_attn_point" class="form-control" id="individual_backtoback_attn_point" value="<?=$setting->individual_backtoback_attn_point?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="individual_not_attn" class="col-md-4 col-lg-3 col-form-label">Individual Not Attendance</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="individual_not_attn" class="form-control" id="individual_not_attn" value="<?=$setting->individual_not_attn?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="core_meeting_inbound_point" class="col-md-4 col-lg-3 col-form-label">Core Meeting Inbound Point</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="core_meeting_inbound_point" class="form-control" id="core_meeting_inbound_point" value="<?=$setting->core_meeting_inbound_point?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="core_meeting_min_attn_percent" class="col-md-4 col-lg-3 col-form-label">Core Meeting Minimum Attendance Percentage</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="core_meeting_min_attn_percent" class="form-control" id="core_meeting_min_attn_percent" value="<?=$setting->core_meeting_min_attn_percent?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="core_meeting_local_outbound_point" class="col-md-4 col-lg-3 col-form-label">Core Meeting Local Outbound Point</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="core_meeting_local_outbound_point" class="form-control" id="core_meeting_local_outbound_point" value="<?=$setting->core_meeting_local_outbound_point?>" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="core_meeting_outbound_point" class="col-md-4 col-lg-3 col-form-label">Core Meeting Outbound Point</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input type="text" name="core_meeting_outbound_point" class="form-control" id="core_meeting_outbound_point" value="<?=$setting->core_meeting_outbound_point?>" required>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form><!-- End application settings Form -->
             </div>
           </div><!-- End Bordered Tabs -->
         </div>
