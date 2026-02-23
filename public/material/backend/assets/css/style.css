@@ -2285,6 +2285,11 @@ a.nav-link.active{
     outline: none !important;
     box-shadow: none !important;
 } 
+.choices__inner,
+.choices__input{
+    border-radius: 10px !important;
+    background: #fff !important;
+}
 /* Responsive */
 @media (max-width: 768px) {
     .col-form-label {
