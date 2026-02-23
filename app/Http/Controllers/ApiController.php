@@ -254,6 +254,7 @@ class ApiController extends Controller
                         $mailData = [
                             'id'    => $checkEmail->id,
                             'email' => $checkEmail->email,
+                            'phone' => $checkEmail->phone,
                             'otp'   => $remember_token,
                         ];
                         $generalSetting = GeneralSetting::find('1');
