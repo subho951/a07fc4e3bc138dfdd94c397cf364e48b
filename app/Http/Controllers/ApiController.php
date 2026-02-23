@@ -241,58 +241,59 @@ class ApiController extends Controller
                 $apiMessage = 'All Data Are Not Present !!!';
             }
             if ($headerData['key'][0] == env('PROJECT_KEY')) {
-                $checkEmail = User::where('email', '=', $requestData['email'])->first();
+                $checkEmail = User::where('email', $requestData['email'])
+                                    ->orWhere('phone', $requestData['email'])
+                                    ->first();
 
                 if ($checkEmail) {
                     if($checkEmail->status == 1){
-                        $roleName = PermissionRole::where('id', '=', $checkEmail->role_id)->first();
-                    // $remember_token  = rand(1000,9999);
-                    $remember_token = 1234;
-                    User::where('id', '=', $checkEmail->id)->update(['remember_token' => $remember_token]);
-                    $mailData = [
-                        'id' => $checkEmail->id,
-                        'email' => $checkEmail->email,
-                        'otp' => $remember_token,
-                    ];
-                    $generalSetting = GeneralSetting::find('1');
-                    $subject = GeneralSetting::where('slug', 'site_name')->value('value').' :: SignIn OTP';
-                    $message = view('email-templates.otp', $mailData);
-
-                    $this->sendMail($requestData['email'], $subject, $message);
+                        
+                        // $remember_token  = rand(1000,9999);
+                        $remember_token = 1234;
+                        User::where('id', '=', $checkEmail->id)->update(['remember_token' => $remember_token]);
+                        $mailData = [
+                            'id'    => $checkEmail->id,
+                            'email' => $checkEmail->email,
+                            'otp'   => $remember_token,
+                        ];
+                        $generalSetting = GeneralSetting::find('1');
+                        $subject = GeneralSetting::where('slug', 'site_name')->value('value').' :: SignIn OTP';
+                        $message = view('email-templates.otp', $mailData);
+                        echo $message;die;
+                        // $this->sendMail($requestData['email'], $subject, $message);
 
                     /* email log capture */
-                    $fields = [
-                        'user_type' => (($roleName) ? $roleName->role_name : ''),
-                        'name' => $checkEmail->name,
-                        'email' => $checkEmail->email,
-                        'subject' => $subject,
-                        'message' => $message,
-                        'status' => 1,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                    EmailLog::insert($fields);
+                        $fields = [
+                            'name' => $checkEmail->name,
+                            'email' => $checkEmail->email,
+                            'subject' => $subject,
+                            'message' => $message,
+                            'status' => 1,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                        EmailLog::insert($fields);
                     /* email log capture */
 
                     //Authentication log capture //
-                    $ipAddress = $request->ip();
-                    $userAgent = $request->header('User-Agent');
-                    $fields101 = [
-                        'user_email' => $checkEmail->email,
-                        'user_name' => $checkEmail->name,
-                        'user_type' => (($roleName) ? $roleName->role_name : ''),
-                        'ip_address' => $ipAddress,
-                        'activity_type' => 0,
-                        'activity_details' => 'OTP Sent To Email Validation !!!',
-                        'platform_type' => 'WEB',
-                        'browser_used' => $userAgent,
-                        'status' => 1,
-                        'created_by' => (($checkEmail) ? $checkEmail->id : 0),
-                        'updated_by' => (($checkEmail) ? $checkEmail->id : 0),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                    UserActivity::insert($fields101);
+                        $ipAddress = $request->ip();
+                        $userAgent = $request->header('User-Agent');
+                        $fields101 = [
+                            'user_email' => $checkEmail->email,
+                            'user_name' => $checkEmail->name,
+                            'user_type' => 'USER',
+                            'ip_address' => $ipAddress,
+                            'activity_type' => 0,
+                            'activity_details' => 'OTP Sent To Email Validation !!!',
+                            'platform_type' => 'WEB',
+                            'browser_used' => $userAgent,
+                            'status' => 1,
+                            'created_by' => (($checkEmail) ? $checkEmail->id : 0),
+                            'updated_by' => (($checkEmail) ? $checkEmail->id : 0),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                        UserActivity::insert($fields101);
                     //Authentication log capture //
                     $apiResponse = $mailData;
                     $apiStatus = true;
@@ -305,22 +306,22 @@ class ApiController extends Controller
                         $ipAddress = $request->ip();
                         $userAgent = $request->header('User-Agent');
                         //Authentication log capture //
-                        $fields101 = [
-                            'user_email' => $requestData['email'],
-                            'user_name' => '',
-                            'user_type' => '',
-                            'ip_address' => $ipAddress,
-                            'activity_type' => 0,
-                            'activity_details' => 'Your account is deactiveted please contact admin !!!',
-                            'platform_type' => 'WEB',
-                            'browser_used' => $userAgent,
-                            'status' => 1,
-                            'created_by' => (($checkEmail) ? $checkEmail->id : 0),
-                            'updated_by' => (($checkEmail) ? $checkEmail->id : 0),
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                        UserActivity::insert($fields101);
+                            $fields101 = [
+                                'user_email' => $requestData['email'],
+                                'user_name' => '',
+                                'user_type' => '',
+                                'ip_address' => $ipAddress,
+                                'activity_type' => 0,
+                                'activity_details' => 'Your account is deactiveted please contact admin !!!',
+                                'platform_type' => 'WEB',
+                                'browser_used' => $userAgent,
+                                'status' => 1,
+                                'created_by' => (($checkEmail) ? $checkEmail->id : 0),
+                                'updated_by' => (($checkEmail) ? $checkEmail->id : 0),
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                            UserActivity::insert($fields101);
                         //Authentication log capture //
 
                         $apiStatus = false;
@@ -333,22 +334,22 @@ class ApiController extends Controller
                     $ipAddress = $request->ip();
                     $userAgent = $request->header('User-Agent');
                     //Authentication log capture //
-                    $fields101 = [
-                        'user_email' => $requestData['email'],
-                        'user_name' => '',
-                        'user_type' => '',
-                        'ip_address' => $ipAddress,
-                        'activity_type' => 0,
-                        'activity_details' => 'We Don\'t Recognize You !!!',
-                        'platform_type' => 'WEB',
-                        'browser_used' => $userAgent,
-                        'status' => 1,
-                        'created_by' => (($checkEmail) ? $checkEmail->id : 0),
-                        'updated_by' => (($checkEmail) ? $checkEmail->id : 0),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                    UserActivity::insert($fields101);
+                        $fields101 = [
+                            'user_email' => $requestData['email'],
+                            'user_name' => '',
+                            'user_type' => '',
+                            'ip_address' => $ipAddress,
+                            'activity_type' => 0,
+                            'activity_details' => 'We Don\'t Recognize You !!!',
+                            'platform_type' => 'WEB',
+                            'browser_used' => $userAgent,
+                            'status' => 1,
+                            'created_by' => (($checkEmail) ? $checkEmail->id : 0),
+                            'updated_by' => (($checkEmail) ? $checkEmail->id : 0),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                        UserActivity::insert($fields101);
                     //Authentication log capture //
 
                     $apiStatus = false;

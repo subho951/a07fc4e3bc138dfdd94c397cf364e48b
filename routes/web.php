@@ -147,9 +147,8 @@ Route::get('/', function () {
         /* before login */
             Route::match(['get'], '/get-app-setting', 'ApiController@getAppSetting');
             Route::match(['post'], '/get-static-pages', 'ApiController@getStaticPages');
-            Route::match(['post'], '/signup', 'ApiController@signup');
-            Route::match(['post'], '/signup-validate', 'ApiController@signupValidate');
-            Route::match(['post'], '/signin', 'ApiController@signin');
+
+            Route::match(['post'], '/signin-with-email', 'ApiController@signinWithEmail');
             Route::match(['post'], '/forgot-password', 'ApiController@forgotPassword');
             Route::match(['post'], '/validate-otp', 'ApiController@validateOtp');
             Route::match(['post'], '/resend-otp', 'ApiController@resendOtp');
