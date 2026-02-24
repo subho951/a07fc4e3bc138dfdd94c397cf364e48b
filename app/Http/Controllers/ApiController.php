@@ -1400,14 +1400,14 @@ class ApiController extends Controller
                                                 'company_name'  => $member->company_name,
                                             ];
                                         }
-                                        $member_detail[]  = [
+                                    }
+                                    $member_detail  = [
                                             'committee_name'        => $row->name,
                                             'main_member_count'     => count($main_members),
                                             'sub_member_count'      => count($sub_members),
                                             'main_members'          => $main_members,
                                             'sub_members'           => $sub_members,
                                         ];
-                                    }
                                 }                                
 
                                 $apiResponse[]      = [
