@@ -1366,7 +1366,7 @@ class ApiController extends Controller
                         $getCommitteeCats = CommitteeCategory::select('id', 'name', 'short_description')->orderBy('id', 'ASC')->get();
                         if($getCommitteeCats){
                             foreach($getCommitteeCats as $row){
-                                $members = CoreMember::select(
+                                $members = User::select(
                                                                 'id',
                                                                 'name',
                                                                 'points',
