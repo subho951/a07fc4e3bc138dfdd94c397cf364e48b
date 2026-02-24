@@ -879,6 +879,89 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        public function getMaster(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $cores      = [];
+                        $industries = [];
+                        $interests  = [];
+
+                        // core
+                        $getCores = Core::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+                        if($getCores){
+                            foreach($getCores as $row){
+                                $cores[]      = [
+                                    'id'    => $row->id,
+                                    'name'  => $row->name,
+                                ];
+                            }
+                        }
+
+                        // industry
+                        $getIndustries = Industry::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+                        if($getIndustries){
+                            foreach($getIndustries as $row){
+                                $industries[]      = [
+                                    'id'    => $row->id,
+                                    'name'  => $row->name,
+                                ];
+                            }
+                        }
+
+                        // interest
+                        $getInterests = Interest::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+                        if($getInterests){
+                            foreach($getInterests as $row){
+                                $interests[]      = [
+                                    'id'    => $row->id,
+                                    'name'  => $row->name,
+                                ];
+                            }
+                        }
+
+                        $apiResponse        = [
+                            'cores'         => $cores,
+                            'industries'    => $industries,
+                            'interests'     => $interests,
+                        ];
+                        
+                        $apiStatus          = TRUE;
+                        $apiMessage         = 'Data Available !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
         public function getProfile(Request $request)
         {
             $apiStatus          = TRUE;
@@ -902,25 +985,25 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         $profileData    = [
-                            'first_name'            => $getUser->first_name,
-                            'last_name'             => $getUser->last_name,
+                            'name'                  => $getUser->name,
                             'email'                 => $getUser->email,
                             'phone'                 => $getUser->phone,
-                            'display_name'          => $getUser->display_name,
-                            'profile_image'         => (($getUser->profile_image != '')?env('UPLOADS_URL').'user/'.$getUser->profile_image:env('NO_IMAGE')),
+                            'photo'                 => (($getUser->photo != '')?env('UPLOADS_URL').'user/'.$getUser->photo:env('NO_IMAGE')),
+                            'company_name'          => $getUser->company_name,
+                            'designation'           => $getUser->designation,
+                            'dob'                   => $getUser->dob,
+                            'doj'                   => $getUser->doj,
+                            'doa'                   => $getUser->doa,
+                            'core_id'               => $getUser->core_id,
+                            'spouse_name'           => $getUser->spouse_name,
+                            'profession'            => $getUser->profession,
+                            'alumni'                => $getUser->alumni,
+                            'industry_id'           => $getUser->industry_id,
+                            'interest_id'           => $getUser->interest_id,
+                            'address'               => $getUser->address,
+                            'points'                => $getUser->points,
                         ];
-                        /* view analytics track */
-                            $userAgent                      = $request->header('User-Agent', 'unknown');
-                            $acceptLanguage                 = $request->header('Accept-Language', 'en');
-                            $clientIp                       = $request->ip();
-                            $deviceId                       = $this->createDeviceFingerprint($userAgent, $acceptLanguage, $clientIp);
-                            $viewData = [
-                                'device_id'     => $deviceId,
-                                'page'          => 'get profile',
-                                'product_id'    => 0,
-                            ];
-                            UserView::insert($viewData);
-                        /* view analytics track */
+                        
                         $apiStatus          = TRUE;
                         $apiMessage         = 'Data Available !!!';
                         $apiResponse        = $profileData;
