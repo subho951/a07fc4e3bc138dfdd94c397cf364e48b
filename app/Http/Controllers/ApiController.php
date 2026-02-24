@@ -1367,62 +1367,59 @@ class ApiController extends Controller
                         if($getCommitteeCats){
                             foreach($getCommitteeCats as $row){
                                 if($row->id == 1){
-                                    $members = User::select(
-                                                            'id',
-                                                            'name',
-                                                            'points',
-                                                            'photo',
-                                                            'company_name',
-                                                            'committee_member_type',
-                                                        )
-                                                        ->where('status', 1)
-                                                        ->orderBy('name', 'ASC')
-                                                        ->get();
+                                    $cats = CommitteeCategory::select('id', 'name', 'short_description')->where('status', '=', 1)->orderBy('id', 'ASC')->get();
                                 } else {
-                                    $members = User::select(
-                                                            'id',
-                                                            'name',
-                                                            'points',
-                                                            'photo',
-                                                            'company_name',
-                                                            'committee_member_type',
-                                                        )
-                                                        ->where('committee_category_id', $row->id)
-                                                        ->where('status', 1)
-                                                        ->orderBy('name', 'ASC')
-                                                        ->get();
+                                    $cats = CommitteeCategory::select('id', 'name', 'short_description')->where('status', '=', 1)->where('id', '=', $row->id)->orderBy('id', 'ASC')->get();
                                 }
-                                
+
                                 $member_detail  = [];
-                                $main_members   = [];
-                                $sub_members    = [];
-                                if($members){
-                                    foreach($members as $member){
-                                        if($member->committee_member_type == 1){
-                                            $main_members[] = [
-                                                'user_id'       => $member->id,
-                                                'name'          => $member->name,
-                                                'points'        => $member->points,
-                                                'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
-                                                'company_name'  => $member->company_name,
-                                            ];
-                                        } else {
-                                            $sub_members[] = [
-                                                'user_id'       => $member->id,
-                                                'name'          => $member->name,
-                                                'points'        => $member->points,
-                                                'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
-                                                'company_name'  => $member->company_name,
-                                            ];
+                                if($cats){
+                                    foreach($cats as $cat){
+                                        $members = User::select(
+                                                                'id',
+                                                                'name',
+                                                                'points',
+                                                                'photo',
+                                                                'company_name',
+                                                                'committee_member_type',
+                                                            )
+                                                            ->where('committee_category_id', $cat->id)
+                                                            ->where('status', 1)
+                                                            ->orderBy('name', 'ASC')
+                                                            ->get();
+                                        
+                                        
+                                        $main_members   = [];
+                                        $sub_members    = [];
+                                        if($members){
+                                            foreach($members as $member){
+                                                if($member->committee_member_type == 1){
+                                                    $main_members[] = [
+                                                        'user_id'       => $member->id,
+                                                        'name'          => $member->name,
+                                                        'points'        => $member->points,
+                                                        'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
+                                                        'company_name'  => $member->company_name,
+                                                    ];
+                                                } else {
+                                                    $sub_members[] = [
+                                                        'user_id'       => $member->id,
+                                                        'name'          => $member->name,
+                                                        'points'        => $member->points,
+                                                        'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
+                                                        'company_name'  => $member->company_name,
+                                                    ];
+                                                }
+                                            }
+                                            $member_detail  = [
+                                                    'committee_name'        => $row->name,
+                                                    'main_member_count'     => count($main_members),
+                                                    'sub_member_count'      => count($sub_members),
+                                                    'main_members'          => $main_members,
+                                                    'sub_members'           => $sub_members,
+                                                ];
                                         }
                                     }
-                                    $member_detail  = [
-                                            'committee_name'        => $row->name,
-                                            'main_member_count'     => count($main_members),
-                                            'sub_member_count'      => count($sub_members),
-                                            'main_members'          => $main_members,
-                                            'sub_members'           => $sub_members,
-                                        ];
                                 }                                
 
                                 $apiResponse[]      = [
