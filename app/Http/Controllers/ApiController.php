@@ -985,7 +985,7 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         $profileData    = [
-                            'id'                    => $uId,
+                            'user_id'               => $uId,
                             'name'                  => $getUser->name,
                             'email'                 => $getUser->email,
                             'phone'                 => $getUser->phone,
