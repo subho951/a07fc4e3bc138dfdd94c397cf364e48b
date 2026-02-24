@@ -1371,34 +1371,49 @@ class ApiController extends Controller
                                                                 'name',
                                                                 'points',
                                                                 'photo',
-                                                                'company_name'
+                                                                'company_name',
+                                                                'committee_member_type',
                                                             )
                                                             ->where('committee_category_id', $row->id)
                                                             ->where('status', 1)
                                                             ->orderBy('name', 'ASC')
                                                             ->get();
-                                $member_detail = [];
+                                $member_detail  = [];
+                                $main_members   = [];
+                                $sub_members    = [];
                                 if($members){
                                     foreach($members as $member){
-                                        $member_detail[] = [
-                                            'user_id'       => $member->id,
-                                            'name'          => $member->name,
-                                            'points'        => $member->points,
-                                            'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
-                                            'company_name'  => $member->company_name,
+                                        if($member->committee_member_type == 1){
+                                            $main_members[] = [
+                                                'user_id'       => $member->id,
+                                                'name'          => $member->name,
+                                                'points'        => $member->points,
+                                                'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
+                                                'company_name'  => $member->company_name,
+                                            ];
+                                        } else {
+                                            $sub_members[] = [
+                                                'user_id'       => $member->id,
+                                                'name'          => $member->name,
+                                                'points'        => $member->points,
+                                                'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
+                                                'company_name'  => $member->company_name,
+                                            ];
+                                        }
+                                        $member_detail[]  = [
+                                            'committee_name'        => $row->name,
+                                            'main_member_count'     => count($main_members),
+                                            'sub_member_count'      => count($sub_members),
+                                            'main_members'          => $main_members,
+                                            'sub_members'           => $sub_members,
                                         ];
                                     }
-                                }
-
-                                $committee_member_count = $sub_committee_member_count = 0;
+                                }                                
 
                                 $apiResponse[]      = [
                                     'id'                            => $row->id,
                                     'name'                          => $row->name,
                                     'description'                   => $row->short_description,
-                                    // 'category_name'                 => $row->name,
-                                    'committee_member_count'        => $committee_member_count,
-                                    'sub_committee_member_count'    => $sub_committee_member_count,
                                     'members'                       => $member_detail,
                                 ];
                             }
