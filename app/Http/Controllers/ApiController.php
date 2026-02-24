@@ -1294,7 +1294,7 @@ class ApiController extends Controller
                                             'user_id'       => $member->id,
                                             'name'          => $member->name,
                                             'points'        => $member->points,
-                                            'photo'         => $member->photo,
+                                            'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
                                             'company_name'  => $member->company_name,
                                         ];
                                     }
