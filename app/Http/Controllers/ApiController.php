@@ -998,8 +998,8 @@ class ApiController extends Controller
                             'spouse_name'           => $getUser->spouse_name,
                             'profession'            => $getUser->profession,
                             'alumni'                => $getUser->alumni,
-                            'industry_id'           => (($getUser->industry_id != '')?json_decode($getUser->industry_id):[]),
-                            'interest_id'           => (($getUser->interest_id != '')?json_decode($getUser->interest_id):[]),
+                            'industry_id'           => (($getUser->industry_id != '')?array_map('intval', json_decode($getUser->industry_id)):[]),
+                            'interest_id'           => (($getUser->interest_id != '')?array_map('intval', json_decode($getUser->interest_id)):[]),
                             'address'               => $getUser->address,
                             'points'                => $getUser->points,
                         ];
