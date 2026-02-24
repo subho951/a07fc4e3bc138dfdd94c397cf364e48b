@@ -1147,12 +1147,8 @@ class ApiController extends Controller
             $apiExtraField      = '';
             $apiExtraData       = '';
             $requestData        = $request->all();
-            // $requiredFields     = ['photo'];
             $headerData         = $request->header();
-            // if (!$this->validateArray($requiredFields, $requestData)){
-            //     $apiStatus          = FALSE;
-            //     $apiMessage         = 'All Data Are Not Present !!!';
-            // }
+            
             if($headerData['key'][0] == env('PROJECT_KEY')){
                 $app_access_token           = $request->header('Authorization');
                 $getTokenValue              = $this->tokenAuth($app_access_token);
@@ -1162,7 +1158,7 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         $member = User::findOrFail($uId);
-                        
+                        Helper::pr($getUser);
                         /** Photo Update */
                         if ($request->hasFile('photo')) {
                             $oldPath = public_path('uploads/user/'.$member->photo);
