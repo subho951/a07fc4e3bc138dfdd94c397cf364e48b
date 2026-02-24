@@ -1374,7 +1374,7 @@ class ApiController extends Controller
                                                                 'company_name'
                                                             )
                                                             ->where('committee_category_id', $row->id)
-                                                            ->where('core_members.status', 1)
+                                                            ->where('status', 1)
                                                             ->orderBy('name', 'ASC')
                                                             ->get();
                                 $member_detail = [];
