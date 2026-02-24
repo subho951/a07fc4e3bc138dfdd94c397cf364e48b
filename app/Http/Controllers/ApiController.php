@@ -1158,7 +1158,7 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         $member = User::findOrFail($uId);
-                        // Helper::pr($getUser);
+                        
                         /** Photo Update */
                         if ($request->hasFile('photo')) {
                             $oldPath = public_path('uploads/user/'.$member->photo);
@@ -1175,7 +1175,7 @@ class ApiController extends Controller
                         $postData = [
                                     'photo'         => $photoName
                                 ];
-                        Helper::pr($postData);
+                        // Helper::pr($postData);
                         User::where('id', '=', $uId)->update($postData);
                         $apiStatus                  = TRUE;
                         $apiMessage                 = 'Profile Image Uploaded Successfully !!!';
