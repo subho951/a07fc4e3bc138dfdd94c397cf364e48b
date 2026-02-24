@@ -1366,18 +1366,33 @@ class ApiController extends Controller
                         $getCommitteeCats = CommitteeCategory::select('id', 'name', 'short_description')->orderBy('id', 'ASC')->get();
                         if($getCommitteeCats){
                             foreach($getCommitteeCats as $row){
-                                $members = User::select(
-                                                                'id',
-                                                                'name',
-                                                                'points',
-                                                                'photo',
-                                                                'company_name',
-                                                                'committee_member_type',
-                                                            )
-                                                            ->where('committee_category_id', $row->id)
-                                                            ->where('status', 1)
-                                                            ->orderBy('name', 'ASC')
-                                                            ->get();
+                                if($row->id == 1){
+                                    $members = User::select(
+                                                            'id',
+                                                            'name',
+                                                            'points',
+                                                            'photo',
+                                                            'company_name',
+                                                            'committee_member_type',
+                                                        )
+                                                        ->where('status', 1)
+                                                        ->orderBy('name', 'ASC')
+                                                        ->get();
+                                } else {
+                                    $members = User::select(
+                                                            'id',
+                                                            'name',
+                                                            'points',
+                                                            'photo',
+                                                            'company_name',
+                                                            'committee_member_type',
+                                                        )
+                                                        ->where('committee_category_id', $row->id)
+                                                        ->where('status', 1)
+                                                        ->orderBy('name', 'ASC')
+                                                        ->get();
+                                }
+                                
                                 $member_detail  = [];
                                 $main_members   = [];
                                 $sub_members    = [];
