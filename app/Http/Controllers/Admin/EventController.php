@@ -48,6 +48,7 @@ class EventController extends Controller
                     'description'           => 'required|max:500',
                     'venue'                 => 'required',
                     'event_date'            => 'required|date',
+                    'event_time'            => 'required|time',
                     'photo'                 => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'video'                 => 'required|mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
                 ]);
@@ -65,6 +66,7 @@ class EventController extends Controller
                     'description'       => $request->description,
                     'venue'             => $request->venue,
                     'event_date'        => $request->event_date,
+                    'event_time'        => $request->event_time,
                     'seat_capacity'     => $request->seat_capacity,
                     'photo'             => $photoName,
                     'video'             => $videoName,
@@ -98,6 +100,7 @@ class EventController extends Controller
                     'description'           => 'required|max:500',
                     'venue'                 => 'required',
                     'event_date'            => 'required|date',
+                    'event_time'            => 'required|time',
                     'photo'                 => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'video'                 => 'nullable|mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
                 ]);
@@ -131,6 +134,7 @@ class EventController extends Controller
                     'description'       => $request->description,
                     'venue'             => $request->venue,
                     'event_date'        => $request->event_date,
+                    'event_time'        => $request->event_time,
                     'seat_capacity'     => $request->seat_capacity,
                 ]);
 

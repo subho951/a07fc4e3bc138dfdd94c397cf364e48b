@@ -1503,6 +1503,83 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // events
+        public function events(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $upcoming_events    = [];
+                        $past_events        = [];
+
+                        $upcomingEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '>', date('Y-m-d'))->orderBy('id', 'DESC')->get();
+                        if($upcomingEvents){
+                            foreach($upcomingEvents as $row){
+                                $upcoming_events[]      = [
+                                    'id'                => $row->id,
+                                    'title'             => $row->title,
+                                    'description'       => $row->description,
+                                    'venue'             => $row->venue,
+                                    'event_date'        => date_format(date_create($row->event_date), "F M d") . ' . ' . date_format(date_create($row->event_time), "h:i A"),
+                                    'photo'             => (($row->photo != '')?env('UPLOADS_URL').'event/'.$row->photo:env('NO_IMAGE')),
+                                ];
+                            }
+                        }
+
+                        $pastEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '<', date('Y-m-d'))->orderBy('id', 'DESC')->get();
+                        if($pastEvents){
+                            foreach($pastEvents as $row){
+                                $past_events[]      = [
+                                    'id'                => $row->id,
+                                    'title'             => $row->title,
+                                    'description'       => $row->description,
+                                    'venue'             => $row->venue,
+                                    'event_date'        => date_format(date_create($row->event_date), "F M d") . ' . ' . date_format(date_create($row->event_time), "h:i A"),
+                                    'photo'             => (($row->photo != '')?env('UPLOADS_URL').'event/'.$row->photo:env('NO_IMAGE')),
+                                ];
+                            }
+                        }
+
+                        $apiResponse = [
+                            'upcoming_events'   => $upcoming_events,
+                            'past_events'       => $past_events,
+                        ];
+                        
+                        $apiStatus          = TRUE;
+                        $apiMessage         = 'Data Available !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
     /* after login */
     /*
     Get http response code

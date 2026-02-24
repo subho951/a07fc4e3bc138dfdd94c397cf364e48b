@@ -36,6 +36,7 @@ $controllerRoute = $module['controller_route'];
       $description          = $row->description;
       $venue                = $row->venue;
       $event_date           = $row->event_date;
+      $event_time           = $row->event_time;
       $photo                = $row->photo;
       $video                = $row->video;
       $seat_capacity        = $row->seat_capacity;
@@ -44,6 +45,7 @@ $controllerRoute = $module['controller_route'];
       $description          = '';
       $venue                = '';
       $event_date           = '';
+      $event_time           = '';
       $photo                = '';
       $video                = '';
       $seat_capacity        = '';
@@ -102,6 +104,14 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <input type="date" name="event_date" class="form-control" id="event_date" value="<?= $event_date ?>" required>
                 @error('event_date') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="event_time" class="col-md-2 col-lg-2 col-form-label">Time <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="time" name="event_time" class="form-control" id="event_time" value="<?= $event_time ?>" required>
+                @error('event_time') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 

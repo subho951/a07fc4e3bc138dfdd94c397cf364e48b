@@ -43,6 +43,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Title</th>
                 <th scope="col">Venue</th>
                 <th scope="col">Date</th>
+                <th scope="col">Time</th>
                 <th scope="col">Questions Count</th>
                 <th scope="col">Action</th>
               </tr>
@@ -54,6 +55,7 @@ $controllerRoute = $module['controller_route'];
                   <td><?=$row->title?></td>
                   <td><?=$row->venue?></td>
                   <td><?=date_format(date_create($row->event_date), "d-m-Y")?></td>
+                  <td><?=date_format(date_create($row->event_time), "d-m-Y")?></td>
                   <td>
                     <?php
                     echo $questionCount = EventQuestion::where('event_id', '=', $row->id)->count();

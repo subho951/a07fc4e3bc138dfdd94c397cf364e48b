@@ -18,6 +18,7 @@ class Event extends Authenticatable
         'description',
         'venue',
         'event_date',
+        'event_time',
         'photo',
         'video',
         'status',
