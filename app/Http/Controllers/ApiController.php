@@ -1411,8 +1411,8 @@ class ApiController extends Controller
                                                     ];
                                                 }
                                             }
-                                            $member_detail  = [
-                                                    'committee_name'        => $row->name,
+                                            $member_detail[]  = [
+                                                    'committee_name'        => $cat->name,
                                                     'main_member_count'     => count($main_members),
                                                     'sub_member_count'      => count($sub_members),
                                                     'main_members'          => $main_members,
