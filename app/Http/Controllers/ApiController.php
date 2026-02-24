@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Services\PaymentService;
+use Illuminate\Support\Facades\File;
 
 use App\Models\Achievement;
 use App\Models\Admin;
@@ -1146,12 +1147,12 @@ class ApiController extends Controller
             $apiExtraField      = '';
             $apiExtraData       = '';
             $requestData        = $request->all();
-            $requiredFields     = ['profile_image'];
+            // $requiredFields     = ['photo'];
             $headerData         = $request->header();
-            if (!$this->validateArray($requiredFields, $requestData)){
-                $apiStatus          = FALSE;
-                $apiMessage         = 'All Data Are Not Present !!!';
-            }
+            // if (!$this->validateArray($requiredFields, $requestData)){
+            //     $apiStatus          = FALSE;
+            //     $apiMessage         = 'All Data Are Not Present !!!';
+            // }
             if($headerData['key'][0] == env('PROJECT_KEY')){
                 $app_access_token           = $request->header('Authorization');
                 $getTokenValue              = $this->tokenAuth($app_access_token);
@@ -1160,60 +1161,25 @@ class ApiController extends Controller
                     $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
-                        $profile_image  = $requestData['profile_image'];
-                        // if($profile_image != ''){
-                        //     /* upload profile image */        
-                        //         $upload_file    = $profile_image;
-                        //         Helper::pr($upload_file);
-                        //         // $img            = $upload_file['base64'];
-                        //         $img            = str_replace('data:image/jpeg;base64,', '', $upload_file);
-                        //         $img            = str_replace(' ', '+', $img);
-                        //         $data           = base64_decode($img);
-                        //         $fileName       = uniqid() . '.jpg';
-                        //         $file           = 'public/uploads/user/' . $fileName;
-                        //         $success        = file_put_contents($file, $data);
-                        //         $profile_image  = $fileName;
-                        //     /* upload profile image */
-                        // } else {
-                        //     $profile_image = $getUser->profile_image;
-                        // }
-                        if(!empty($profile_image)){
-                            $profile_image      = $profile_image;
-                            $upload_type        = $profile_image['type'];
-                            if($upload_type == 'image/jpeg' || $upload_type == 'image/jpg' || $upload_type == 'image/png' || $upload_type == 'image/gif'){
-                                $upload_base64      = $profile_image['base64'];
-                                $img                = $upload_base64;
-                                $proof_type         = $profile_image['type'];
-                                if($proof_type == 'image/png'){
-                                    $extn = 'png';
-                                } elseif($proof_type == 'image/jpg'){
-                                    $extn = 'jpg';
-                                } elseif($proof_type == 'image/jpeg'){
-                                    $extn = 'jpeg';
-                                } elseif($proof_type == 'image/gif'){
-                                    $extn = 'gif';
-                                } else {
-                                    $extn = 'png';
-                                }
-                                $data               = base64_decode($img);
-                                $fileName           = uniqid() . '.' . $extn;
-                                $file               = 'public/uploads/user/' . $fileName;
-                                $success            = file_put_contents($file, $data);
-                                $profile_image      = $fileName;
-                            } else {
-                                $apiStatus          = FALSE;
-                                http_response_code(404);
-                                $apiMessage         = 'Please Upload Image !!!';
-                                $apiExtraField      = 'response_code';
-                                $apiExtraData       = http_response_code();
+                        $member = User::findOrFail($uId);
+                        
+                        /** Photo Update */
+                        if ($request->hasFile('photo')) {
+                            $oldPath = public_path('uploads/user/'.$member->photo);
+                            if (File::exists($oldPath)) {
+                                File::delete($oldPath);
                             }
+
+                            $photoName = time().'_'.$request->photo->getClientOriginalName();
+                            $request->photo->move(public_path('uploads/user'), $photoName);
                         } else {
-                            $profile_image = $getUser->photo;
+                            $photoName = $member->photo;
                         }
+
                         $postData = [
-                                    'photo'         => $profile_image
+                                    'photo'         => $photoName
                                 ];
-                        // Helper::pr($postData);
+                        Helper::pr($postData);
                         User::where('id', '=', $uId)->update($postData);
                         $apiStatus                  = TRUE;
                         $apiMessage                 = 'Profile Image Uploaded Successfully !!!';
