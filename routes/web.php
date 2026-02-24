@@ -166,6 +166,7 @@ Route::get('/', function () {
             Route::match(['post'], '/upload-profile-image', 'ApiController@uploadProfileImage');
 
             Route::match(['get'], '/core', 'ApiController@core');
+            Route::match(['get'], '/committee-members', 'ApiController@committeeMembers');
         /* after login */
     });
 /* Api */

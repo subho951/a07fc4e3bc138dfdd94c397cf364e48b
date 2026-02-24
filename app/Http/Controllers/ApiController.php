@@ -52,6 +52,7 @@ class ApiController extends Controller
         $this->paymentService = $paymentService;
     }
     /* before login screen */
+        // get app setting
         public function getAppSetting(Request $request){
             $apiStatus          = TRUE;
             $apiMessage         = '';
@@ -100,6 +101,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // get static pages
         public function getStaticPages(Request $request){
             $apiStatus          = TRUE;
             $apiMessage         = '';
@@ -227,6 +229,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // signin with email
         public function signinWithEmail(Request $request)
         {
             $apiStatus = true;
@@ -369,7 +372,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
-
+        // signin validate otp
         public function signinValidateOTP(Request $request)
         {
             $apiStatus = true;
@@ -775,6 +778,7 @@ class ApiController extends Controller
         }
     /* authentication */
     /* after login */
+        // signout
         public function signout(Request $request)
         {
             $apiStatus          = TRUE;
@@ -808,6 +812,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // dashboard
         public function dashboard(Request $request)
         {
             $apiStatus          = TRUE;
@@ -880,6 +885,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // get master
         public function getMaster(Request $request)
         {
             $apiStatus          = TRUE;
@@ -963,6 +969,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // get profile
         public function getProfile(Request $request)
         {
             $apiStatus          = TRUE;
@@ -1025,6 +1032,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // update profile
         public function updateProfile(Request $request)
         {
             $apiStatus          = TRUE;
@@ -1139,6 +1147,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // update profile image
         public function uploadProfileImage(Request $request)
         {
             $apiStatus          = TRUE;
@@ -1195,6 +1204,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // delete account
         public function deleteAccount(Request $request)
         {
             $apiStatus          = TRUE;
@@ -1248,7 +1258,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
-
+        // core
         public function core(Request $request)
         {
             $apiStatus          = TRUE;
@@ -1307,6 +1317,90 @@ class ApiController extends Controller
                                     'description'   => $row->description,
                                     'no_of_members' => count($members),
                                     'members'       => $member_detail,
+                                ];
+                            }
+                        }
+                        
+                        $apiStatus          = TRUE;
+                        $apiMessage         = 'Data Available !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
+        // committee members
+        public function committeeMembers(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        // members
+                        $getCommitteeCats = CommitteeCategory::select('id', 'name', 'short_description')->where('status', '=', 1)->orderBy('id', 'ASC')->get();
+                        if($getCommitteeCats){
+                            foreach($getCommitteeCats as $row){
+                                // $members = CoreMember::select(
+                                //                                 'users.id',
+                                //                                 'users.name',
+                                //                                 'users.points',
+                                //                                 'users.photo',
+                                //                                 'users.company_name'
+                                //                             )
+                                //                             ->join('users', 'users.id', '=', 'core_members.member_id')
+                                //                             ->where('core_members.core_id', $row->id)
+                                //                             ->where('core_members.status', 1)
+                                //                             ->orderBy('users.name', 'ASC')
+                                //                             ->get();
+                                // $member_detail = [];
+                                // if($members){
+                                //     foreach($members as $member){
+                                //         $member_detail[] = [
+                                //             'user_id'       => $member->id,
+                                //             'name'          => $member->name,
+                                //             'points'        => $member->points,
+                                //             'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
+                                //             'company_name'  => $member->company_name,
+                                //         ];
+                                //     }
+                                // }
+
+                                $committee_member_count = $sub_committee_member_count = 0;
+
+                                $apiResponse[]      = [
+                                    'id'                            => $row->id,
+                                    'name'                          => $row->name,
+                                    'description'                   => $row->short_description,
+                                    'category_name'                 => $row->name,
+                                    'committee_member_count'        => $committee_member_count,
+                                    'sub_committee_member_count'    => $sub_committee_member_count,
+                                    // 'members'       => $member_detail,
                                 ];
                             }
                         }
