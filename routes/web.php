@@ -167,6 +167,7 @@ Route::get('/', function () {
 
             Route::match(['get'], '/core', 'ApiController@core');
             Route::match(['get'], '/committee-members', 'ApiController@committeeMembers');
+            Route::match(['get'], '/concierge', 'ApiController@concierge');
         /* after login */
     });
 /* Api */
