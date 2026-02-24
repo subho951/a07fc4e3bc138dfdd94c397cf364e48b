@@ -1275,11 +1275,38 @@ class ApiController extends Controller
                         $getCores = Core::select('id', 'name', 'points', 'description')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
                         if($getCores){
                             foreach($getCores as $row){
+                                $members = CoreMember::select(
+                                                                'users.id',
+                                                                'users.name',
+                                                                'users.points',
+                                                                'users.photo',
+                                                                'users.company_name'
+                                                            )
+                                                            ->join('users', 'users.id', '=', 'core_members.member_id')
+                                                            ->where('core_members.core_id', $row->id)
+                                                            ->where('core_members.status', 1)
+                                                            ->orderBy('users.name', 'ASC')
+                                                            ->get();
+                                $member_detail = [];
+                                if($members){
+                                    foreach($members as $member){
+                                        $member_detail[] = [
+                                            'user_id'       => $member->id,
+                                            'name'          => $member->name,
+                                            'points'        => $member->points,
+                                            'photo'         => $member->photo,
+                                            'company_name'  => $member->company_name,
+                                        ];
+                                    }
+                                }
+
                                 $apiResponse[]      = [
                                     'id'            => $row->id,
                                     'name'          => $row->name,
                                     'points'        => $row->points,
                                     'description'   => $row->description,
+                                    'no_of_members' => count($members),
+                                    'members'       => $member_detail,
                                 ];
                             }
                         }
