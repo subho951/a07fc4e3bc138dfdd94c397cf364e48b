@@ -302,6 +302,7 @@ h6 {
     padding-left: 10px;
     cursor: pointer;
     color: #fff;
+    margin-top: -10px;
 }
 .header .search-bar {
     min-width: 360px;
@@ -2007,7 +2008,7 @@ a.nav-link.active{
     background-color: #8B2525 !important;
 }
 .card{
-    border: 1px solid #dfcdaf;
+    border: 1px solid #FCC312;
 }
 .recent_activity.table-item{
     padding: 10px;
@@ -2031,7 +2032,7 @@ a.nav-link.active{
     border-top-right-radius: 5px;
 }
 .global_table tbody tr:nth-child(odd){
-    background: #dfcdaf24;
+    background: #fff;
 }
 .product-items-grid,
 .listing_box {
@@ -2051,6 +2052,8 @@ a.nav-link.active{
 .global_table th a,
 .global_table > tbody > tr > td{
     font-size: 14px;
+    vertical-align: middle;
+    color: #000;
 }
 .top-listing-nav li.active a {
     color: #8B2525;
@@ -2062,11 +2065,254 @@ a.nav-link.active{
     display: inline-flex !important;
     align-items: center !important;
     margin: 2px !important;
-    background-color: #dfcdaf !important;
-    color: #8B2525 !important;
+    background-color: #fcc312 !important;
+    color: #fff !important;
 }
 .datatable-pagination .datatable-active a, .datatable-pagination .datatable-active a:focus, .datatable-pagination .datatable-active a:hover,
 .datatable-pagination a:hover{
-    background-color: #dfcdaf !important;
-    color: #8B2525;
+    background-color: #fcc312 !important;
+    color: #fff;
+}
+
+/* surajit css */
+.dashboard .card,
+.dashboard .card a {
+    transition: all 0.3s ease-in-out;
+}
+.dashboard .card:hover {
+    background: #FCC312;
+    transition: all 0.3s ease-in-out;
+}
+.dashboard .card h6{
+    font-size: 20px;
+    color: #FCC312;
+}
+.dashboard .card b{
+    font-size: 20px;
+    color: #000;
+}
+.dashboard .card:hover h6,
+.dashboard .card:hover b{
+    color: #fff;
+}
+
+/* =========================
+   GLOBAL TABLE DESIGN
+   Color: #FCC312
+========================= */
+
+.global_table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+/* Header */
+.global_table thead {
+    background: linear-gradient(135deg, #FCC312, #f7b800);
+}
+
+.global_table thead th {
+    color: #000;
+    font-weight: 600;
+    padding: 14px 16px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+/* Body */
+.global_table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.global_table tbody tr:nth-child(even) {
+    background-color: #fffaf0;
+}
+
+.global_table tbody tr:hover {
+    background-color: rgba(252, 195, 18, 0.08);
+    transform: scale(1.01);
+}
+
+.global_table tbody td,
+.global_table tbody th {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 14px;
+    color: #444;
+}
+
+/* Action Buttons */
+.global_table .btn {
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    transition: 0.3s ease;
+}
+
+/* Edit */
+.global_table .btn-outline-primary {
+    border: 1px solid #FCC312;
+    color: #FCC312;
+}
+
+.global_table .btn-outline-primary:hover {
+    background: #FCC312;
+    color: #000;
+}
+
+/* Delete */
+.global_table .btn-outline-danger {
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+}
+
+.global_table .btn-outline-danger:hover {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+/* Status Active */
+.global_table .btn-outline-success {
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.global_table .btn-outline-success:hover {
+    background: #28a745;
+    color: #fff;
+}
+
+/* Status Inactive */
+.global_table .btn-outline-warning {
+    border: 1px solid #f0ad4e;
+    color: #f0ad4e;
+}
+
+.global_table .btn-outline-warning:hover {
+    background: #f0ad4e;
+    color: #fff;
+}
+
+/* Rounded Corners Fix */
+.global_table thead th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.global_table thead th:last-child {
+    border-top-right-radius: 12px;
+}
+.datatable-table > thead > tr > th{
+    padding: 12px 10px;
+}
+/* =========================
+   GLOBAL FORM DESIGN
+   Brand Color: #FCC312
+========================= */
+
+/* Input Field */
+.form-control {
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid #e5e5e5;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+/* Focus Effect */
+.form-control:focus {
+    border-color: #FCC312;
+    box-shadow: 0 0 0 3px rgba(252, 195, 18, 0.15);
+}
+
+/* Error Message */
+.text-danger {
+    font-size: 13px;
+}
+
+/* Submit Button */
+.btn-primary {
+    background: linear-gradient(135deg, #FCC312, #f7b800);
+    border: none;
+    padding: 10px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    color: #000;
+}
+
+/* Button Hover */
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(252, 195, 18, 0.4);
+}
+
+/* Smooth Row Spacing */
+.row.mb-3 {
+    margin-bottom: 20px !important;
+}
+.choices__list--multiple .choices__item {
+    background-color: #fcc312 !important;
+    border: 1px solid #fcc312 !important;
+}
+.choices[data-type*=select-multiple] .choices__button, .choices[data-type*=text] .choices__button{
+    border-left: 1px solid #717171 !important;
+}
+.datatable-selector {
+    padding: 6px 8px !important;
+    border-radius: 5px !important;
+    border: 1px solid #fcc312 !important;
+}
+.datatable-dropdown label{
+    font-size: 14px !important;
+    text-transform: capitalize !important
+}
+.datatable-search input {
+    border: 1px solid #fcc312 !important;
+    border-radius: 5px !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+}
+.datatable-search input:focus{
+    outline: none !important;
+    box-shadow: none !important;
+} 
+.choices__inner,
+.choices__input{
+    border-radius: 10px !important;
+    background: #fff !important;
+}
+/* Responsive */
+@media (max-width: 768px) {
+    .col-form-label {
+        margin-bottom: 8px;
+    }
+}
+/* Responsive */
+@media (max-width: 768px) {
+    .global_table thead {
+        display: none;
+    }
+
+    .global_table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .global_table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 15px;
+        border: none;
+    }
 }
