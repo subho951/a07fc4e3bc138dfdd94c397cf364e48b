@@ -1587,6 +1587,80 @@ class ApiController extends Controller
         // privileges
 
         // leaderboard
+        public function leaderboard(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $core_leaderboard    = [];
+                        $member_leaderboard  = [];
+
+                        // core
+                        $getCores = Core::select('id', 'name', 'points', 'photo')->where('status', '=', 1)->orderBy('points', 'DESC')->get();
+                        if($getCores){
+                            foreach($getCores as $core){
+                                $core_leaderboard[]    = [
+                                    'id'        => $core->id,
+                                    'name'      => $core->name,
+                                    'points'    => $core->points,
+                                    'photo'     => (($core->photo != '')?env('UPLOADS_URL').'core/'.$core->photo:env('NO_IMAGE')),
+                                ];
+                            }
+                        }
+
+                        // member
+                        $getMembers = User::select('id', 'name', 'points', 'photo')->where('status', '=', 1)->orderBy('points', 'DESC')->limit(2)->get();
+                        if($getMembers){
+                            foreach($getMembers as $row){
+                                $member_leaderboard[]    = [
+                                    'id'        => $row->id,
+                                    'name'      => $row->name,
+                                    'points'    => $row->points,
+                                    'photo'     => (($row->photo != '')?env('UPLOADS_URL').'user'.$row->photo:env('NO_IMAGE')),
+                                ];
+                            }
+                        }                       
+
+                        $apiResponse = [
+                            'core_leaderboard'   => $core_leaderboard,
+                            'member_leaderboard' => $member_leaderboard,
+                        ];
+                        
+                        $apiStatus          = TRUE;
+                        $apiMessage         = 'Data Available !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
     /* after login */
     /*
     Get http response code
