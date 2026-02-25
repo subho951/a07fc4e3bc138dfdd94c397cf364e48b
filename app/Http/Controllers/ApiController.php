@@ -1076,7 +1076,7 @@ class ApiController extends Controller
                                             'interest_id'               => (($request->interest_id != '')?json_encode($request->interest_id):[]),
                                             'address'                   => $requestData['address'],
                                         ];
-                                Helper::pr($postData);
+                                // Helper::pr($postData);
                                 User::where('id', '=', $uId)->update($postData);
                                 
                                 $apiStatus                  = TRUE;
