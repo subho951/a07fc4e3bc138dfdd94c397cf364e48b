@@ -1580,6 +1580,13 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+        // event detail
+
+        // member directory
+
+        // privileges
+
+        // leaderboard
     /* after login */
     /*
     Get http response code
