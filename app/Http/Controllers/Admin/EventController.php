@@ -47,6 +47,10 @@ class EventController extends Controller
                     'title'                 => 'required|string|max:255',
                     'description'           => 'required|max:500',
                     'venue'                 => 'required',
+                    'venue_google_map_link' => 'required',
+                    'dress_code'            => 'required',
+                    'dining'                => 'required',
+                    'check_in'              => 'required',
                     'event_date'            => 'required|date',
                     'event_time'            => 'required|time',
                     'photo'                 => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
@@ -62,14 +66,18 @@ class EventController extends Controller
                 $request->video->move(public_path('uploads/event'), $videoName);
 
                 Event::create([
-                    'title'             => $request->title,
-                    'description'       => $request->description,
-                    'venue'             => $request->venue,
-                    'event_date'        => $request->event_date,
-                    'event_time'        => $request->event_time,
-                    'seat_capacity'     => $request->seat_capacity,
-                    'photo'             => $photoName,
-                    'video'             => $videoName,
+                    'title'                     => $request->title,
+                    'description'               => $request->description,
+                    'venue'                     => $request->venue,
+                    'venue_google_map_link'     => $request->venue_google_map_link,
+                    'dress_code'                => $request->dress_code,
+                    'dining'                    => $request->dining,
+                    'check_in'                  => $request->check_in,
+                    'event_date'                => $request->event_date,
+                    'event_time'                => $request->event_time,
+                    'seat_capacity'             => $request->seat_capacity,
+                    'photo'                     => $photoName,
+                    'video'                     => $videoName,
                 ]);
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
@@ -99,6 +107,10 @@ class EventController extends Controller
                     'title'                 => 'required|string|max:255',
                     'description'           => 'required|max:500',
                     'venue'                 => 'required',
+                    'venue_google_map_link' => 'required',
+                    'dress_code'            => 'required',
+                    'dining'                => 'required',
+                    'check_in'              => 'required',
                     'event_date'            => 'required|date',
                     'event_time'            => 'required|time',
                     'photo'                 => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
@@ -130,12 +142,16 @@ class EventController extends Controller
                 }
 
                 $member->update([
-                    'title'             => $request->title,
-                    'description'       => $request->description,
-                    'venue'             => $request->venue,
-                    'event_date'        => $request->event_date,
-                    'event_time'        => $request->event_time,
-                    'seat_capacity'     => $request->seat_capacity,
+                    'title'                     => $request->title,
+                    'description'               => $request->description,
+                    'venue'                     => $request->venue,
+                    'venue_google_map_link'     => $request->venue_google_map_link,
+                    'dress_code'                => $request->dress_code,
+                    'dining'                    => $request->dining,
+                    'check_in'                  => $request->check_in,
+                    'event_date'                => $request->event_date,
+                    'event_time'                => $request->event_time,
+                    'seat_capacity'             => $request->seat_capacity,
                 ]);
 
                 $event_id               = $id;

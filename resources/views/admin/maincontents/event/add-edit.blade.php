@@ -35,6 +35,10 @@ $controllerRoute = $module['controller_route'];
       $title                = $row->title;
       $description          = $row->description;
       $venue                = $row->venue;
+      $venue_google_map_link                = $row->venue_google_map_link;
+      $dress_code                = $row->dress_code;
+      $dining                = $row->dining;
+      $check_in                = $row->check_in;
       $event_date           = $row->event_date;
       $event_time           = $row->event_time;
       $photo                = $row->photo;
@@ -44,6 +48,10 @@ $controllerRoute = $module['controller_route'];
       $title                = '';
       $description          = '';
       $venue                = '';
+      $venue_google_map_link                = '';
+      $dress_code                = '';
+      $dining                = '';
+      $check_in                = '';
       $event_date           = '';
       $event_time           = '';
       $photo                = '';
@@ -88,6 +96,38 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <input type="text" name="venue" class="form-control" id="venue" value="<?= $venue ?>" required>
                 @error('venue') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="venue_google_map_link" class="col-md-2 col-lg-2 col-form-label">Venue Google Map Link <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="venue_google_map_link" class="form-control" id="venue_google_map_link" value="<?= $venue_google_map_link ?>" required>
+                @error('venue_google_map_link') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="dress_code" class="col-md-2 col-lg-2 col-form-label">Dress Code <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="dress_code" class="form-control" id="dress_code" value="<?= $dress_code ?>" required>
+                @error('dress_code') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="dining" class="col-md-2 col-lg-2 col-form-label">Dining <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="dining" class="form-control" id="dining" value="<?= $dining ?>" required>
+                @error('dining') <span class="text-danger">{{ $message }}</span> @enderror
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label for="check_in" class="col-md-2 col-lg-2 col-form-label">Check-in <span class="text-danger">*</span></label>
+              <div class="col-md-10 col-lg-10">
+                <input type="text" name="check_in" class="form-control" id="check_in" value="<?= $check_in ?>" required>
+                @error('check_in') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 

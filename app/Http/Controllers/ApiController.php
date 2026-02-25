@@ -1581,10 +1581,85 @@ class ApiController extends Controller
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
         // event detail
+        public function eventDetail(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source', 'event_id'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $event_id = $requestData['event_id'];
+                        $getEvent = Event::where('id', '=', $event_id)->first();
+                        if($getEvent){
+                            $questions= [];
+                            $eventQuestions = EventQuestion::where('event_id', '=', $event_id)->get();
+                            if($eventQuestions){
+                                foreach($eventQuestions as $eventQuestion){
+                                    $questions[] = [
+                                        'event_question'        => $eventQuestion->event_question,
+                                        'event_answer_type'     => $eventQuestion->event_answer_type,
+                                        'event_answer_options'  => (($eventQuestion->event_answer_options != '')?explode(',', $eventQuestion->event_answer_options):[]),
+                                    ];
+                                }
+                            }
+
+                            $apiResponse = [
+                                'id'                            => $getEvent->id,
+                                'title'                         => $getEvent->title,
+                                'description'                   => $getEvent->description,
+                                'venue'                         => $getEvent->venue,
+                                'venue_google_map_link'         => $getEvent->venue_google_map_link,
+                                'dress_code'                    => $getEvent->dress_code,
+                                'dining'                        => $getEvent->dining,
+                                'check_in'                      => $getEvent->check_in,
+                                'event_date'                    => date_format(date_create($getEvent->event_date), "l M d") . ' . ' . date_format(date_create($getEvent->event_time), "h:i A"),
+                                'photo'                         => (($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')),
+                                'questions'                     => $questions
+                            ];
+                            
+                            $apiStatus          = TRUE;
+                            $apiMessage         = 'Data Available !!!';
+                        } else {
+                            $apiStatus          = FALSE;
+                            $apiMessage         = 'Event not found !!!';
+                        }
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
 
         // member directory
 
+        
         // privileges
+
 
         // leaderboard
         public function leaderboard(Request $request)
