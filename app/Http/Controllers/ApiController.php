@@ -1055,82 +1055,40 @@ class ApiController extends Controller
                     $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
-                        // $profile_image  = $requestData['profile_image'];
-                        // if(!empty($profile_image)){
-                        //     $profile_image      = $profile_image;
-                        //     $upload_type        = $profile_image['type'];
-                        //     if($upload_type == 'image/jpeg' || $upload_type == 'image/jpg' || $upload_type == 'image/png' || $upload_type == 'image/gif'){
-                        //         $upload_base64      = $profile_image['base64'];
-                        //         $img                = $upload_base64;
-                        //         $proof_type         = $profile_image['type'];
-                        //         if($proof_type == 'image/png'){
-                        //             $extn = 'png';
-                        //         } elseif($proof_type == 'image/jpg'){
-                        //             $extn = 'jpg';
-                        //         } elseif($proof_type == 'image/jpeg'){
-                        //             $extn = 'jpeg';
-                        //         } elseif($proof_type == 'image/gif'){
-                        //             $extn = 'gif';
-                        //         } else {
-                        //             $extn = 'png';
-                        //         }
-                        //         $data               = base64_decode($img);
-                        //         $fileName           = uniqid() . '.' . $extn;
-                        //         $file               = 'public/uploads/user/' . $fileName;
-                        //         $success            = file_put_contents($file, $data);
-                        //         $profile_image      = $fileName;
-                        //     } else {
-                        //         $apiStatus          = FALSE;
-                        //         http_response_code(404);
-                        //         $apiMessage         = 'Please Upload Image !!!';
-                        //         $apiExtraField      = 'response_code';
-                        //         $apiExtraData       = http_response_code();
-                        //     }
-                        // } else {
-                        //     $profile_image = $getUser->profile_image;
-                        // }
-                        /* banner image */
-                            $imageFile      = $request->file('profile_image');
-                            if($imageFile != ''){
-                                $imageName      = $imageFile->getClientOriginalName();
-                                $uploadedFile   = $this->upload_single_file('profile_image', $imageName, 'user', 'image');
-                                if($uploadedFile['status']){
-                                    $profile_image = $uploadedFile['newFilename'];
-                                } else {
-                                    $apiStatus          = FALSE;
-                                    http_response_code(404);
-                                    $apiMessage         = 'Please Upload Image !!!';
-                                    $apiExtraField      = 'response_code';
-                                    $apiExtraData       = http_response_code();
-                                }
+                        $checkEmail = User::where('id', '!=', $uId)->where('email', '=', $requestData['email'])->first();
+                        if(empty($checkEmail)){
+                            $checkPhone = User::where('id', '!=', $uId)->where('phone', '=', $requestData['phone'])->first();
+                            if(empty($checkPhone)){
+                                $postData = [
+                                            'name'                      => $requestData['name'],
+                                            'email'                     => $requestData['email'],
+                                            'phone'                     => $requestData['phone'],
+                                            'company_name'              => $requestData['company_name'],
+                                            'designation'               => $requestData['designation'],
+                                            'dob'                       => $requestData['dob'],
+                                            'doj'                       => $requestData['doj'],
+                                            'doa'                       => $requestData['doa'],
+                                            'core_id'                   => $requestData['core_id'],
+                                            'spouse_name'               => $requestData['spouse_name'],
+                                            'profession'                => $requestData['profession'],
+                                            'alumni'                    => $requestData['alumni'],
+                                            'industry_id'               => (($request->industry_id != '')?json_encode($request->industry_id):[]),
+                                            'interest_id'               => (($request->interest_id != '')?json_encode($request->interest_id):[]),
+                                            'address'                   => $requestData['address'],
+                                        ];
+                                Helper::pr($postData);
+                                User::where('id', '=', $uId)->update($postData);
+                                
+                                $apiStatus                  = TRUE;
+                                $apiMessage                 = 'Profile Updated Successfully !!!';
                             } else {
-                                $profile_image = $getUser->profile_image;
+                                $apiStatus          = FALSE;
+                                $apiMessage         = 'Phone already exists';
                             }
-                        /* banner image */
-                        $postData = [
-                                    'first_name'                    => $requestData['first_name'],
-                                    'last_name'                     => $requestData['last_name'],
-                                    // 'email'                         => $requestData['country'],
-                                    'phone'                         => $requestData['phone'],
-                                    'display_name'                  => $requestData['first_name'].' '.$requestData['last_name'],
-                                    'profile_image'                 => $profile_image
-                                ];
-                        // Helper::pr($postData);
-                        User::where('id', '=', $uId)->update($postData);
-                        /* view analytics track */
-                            $userAgent                      = $request->header('User-Agent', 'unknown');
-                            $acceptLanguage                 = $request->header('Accept-Language', 'en');
-                            $clientIp                       = $request->ip();
-                            $deviceId                       = $this->createDeviceFingerprint($userAgent, $acceptLanguage, $clientIp);
-                            $viewData = [
-                                'device_id'     => $deviceId,
-                                'page'          => 'update profile',
-                                'product_id'    => 0,
-                            ];
-                            UserView::insert($viewData);
-                        /* view analytics track */
-                        $apiStatus                  = TRUE;
-                        $apiMessage                 = 'Profile Updated Successfully !!!';
+                        } else {
+                            $apiStatus          = FALSE;
+                            $apiMessage         = 'Email already exists';
+                        }
                     } else {
                         $apiStatus          = FALSE;
                         $apiMessage         = 'User Not Found !!!';
