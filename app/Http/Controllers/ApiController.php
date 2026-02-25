@@ -1626,14 +1626,14 @@ class ApiController extends Controller
                         }
 
                         // member
-                        $getMembers = User::select('id', 'name', 'points', 'photo')->where('status', '=', 1)->orderBy('points', 'DESC')->limit(2)->get();
+                        $getMembers = User::select('id', 'name', 'points', 'photo')->where('status', '=', 1)->orderBy('points', 'DESC')->limit(10)->get();
                         if($getMembers){
                             foreach($getMembers as $row){
                                 $member_leaderboard[]    = [
                                     'id'        => $row->id,
                                     'name'      => $row->name,
                                     'points'    => $row->points,
-                                    'photo'     => (($row->photo != '')?env('UPLOADS_URL').'user'.$row->photo:env('NO_IMAGE')),
+                                    'photo'     => (($row->photo != '')?env('UPLOADS_URL').'user/'.$row->photo:env('NO_IMAGE')),
                                 ];
                             }
                         }                       
