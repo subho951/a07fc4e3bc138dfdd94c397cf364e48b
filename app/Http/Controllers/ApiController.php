@@ -1614,7 +1614,91 @@ class ApiController extends Controller
         }
 
         // member directory
+        public function memberDirectory(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source', 'page_no', 'per_page', 'search_text'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $page_no = $requestData['page_no'];
+                        $per_page = $requestData['per_page'];
+                        $search_text = $requestData['search_text'];
 
+                        $limit = $per_page; // per page elements
+                        if ($page_no == 1) {
+                            $offset = 0;
+                        } else {
+                            $offset = (($limit * $page_no) - $limit); // ((15 * 3) - 15)
+                        }                    
+
+                        if ($search_text == '') {
+                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points')
+                                                ->where('status', '=', 1)
+                                                ->orderBy('name', 'ASC')
+                                                ->offset($offset)
+                                                ->limit($limit)
+                                                ->get();
+                        } else {
+                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points')
+                                                    ->where('status', 1)
+                                                    ->where(function ($q) use ($search_text) {
+                                                        $q->where('name', 'LIKE', "%{$search_text}%")
+                                                        ->orWhere('company_name', 'LIKE', "%{$search_text}%")
+                                                        ->orWhere('designation', 'LIKE', "%{$search_text}%");
+                                                    })
+                                                    ->orderBy('name', 'ASC')
+                                                    ->offset($offset)
+                                                    ->limit($limit)
+                                                    ->get();
+                        }
+
+                        if ($rows) {
+                            foreach ($rows as $row) {
+                                $apiResponse[] = [
+                                    'id'                => $row->id,
+                                    'name'              => $row->name,
+                                    'company_name'      => $row->company_name,
+                                    'designation'       => $row->designation,
+                                    'points'            => $row->points,
+                                    'photo'             => (($row->photo != '')?env('UPLOADS_URL').'user/'.$row->photo:env('NO_IMAGE')),
+                                ];
+                            }
+                        }
+
+                        $apiStatus = true;
+                        $apiMessage = 'Data Available !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
         
         // privileges
 
