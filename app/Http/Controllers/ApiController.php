@@ -1660,14 +1660,14 @@ class ApiController extends Controller
                         }                    
 
                         if ($search_text == '') {
-                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id')
+                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
                                                 ->where('status', '=', 1)
                                                 ->orderBy('name', 'ASC')
                                                 ->offset($offset)
                                                 ->limit($limit)
                                                 ->get();
                         } else {
-                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id')
+                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
                                                     ->where('status', 1)
                                                     ->where(function ($q) use ($search_text) {
                                                         $q->where('name', 'LIKE', "%{$search_text}%")
@@ -1712,8 +1712,10 @@ class ApiController extends Controller
                                     'spouse_name'       => $row->spouse_name,
                                     'profession'        => $row->profession,
                                     'alumni'            => $row->alumni,
-                                    'industry_list'     => $row->industry_list,
-                                    'interest_list'     => $row->interest_list,
+                                    'industry_list'     => implode(', ', $industry_list),
+                                    'interest_list'     => implode(', ', $interest_list),
+                                    'phone'             => $row->phone,
+                                    'email'             => $row->email,
                                     'photo'             => (($row->photo != '')?env('UPLOADS_URL').'user/'.$row->photo:env('NO_IMAGE')),
                                 ];
                             }
