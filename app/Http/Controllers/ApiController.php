@@ -1755,7 +1755,7 @@ class ApiController extends Controller
                                             'id'                        => $privilege->id,
                                             'name'                      => $privilege->name,
                                             'short_description'         => $privilege->short_description,
-                                            'logo'                      => (($privilege->logo != '')?env('UPLOADS_URL').'user/'.$privilege->logo:env('NO_IMAGE')),
+                                            'logo'                      => (($privilege->logo != '')?env('UPLOADS_URL').'privilege/'.$privilege->logo:env('NO_IMAGE')),
                                         ];
                                     }
                                 }
