@@ -41,6 +41,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Phone</th>
+                <th scope="col">Company</th>
                 <th scope="col">Designation</th>
                 <!-- <th scope="col">Photo</th> -->
                 <th scope="col">Points</th>
@@ -54,6 +55,7 @@ $controllerRoute = $module['controller_route'];
                   <td><?=$row->name?></td>
                   <td><?=$row->email?></td>
                   <td><?=$row->phone?></td>
+                  <td><?=$row->company_name?></td>
                   <td><?=$row->designation?></td>
                   <!-- <td>
                     <?php if($row->photo != ''){?>
