@@ -812,6 +812,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // dashboard
         public function dashboard(Request $request)
         {
@@ -885,6 +886,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // get master
         public function getMaster(Request $request)
         {
@@ -969,6 +971,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // get profile
         public function getProfile(Request $request)
         {
@@ -1032,6 +1035,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // update profile
         public function updateProfile(Request $request)
         {
@@ -1105,6 +1109,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // update profile image
         public function uploadProfileImage(Request $request)
         {
@@ -1162,6 +1167,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // delete account
         public function deleteAccount(Request $request)
         {
@@ -1216,6 +1222,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // core
         public function core(Request $request)
         {
@@ -1297,6 +1304,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // committee members
         public function committeeMembers(Request $request)
         {
@@ -1407,6 +1415,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // concierge
         public function concierge(Request $request)
         {
@@ -1461,6 +1470,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // events
         public function events(Request $request)
         {
@@ -1538,6 +1548,7 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
         // event detail
         public function eventDetail(Request $request)
         {
@@ -1702,7 +1713,82 @@ class ApiController extends Controller
         }
         
         // privileges
+        public function privileges(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $getCats = Category::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+                        if($getCats){
+                            foreach($getCats as $row){
+                                $privileges = Privilege::select(
+                                                                'id',
+                                                                'name',
+                                                                'short_description',
+                                                                'logo',
+                                                            )
+                                                            ->where('category_id', $row->id)
+                                                            ->where('status', 1)
+                                                            ->orderBy('id', 'DESC')
+                                                            ->get();
+                                $privilege_detail = [];
+                                if($privileges){
+                                    foreach($privileges as $privilege){
+                                        $privilege_detail[] = [
+                                            'id'                        => $privilege->id,
+                                            'name'                      => $privilege->name,
+                                            'short_description'         => $privilege->short_description,
+                                            'logo'                      => (($privilege->logo != '')?env('UPLOADS_URL').'user/'.$privilege->logo:env('NO_IMAGE')),
+                                        ];
+                                    }
+                                }
 
+                                if(count($privileges) > 0){
+                                    $apiResponse[]      = [
+                                        'id'                        => $row->id,
+                                        'name'                      => $row->name,
+                                        'no_of_privilege'           => count($privileges),
+                                        'privilege_detail'          => $privilege_detail,
+                                    ];
+                                }
+                            }
+                        }
+                        
+                        $apiStatus          = TRUE;
+                        $apiMessage         = 'Data Available !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
 
         // leaderboard
         public function leaderboard(Request $request)
