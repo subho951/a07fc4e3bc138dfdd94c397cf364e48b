@@ -54,8 +54,8 @@ $controllerRoute = $module['controller_route'];
                   <th scope="row"><?=$sl++?></th>
                   <td><?=$row->title?></td>
                   <td><?=$row->venue?></td>
-                  <td><?=date_format(date_create($row->event_date), "d-m-Y")?></td>
-                  <td><?=date_format(date_create($row->event_time), "h:i A")?></td>
+                  <td><?=!empty($row->event_date)? date("d-m-Y", strtotime($row->event_date)): '-'?></td>
+                  <td><?=!empty($row->event_date)? date("d-m-Y", strtotime($row->event_time)): '-'?></td>
                   <td>
                     <?php
                     echo $questionCount = EventQuestion::where('event_id', '=', $row->id)->count();
