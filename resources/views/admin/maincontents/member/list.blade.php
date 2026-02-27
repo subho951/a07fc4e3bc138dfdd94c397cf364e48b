@@ -63,6 +63,8 @@ $controllerRoute = $module['controller_route'];
                     <?php } else {?>
                       <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 75px; height: 75px; margin-top: 10px;">
                     <?php }?>
+                    <br>
+                    <?=$row->photo?>
                   </td>
                   <td><?=$row->points?></td>
                   <td>
