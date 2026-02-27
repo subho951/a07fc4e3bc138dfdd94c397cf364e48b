@@ -43,7 +43,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Phone</th>
                 <th scope="col">Company</th>
                 <th scope="col">Designation</th>
-                <!-- <th scope="col">Photo</th> -->
+                <th scope="col">Photo</th>
                 <th scope="col">Points</th>
                 <th scope="col">Action</th>
               </tr>
@@ -57,13 +57,13 @@ $controllerRoute = $module['controller_route'];
                   <td><?=$row->phone?></td>
                   <td><?=$row->company_name?></td>
                   <td><?=$row->designation?></td>
-                  <!-- <td>
+                  <td>
                     <?php if($row->photo != ''){?>
                       <img src="<?=env('UPLOADS_URL').'user/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 75px; height: 75px; margin-top: 10px;">
                     <?php } else {?>
                       <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 75px; height: 75px; margin-top: 10px;">
                     <?php }?>
-                  </td> -->
+                  </td>
                   <td><?=$row->points?></td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
