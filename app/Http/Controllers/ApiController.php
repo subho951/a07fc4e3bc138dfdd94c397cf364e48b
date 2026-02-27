@@ -1660,14 +1660,14 @@ class ApiController extends Controller
                         }                    
 
                         if ($search_text == '') {
-                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points')
+                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id')
                                                 ->where('status', '=', 1)
                                                 ->orderBy('name', 'ASC')
                                                 ->offset($offset)
                                                 ->limit($limit)
                                                 ->get();
                         } else {
-                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points')
+                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id')
                                                     ->where('status', 1)
                                                     ->where(function ($q) use ($search_text) {
                                                         $q->where('name', 'LIKE', "%{$search_text}%")
@@ -1682,12 +1682,38 @@ class ApiController extends Controller
 
                         if ($rows) {
                             foreach ($rows as $row) {
+                                // industry
+                                $industry_id = (($row->industry_id != '')?json_decode($row->industry_id):[]);
+                                $industry_list = [];
+                                if(!empty($industry_id)){
+                                    for($k=0;$k<count($industry_id);$k++){
+                                        $getIndustry = Industry::select('name')->where('id', '=', $industry_id[$k])->first();
+                                        $industry_list[] = (($getIndustry)?$getIndustry->name:'');
+                                    }
+                                }
+
+                                // interest
+                                $interest_id = (($row->interest_id != '')?json_decode($row->interest_id):[]);
+                                $interest_list = [];
+                                if(!empty($interest_id)){
+                                    for($k=0;$k<count($interest_id);$k++){
+                                        $getInterest = Interest::select('name')->where('id', '=', $interest_id[$k])->first();
+                                        $interest_list[] = (($getInterest)?$getInterest->name:'');
+                                    }
+                                }
                                 $apiResponse[] = [
                                     'id'                => $row->id,
                                     'name'              => $row->name,
                                     'company_name'      => $row->company_name,
                                     'designation'       => $row->designation,
                                     'points'            => $row->points,
+                                    'dob'               => $row->dob,
+                                    'doj'               => $row->doj,
+                                    'spouse_name'       => $row->spouse_name,
+                                    'profession'        => $row->profession,
+                                    'alumni'            => $row->alumni,
+                                    'industry_list'     => $row->industry_list,
+                                    'interest_list'     => $row->interest_list,
                                     'photo'             => (($row->photo != '')?env('UPLOADS_URL').'user/'.$row->photo:env('NO_IMAGE')),
                                 ];
                             }
