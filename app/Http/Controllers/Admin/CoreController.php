@@ -68,6 +68,8 @@ class CoreController extends Controller
                             'member_id' => $member_id[$m],
                         ];
                         CoreMember::insert($fields);
+
+                        User::where('id', '=', $member_id[$m])->update(['core_id' => $id]);
                     }
                 }
 
@@ -137,6 +139,8 @@ class CoreController extends Controller
                             'member_id' => $member_id[$m],
                         ];
                         CoreMember::insert($fields);
+
+                        User::where('id', '=', $member_id[$m])->update(['core_id' => $id]);
                     }
                 }
 
