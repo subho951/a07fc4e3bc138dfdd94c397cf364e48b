@@ -1247,7 +1247,7 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         // core
-                        $getCores = Core::select('id', 'name', 'points', 'description')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+                        $getCores = Core::select('id', 'name', 'points', 'description')->where('status', '=', 1)->orderBy('id', 'ASC')->get();
                         if($getCores){
                             foreach($getCores as $row){
                                 $members = CoreMember::select(
