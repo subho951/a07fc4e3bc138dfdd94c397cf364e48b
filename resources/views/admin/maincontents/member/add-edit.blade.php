@@ -190,6 +190,7 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <input type="file" name="photo" class="form-control" id="photo" <?=((!empty($row))?'':'required')?>>
                 <small class="text-info">* Only JPG, JPEG, ICO, SVG, PNG files are allowed</small><br>
+                <small class="text-danger">Recomended image size : width : 160px & height : 110px</small><br>
                 <?php if($photo != ''){?>
                   <img src="<?=env('UPLOADS_URL').'user/'.$photo?>" class="img-thumbnail" alt="<?=$name?>" style="width: 150px; height: 150px; margin-top: 10px;">
                 <?php } else {?>
