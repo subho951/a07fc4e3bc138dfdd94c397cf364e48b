@@ -52,7 +52,7 @@ class EventController extends Controller
                     'dining'                => 'required',
                     'check_in'              => 'required',
                     'event_date'            => 'required|date',
-                    'event_time'            => 'required|time',
+                    'event_time'            => 'required|date_format:H:i',
                     'photo'                 => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'video'                 => 'required|mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
                 ]);
@@ -112,7 +112,7 @@ class EventController extends Controller
                     'dining'                => 'required',
                     'check_in'              => 'required',
                     'event_date'            => 'required|date',
-                    'event_time'            => 'required|time',
+                    'event_time'            => 'required|date_format:H:i',
                     'photo'                 => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'video'                 => 'nullable|mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
                 ]);
