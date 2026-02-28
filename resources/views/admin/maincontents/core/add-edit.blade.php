@@ -100,7 +100,7 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <select class="form-control" name="member_id[]" id="choices-multiple-remove-button" multiple required>
                   <?php if ($members) { foreach ($members as $member) { ?>
-                          <option value="<?= $member->id ?>" <?= ((in_array($member->id, $memberIDs))?'selected':'') ?>><?= $member->name ?> (<?= (($member->type == 1)?'committee member':'normal member') ?>)</option>
+                          <option value="<?= $member->id ?>" <?= ((in_array($member->id, $memberIDs))?'selected':'') ?>><?= $member->name ?> (<?= (($member->type == 1)?'committee member':'') ?>)</option>
                   <?php } } ?>
                 </select>
                 @error('member_id') <span class="text-danger">{{ $message }}</span> @enderror
