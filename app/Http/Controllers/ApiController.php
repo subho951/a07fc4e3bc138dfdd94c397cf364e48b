@@ -1006,7 +1006,7 @@ class ApiController extends Controller
                             'dob'                   => $getUser->dob,
                             'doj'                   => $getUser->doj,
                             'doa'                   => $getUser->doa,
-                            'core_id'               => (int) $getUser->core_id,
+                            'core_id'               => (($getUser->core_id > 0)?$getUser->core_id:null),
                             'spouse_name'           => $getUser->spouse_name,
                             'profession'            => $getUser->profession,
                             'alumni'                => $getUser->alumni,
