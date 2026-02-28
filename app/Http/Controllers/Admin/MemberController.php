@@ -59,7 +59,7 @@ class MemberController extends Controller
                     'dob'          => 'required|date',
                     'doj'          => 'required',
                     'profession'   => 'required',
-                    'address'      => 'required',
+                    // 'address'      => 'required',
                 ]);
 
                 /** Photo Upload */
@@ -123,7 +123,7 @@ class MemberController extends Controller
                     'dob'          => 'required|date',
                     'doj'          => 'required',
                     'profession'   => 'required',
-                    'address'      => 'required',
+                    // 'address'      => 'required',
                 ]);
 
                 /** Photo Update */

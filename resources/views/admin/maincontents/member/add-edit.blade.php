@@ -242,7 +242,7 @@ $controllerRoute = $module['controller_route'];
             <div class="row mb-3">
               <label for="address" class="col-md-2 col-lg-2 col-form-label">Address <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="address" class="form-control" id="address" value="<?=$address?>" required>
+                <input type="text" name="address" class="form-control" id="address" value="<?=$address?>">
                 @error('address') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
