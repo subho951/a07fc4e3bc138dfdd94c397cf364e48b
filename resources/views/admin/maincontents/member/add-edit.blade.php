@@ -201,7 +201,7 @@ $controllerRoute = $module['controller_route'];
             </div>
             
             <div class="row mb-3">
-              <label for="profession" class="col-md-2 col-lg-2 col-form-label">Profession</label>
+              <label for="profession" class="col-md-2 col-lg-2 col-form-label">Professional Qualifications</label>
               <div class="col-md-10 col-lg-10">
                 <input type="text" name="profession" class="form-control" id="profession" value="<?=$profession?>">
                 @error('profession') <span class="text-danger">{{ $message }}</span> @enderror
