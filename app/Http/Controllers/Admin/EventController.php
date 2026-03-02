@@ -54,7 +54,7 @@ class EventController extends Controller
                     'event_date'            => 'required|date',
                     'event_time'            => 'required|date_format:H:i',
                     'photo'                 => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'video'                 => 'required|mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
+                    'video'                 => 'mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
                 ]);
 
                 /** Photo Upload */
@@ -62,8 +62,11 @@ class EventController extends Controller
                 $request->photo->move(public_path('uploads/event'), $photoName);
 
                 /** video Upload */
-                $videoName = time().'_'.$request->video->getClientOriginalName();
-                $request->video->move(public_path('uploads/event'), $videoName);
+                $videoName = '';
+                if ($request->hasFile('video')) {
+                    $videoName = time().'_'.$request->video->getClientOriginalName();
+                    $request->video->move(public_path('uploads/event'), $videoName);
+                }
 
                 Event::create([
                     'title'                     => $request->title,
@@ -114,7 +117,7 @@ class EventController extends Controller
                     'event_date'            => 'required|date',
                     'event_time'            => 'required|date_format:H:i',
                     'photo'                 => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'video'                 => 'nullable|mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
+                    'video'                 => 'mimes:mp4,mov,avi,wmv|max:' . $generalSetting->video_size,
                 ]);
 
                 /** Photo Update */

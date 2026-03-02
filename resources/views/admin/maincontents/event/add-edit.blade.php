@@ -132,9 +132,9 @@ $controllerRoute = $module['controller_route'];
             </div>
 
             <div class="row mb-3">
-              <label for="seat_capacity" class="col-md-2 col-lg-2 col-form-label">Seat Capacity <span class="text-danger">*</span></label>
+              <label for="seat_capacity" class="col-md-2 col-lg-2 col-form-label">Seat Capacity</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="seat_capacity" class="form-control" id="seat_capacity" value="<?= $seat_capacity ?>" required>
+                <input type="text" name="seat_capacity" class="form-control" id="seat_capacity" value="<?= $seat_capacity ?>">
                 @error('seat_capacity') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
@@ -171,9 +171,9 @@ $controllerRoute = $module['controller_route'];
             </div>
 
             <div class="row mb-3">
-              <label for="video" class="col-md-2 col-lg-2 col-form-label">Video <span class="text-danger">*</span></label>
+              <label for="video" class="col-md-2 col-lg-2 col-form-label">Video</label>
               <div class="col-md-10 col-lg-10">
-                <input type="file" name="video" class="form-control" id="video" <?= ((!empty($row)) ? '' : 'required') ?>>
+                <input type="file" name="video" class="form-control" id="video">
                 <small class="text-info">* Only mp4,mov,avi,wmv files are allowed</small><br>
                 <?php if ($video != '') { ?>
                   <a href="<?= env('UPLOADS_URL') . 'event/' . $video ?>" target="_blank" class="badge badge-info">View file</a>
