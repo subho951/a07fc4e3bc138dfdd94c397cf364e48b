@@ -58,7 +58,7 @@ class MemberController extends Controller
                     'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'dob'          => 'required|date',
                     'doj'          => 'required',
-                    'profession'   => 'required',
+                    // 'profession'   => 'required',
                     // 'address'      => 'required',
                 ]);
 
@@ -122,7 +122,7 @@ class MemberController extends Controller
                     'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
                     'dob'          => 'required|date',
                     'doj'          => 'required',
-                    'profession'   => 'required',
+                    // 'profession'   => 'required',
                     // 'address'      => 'required',
                 ]);
 
