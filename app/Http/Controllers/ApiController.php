@@ -1708,7 +1708,7 @@ class ApiController extends Controller
                                     'designation'       => $row->designation,
                                     'points'            => $row->points,
                                     'dob'               => (($row->dob != '')?date_format(date_create($row->dob), "d/m/Y"):''),
-                                    'doj'               => (($row->doj != '')?date_format(date_create($row->doj), "d/m/Y"):''),
+                                    'doj'               => $row->doj,
                                     'spouse_name'       => $row->spouse_name,
                                     'profession'        => $row->profession,
                                     'alumni'            => $row->alumni,
