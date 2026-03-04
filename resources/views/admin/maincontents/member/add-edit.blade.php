@@ -123,9 +123,9 @@ $controllerRoute = $module['controller_route'];
               </div>
             </div>
             <div class="row mb-3">
-              <label for="company_name" class="col-md-2 col-lg-2 col-form-label">Company Name <span class="text-danger">*</span></label>
+              <label for="company_name" class="col-md-2 col-lg-2 col-form-label">Company Name</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="company_name" class="form-control" id="company_name" value="<?=$company_name?>" required>
+                <input type="text" name="company_name" class="form-control" id="company_name" value="<?=$company_name?>">
                 @error('company_name') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
@@ -241,7 +241,7 @@ $controllerRoute = $module['controller_route'];
             </div>
 
             <div class="row mb-3">
-              <label for="address" class="col-md-2 col-lg-2 col-form-label">Address <span class="text-danger">*</span></label>
+              <label for="address" class="col-md-2 col-lg-2 col-form-label">Address</label>
               <div class="col-md-10 col-lg-10">
                 <input type="text" name="address" class="form-control" id="address" value="<?=$address?>">
                 @error('address') <span class="text-danger">{{ $message }}</span> @enderror
