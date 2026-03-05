@@ -1587,6 +1587,8 @@ class ApiController extends Controller
                                 }
                             }
 
+                            $checkEventRegistered = UserRegEvent::where('userid', '=', $uId)->where('eventid', '=', $event_id)->count();
+
                             $apiResponse = [
                                 'id'                            => $getEvent->id,
                                 'title'                         => $getEvent->title,
@@ -1598,6 +1600,7 @@ class ApiController extends Controller
                                 'check_in'                      => $getEvent->check_in,
                                 'event_date'                    => date_format(date_create($getEvent->event_date), "l, M d Y") . ' ' . date_format(date_create($getEvent->event_time), "h:i A"),
                                 'is_past'                       => (($getEvent->event_date < date('Y-m-d'))?1:0),
+                                'is_registered'                 => (($checkEventRegistered > 0)?1:0),
                                 'photo'                         => (($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')),
                                 'questions'                     => $questions
                             ];
@@ -1893,6 +1896,9 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
+        // event registration
+
     /* after login */
     /*
     Get http response code

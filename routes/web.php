@@ -169,10 +169,11 @@ Route::get('/', function () {
             Route::match(['get'], '/committee-members', 'ApiController@committeeMembers');
             Route::match(['post'], '/member-directory', 'ApiController@memberDirectory');
             Route::match(['get'], '/concierge', 'ApiController@concierge');
-            Route::match(['get'], '/events', 'ApiController@events');
-            Route::match(['post'], '/event-detail', 'ApiController@eventDetail');
             Route::match(['get'], '/privileges', 'ApiController@privileges');
             Route::match(['get'], '/leaderboard', 'ApiController@leaderboard');
+            Route::match(['get'], '/events', 'ApiController@events');
+            Route::match(['post'], '/event-detail', 'ApiController@eventDetail');
+            Route::match(['post'], '/event-registration', 'ApiController@eventRegistration');
         /* after login */
     });
 /* Api */
