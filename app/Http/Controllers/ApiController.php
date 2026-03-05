@@ -1944,6 +1944,7 @@ class ApiController extends Controller
 
                             echo $getQrUrl;die;
                             
+                            
                             $apiStatus          = TRUE;
                             $apiMessage         = 'Data Available !!!';
                         } else {
