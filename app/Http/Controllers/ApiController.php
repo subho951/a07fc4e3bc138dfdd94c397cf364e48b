@@ -1945,10 +1945,23 @@ class ApiController extends Controller
 
                                 $getQrUrl = $this->generateQr($user_reg_event_id);
 
-                                Helper::pr($questions);
                                 // user event answer
                                 if(!empty($questions)){
+                                    foreach($questions as $question){
+                                        $event_question_id  = $question['event_question_id'];
+                                        $event_answer_type  = $question['event_answer_type'];
+                                        $answer             = $question['answer'];
 
+                                        $fields2 = [
+                                            'userid'                => $uId,
+                                            'eventid'               => $event_id,
+                                            'event_question_id'     => $event_question_id,
+                                            'event_answer_type'     => $event_answer_type,
+                                            'event_answer'          => $answer
+                                        ];
+                                        Helper::pr($fields2);
+                                        UserRegEventAnswer::insert($fields2);
+                                    }
                                 }
                                 
                                 $apiStatus          = TRUE;
