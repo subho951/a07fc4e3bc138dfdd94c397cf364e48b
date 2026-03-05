@@ -1583,6 +1583,7 @@ class ApiController extends Controller
                             if($eventQuestions){
                                 foreach($eventQuestions as $eventQuestion){
                                     $questions[] = [
+                                        'event_question_id'     => $eventQuestion->id,
                                         'event_question'        => $eventQuestion->event_question,
                                         'event_answer_type'     => $eventQuestion->event_answer_type,
                                         'event_answer_options'  => (($eventQuestion->event_answer_options != '')?explode(',', $eventQuestion->event_answer_options):[]),
