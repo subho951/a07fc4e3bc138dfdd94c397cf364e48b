@@ -58,7 +58,6 @@ $controllerRoute = $module['controller_route'];
                       <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
                     <?php }?>
                   </td>
-                  <td><?=$row->points?></td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
                     
