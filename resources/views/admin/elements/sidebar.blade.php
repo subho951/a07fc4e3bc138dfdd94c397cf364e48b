@@ -119,7 +119,7 @@ if(!empty($parameters)){
 
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'theme')?'active':'')?>" href="{{ url('admin/theme/list') }}">
-      <i class="fa fa-file-text"></i>
+      <i class="fa-regular fa-image"></i>
       <span>Themes</span>
     </a>
   </li><!-- End Theme Nav -->
