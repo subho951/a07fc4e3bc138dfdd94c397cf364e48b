@@ -42,6 +42,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Name</th>
                 <th scope="col">Description</th>
                 <th scope="col">Photo</th>
+                <th scope="col">Status</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -53,17 +54,18 @@ $controllerRoute = $module['controller_route'];
                   <td><?=$row->banner_text?></td>
                   <td>
                     <?php if($row->photo != ''){?>
-                      <img src="<?=env('UPLOADS_URL').'theme/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                      <img src="<?=env('UPLOADS_URL').'theme/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px;">
                     <?php } else {?>
-                      <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
+                      <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px;">
                     <?php }?>
                   </td>
+                  <td><?= (($row->status == 1)?'Active':'Deactive') ?></td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
                     
-                    <?php if($row->status == 1){?>
+                    <?php //if($row->status == 1){?>
                       <a href="<?=url('admin/' . $controllerRoute . '/change-status/'.Helper::encoded($row->id))?>" class="btn btn-outline-success btn-sm" title="Activate <?=$module['title']?>"><i class="fa fa-check"></i></a>
-                    <?php }?>
+                    <?php //}?>
                   </td>
                 </tr>
               <?php } }?>
