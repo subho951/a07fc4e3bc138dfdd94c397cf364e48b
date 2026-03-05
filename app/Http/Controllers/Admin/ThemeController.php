@@ -52,8 +52,8 @@ class ThemeController extends Controller
                 $request->photo->move(public_path('uploads/theme'), $photoName);
 
                 Banner::create([
-                    'heading'        => $request->name,
-                    'banner_text' => $request->description,
+                    'heading'        => $request->heading,
+                    'banner_text' => $request->banner_text,
                     'photo'       => $photoName,
                 ]);
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' added successfully !!!');
@@ -96,8 +96,8 @@ class ThemeController extends Controller
                 }
 
                 $member->update([
-                    'heading'        => $request->name,
-                    'banner_text' => $request->description,
+                    'heading'        => $request->heading,
+                    'banner_text' => $request->banner_text,
                 ]);
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
             }
