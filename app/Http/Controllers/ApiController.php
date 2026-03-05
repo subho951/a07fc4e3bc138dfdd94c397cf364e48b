@@ -34,6 +34,9 @@ use App\Models\UserRegEvent;
 use App\Models\UserRegEventAnswer;
 use App\Models\UserDevice;
 
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Crypt;
+
 use Auth;
 use Session;
 use Helper;
@@ -1898,7 +1901,105 @@ class ApiController extends Controller
         }
 
         // event registration
+        public function eventRegistration(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source', 'event_id', 'questions'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $event_id = $requestData['event_id'];
+                        $questions = $requestData['questions'];
 
+                        $getEvent = Event::where('id', '=', $event_id)->first();
+                        if($getEvent){
+                            // user event
+                            $fields1 = [
+                                'userid'        => $uId,
+                                'eventid'       => $event_id,
+                                'is_spouse'     => 0,
+                                'note'          => '',
+                                'date'          => date('Y-m-d'),
+                                'time'          => date('H:i:s'),
+                                'qrcode'        => ''
+                            ];
+                            $user_reg_event_id = UserRegEvent::insertGetId($fields1);
+
+                            $getQrUrl = $this->generateQr($user_reg_event_id);
+
+                            echo $getQrUrl;die;
+                            
+                            $apiStatus          = TRUE;
+                            $apiMessage         = 'Data Available !!!';
+                        } else {
+                            $apiStatus          = FALSE;
+                            $apiMessage         = 'Event not found !!!';
+                        }
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
+        public function generateQr($id)
+        {
+            $row = UserRegEvent::findOrFail($id);
+
+            // Encrypt ID
+            $encryptedId = Crypt::encryptString($row->id);
+
+            // Check-in URL
+            $checkinUrl = url('/event-checkin/'.$encryptedId);
+
+            // Folder
+            $folder = public_path('uploads/event/');
+            if (!File::exists($folder)) {
+                File::makeDirectory($folder, 0755, true);
+            }
+
+            // File name
+            $fileName = 'qr_'.$row->id.'_'.time().'.png';
+            $filePath = $folder.$fileName;
+
+            // Generate QR
+            QrCode::format('png')
+                ->size(300)
+                ->generate($checkinUrl, $filePath);
+
+            // Full URL
+            $qrUrl = url('public/uploads/event/'.$fileName);
+
+            // Save in DB
+            $row->qrcode = $qrUrl;
+            $row->save();
+
+            return $qrUrl;
+        }
     /* after login */
     /*
     Get http response code
