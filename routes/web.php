@@ -180,6 +180,7 @@ Route::get('/', function () {
             Route::match(['get'], '/events', 'ApiController@events');
             Route::match(['post'], '/event-detail', 'ApiController@eventDetail');
             Route::match(['post'], '/event-registration', 'ApiController@eventRegistration');
+            Route::match(['get'], '/home', 'ApiController@home');
         /* after login */
     });
 /* Api */
