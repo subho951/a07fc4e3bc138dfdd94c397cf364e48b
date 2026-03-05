@@ -115,7 +115,7 @@ class CoreController extends Controller
 
                 /** Photo Update */
                 if ($request->hasFile('photo')) {
-                    $oldPath = public_path('uploads/news/'.$member->photo);
+                    $oldPath = public_path('uploads/core/'.$member->photo);
                     if (File::exists($oldPath)) {
                         File::delete($oldPath);
                     }

@@ -12,11 +12,9 @@ class Banner extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $fillable = [
-        'heading1',
-        'heading2',
+        'heading',
         'banner_text',
-        'banner_text2',
-        'banner_link',
-        'banner_image',
+        'photo',
+        'status',
     ];
 }
