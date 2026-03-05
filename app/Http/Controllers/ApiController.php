@@ -2073,12 +2073,35 @@ class ApiController extends Controller
 
                         $getContent = Page::select('long_description')->where('slug', '=', 'about-us')->first();
 
+                        $registered_events    = [];
+                        $registeredEvents = Event::select('events.id', 'events.title', 'events.description', 'events.description', 'events.venue', 'events.event_date', 'events.photo', 'events.event_time', 'user_reg_events.qrcode')
+                                                    ->join('user_reg_events', 'user_reg_events.eventid', '=', 'events.id')
+                                                    ->where('user_reg_events.status', '=', 0)
+                                                    ->where('events.event_date', '>', date('Y-m-d'))
+                                                    ->where('user_reg_events.userid', '=', $uId)
+                                                    ->orderBy('events.event_date', 'DESC')
+                                                    ->get();
+                        if($registeredEvents){
+                            foreach($registeredEvents as $row){
+                                $registered_events[]      = [
+                                    'id'                => $row->id,
+                                    'title'             => $row->title,
+                                    'description'       => $row->description,
+                                    'venue'             => $row->venue,
+                                    'event_date'        => date_format(date_create($row->event_date), "l, M d Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
+                                    'photo'             => (($row->photo != '')?env('UPLOADS_URL').'event/'.$row->photo:env('NO_IMAGE')),
+                                    'qrcode'            => (($row->qrcode != '')?env('UPLOADS_URL').'event/'.$row->qrcode:env('NO_IMAGE')),
+                                ];
+                            }
+                        }
+
                         $apiResponse = [
                             'theme_name'        => (($getTheme)?$getTheme->heading:''),
                             'theme_description' => (($getTheme)?$getTheme->banner_text:''),
                             'theme_image'       => (($getTheme)?(($getTheme->photo != '')?env('UPLOADS_URL').'event/'.$getTheme->photo:env('NO_IMAGE')):env('NO_IMAGE')),
                             'upcoming_events'   => $upcoming_events,
                             'about_us_content'  => (($getContent)?$getContent->long_description:''),
+                            'registered_events' => $registered_events,
                         ];
                         
                         $apiStatus          = TRUE;
