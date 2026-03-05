@@ -49,8 +49,8 @@ $controllerRoute = $module['controller_route'];
               <?php if($rows){ $sl=1; foreach($rows as $row){?>
                 <tr>
                   <th scope="row"><?=$sl++?></th>
-                  <td><?=$row->name?></td>
-                  <td><?=$row->description?></td>
+                  <td><?=$row->heading?></td>
+                  <td><?=$row->banner_text?></td>
                   <td>
                     <?php if($row->photo != ''){?>
                       <img src="<?=env('UPLOADS_URL').'theme/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
