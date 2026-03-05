@@ -1959,13 +1959,18 @@ class ApiController extends Controller
                                             'event_answer_type'     => $event_answer_type,
                                             'event_answer'          => $answer
                                         ];
-                                        Helper::pr($fields2);
+                                        // Helper::pr($fields2);
                                         UserRegEventAnswer::insert($fields2);
                                     }
                                 }
+
+                                $apiResponse = [
+                                    'event_id'      => $event_id,
+                                    'qrcode_url'    => $getQrUrl,
+                                ];
                                 
                                 $apiStatus          = TRUE;
-                                $apiMessage         = 'Data Available !!!';
+                                $apiMessage         = 'Registered in event successfully !!!';
                             } else {
                                 $apiStatus          = FALSE;
                                 $apiMessage         = 'Already registered in this event !!!';
