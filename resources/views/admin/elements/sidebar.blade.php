@@ -118,6 +118,13 @@ if(!empty($parameters)){
   </li><!-- End Member Leader Board Nav -->
 
   <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'theme')?'active':'')?>" href="{{ url('admin/theme/list') }}">
+      <i class="fa fa-file-text"></i>
+      <span>Themes</span>
+    </a>
+  </li><!-- End Theme Nav -->
+
+  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'page')?'active':'')?>" href="{{ url('admin/page/list') }}">
       <i class="fa fa-file-text"></i>
       <span>Pages</span>

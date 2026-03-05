@@ -111,11 +111,11 @@ Route::get('/', function () {
                 Route::get('page/change-status/{id}', 'PageController@change_status');
             /* page */
             /* theme */
-                Route::get('theme/list', 'PageController@list');
-                Route::match(['get', 'post'], 'theme/add', 'PageController@add');
-                Route::match(['get', 'post'], 'theme/edit/{id}', 'PageController@edit');
-                Route::get('theme/delete/{id}', 'PageController@delete');
-                Route::get('theme/change-status/{id}', 'PageController@change_status');
+                Route::get('theme/list', 'ThemeController@list');
+                Route::match(['get', 'post'], 'theme/add', 'ThemeController@add');
+                Route::match(['get', 'post'], 'theme/edit/{id}', 'ThemeController@edit');
+                Route::get('theme/delete/{id}', 'ThemeController@delete');
+                Route::get('theme/change-status/{id}', 'ThemeController@change_status');
             /* theme */
             /* core */
                 Route::get('core/list', 'CoreController@list');
