@@ -79,8 +79,8 @@ class ThemeController extends Controller
 
                 $request->validate([
                     'heading'          => 'required|string|max:255',
-                    'photo'         => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'banner_text'   => 'nullable|string|max:500',
+                    'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
+                    'banner_text'   => 'required|string|max:500',
                 ]);
 
                 /** Photo Update */
