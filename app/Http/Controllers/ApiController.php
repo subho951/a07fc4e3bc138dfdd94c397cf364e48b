@@ -1968,7 +1968,7 @@ class ApiController extends Controller
                                 $apiMessage         = 'Data Available !!!';
                             } else {
                                 $apiStatus          = FALSE;
-                                $apiMessage         = 'Already registered !!!';
+                                $apiMessage         = 'Already registered in this event !!!';
                             }
                         } else {
                             $apiStatus          = FALSE;
