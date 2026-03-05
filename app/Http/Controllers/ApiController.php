@@ -1928,25 +1928,35 @@ class ApiController extends Controller
 
                         $getEvent = Event::where('id', '=', $event_id)->first();
                         if($getEvent){
-                            // user event
-                            $fields1 = [
-                                'userid'        => $uId,
-                                'eventid'       => $event_id,
-                                'is_spouse'     => 0,
-                                'note'          => '',
-                                'date'          => date('Y-m-d'),
-                                'time'          => date('H:i:s'),
-                                'qrcode'        => ''
-                            ];
-                            $user_reg_event_id = UserRegEvent::insertGetId($fields1);
+                            $checkEventRegistered = UserRegEvent::where('userid', '=', $uId)->where('eventid', '=', $event_id)->count();
 
-                            $getQrUrl = $this->generateQr($user_reg_event_id);
+                            if($checkEventRegistered <= 0){
+                                // user event
+                                $fields1 = [
+                                    'userid'        => $uId,
+                                    'eventid'       => $event_id,
+                                    'is_spouse'     => 0,
+                                    'note'          => '',
+                                    'date'          => date('Y-m-d'),
+                                    'time'          => date('H:i:s'),
+                                    'qrcode'        => ''
+                                ];
+                                $user_reg_event_id = UserRegEvent::insertGetId($fields1);
 
-                            echo $getQrUrl;die;
-                            
-                            
-                            $apiStatus          = TRUE;
-                            $apiMessage         = 'Data Available !!!';
+                                $getQrUrl = $this->generateQr($user_reg_event_id);
+
+                                Helper::pr($questions);
+                                // user event answer
+                                if(!empty($questions)){
+
+                                }
+                                
+                                $apiStatus          = TRUE;
+                                $apiMessage         = 'Data Available !!!';
+                            } else {
+                                $apiStatus          = FALSE;
+                                $apiMessage         = 'Already registered !!!';
+                            }
                         } else {
                             $apiStatus          = FALSE;
                             $apiMessage         = 'Event not found !!!';
