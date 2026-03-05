@@ -116,7 +116,7 @@ class ThemeController extends Controller
     /* delete */
     /* change status */
         public function change_status(Request $request, $id){
-            Banner::update(['status' => 0]);
+            Banner::where('id', '>', 0)->update(['status' => 0]);
             $id                             = Helper::decoded($id);
             $model                          = Banner::find($id);
             $model->status                  = 1;
