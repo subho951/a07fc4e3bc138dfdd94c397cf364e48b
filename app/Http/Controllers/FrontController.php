@@ -122,6 +122,7 @@ class FrontController extends Controller
                                     'member_id' => $member_id,
                                     'credited_points' => $credited_points,
                                 ];
+                                Helper::pr($fields1);
                                 UserPoint::insert($fields1);
 
                                 User::where('id', '', $member_id)->update(['points' => $user_new_points]);
