@@ -63,7 +63,12 @@ $controllerRoute = $module['controller_route'];
                                             <small><?= (($getEvent)?date_format(date_create($getEvent->event_date), "d.m.Y"):'') ?></small>
                                         </td>
                                         <td>
-                                            
+                                            <?php
+                                            $getMeeting = CoreMeeting::select('meeting_type', 'venue', 'from_date', 'to_date')->where('id', '=', $row->meeting_id)->first();
+                                            ?>
+                                            <span><?= (($getMeeting)?$getMeeting->meeting_type:'') ?></span><br>
+                                            <small><?= (($getEvent)?$getEvent->venue:'') ?></small><br>
+                                            <small><?= (($getEvent)?date_format(date_create($getEvent->from_date), "d.m.Y"):'') ?> - <?= (($getEvent)?date_format(date_create($getEvent->to_date), "d.m.Y"):'') ?></small>
                                         </td>
                                         <td><?= date_format(date_create($row->created_at), "d-m-Y h:i A") ?></td>
                                         <td><?= $row->credited_points ?></td>

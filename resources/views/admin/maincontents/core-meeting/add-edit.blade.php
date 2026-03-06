@@ -30,23 +30,23 @@ $controllerRoute = $module['controller_route'];
     </div>
     <?php
     if($row){
-      $core_id                = $row->core_id;
-      $meeting_type                       = $row->meeting_type;
-      $from_date          = $row->from_date;
-      $to_date                       = $row->to_date;
-      $venue                = $row->venue;
-      $short_description                       = $row->short_description;
-      $attendance          = $row->attendance;
-      $quorum_percent                       = $row->quorum_percent;
+      $core_id                    = $row->core_id;
+      $meeting_type               = $row->meeting_type;
+      $from_date                  = $row->from_date;
+      $to_date                    = $row->to_date;
+      $venue                      = $row->venue;
+      $short_description          = $row->short_description;
+      $attendance                 = $row->attendance;
+      $quorum_percent             = $row->quorum_percent;
     } else {
-      $core_id                = '';
-      $meeting_type                       = '';
-      $from_date          = '';
-      $to_date                       = '';
-      $venue                = '';
-      $short_description                       = '';
-      $attendance          = '';
-      $quorum_percent                       = '';
+      $core_id                    = '';
+      $meeting_type               = '';
+      $from_date                  = '';
+      $to_date                    = '';
+      $venue                      = '';
+      $short_description          = '';
+      $attendance                 = 0;
+      $quorum_percent             = 0;
     }
     ?>
     @if ($errors->any())

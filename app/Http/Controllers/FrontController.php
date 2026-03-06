@@ -143,6 +143,7 @@ class FrontController extends Controller
                                             'core_id'           => $core_id,
                                             'member_id'         => $member_id,
                                             'event_id'          => $event_id,
+                                            'meeting_id'        => 0,
                                             'credited_points'   => $credited_points,
                                             'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
                                         ];

@@ -10,6 +10,8 @@ use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Core;
 use App\Models\CoreMeeting;
+use App\Models\CorePoint;
+
 use Auth;
 use Session;
 use Helper;
@@ -108,6 +110,48 @@ class CoreMeetingController extends Controller
                     'attendance'                => $request->attendance,
                     'quorum_percent'            => $request->quorum_percent,
                 ]);
+
+                if($request->attendance > 0 && $request->quorum_percent > 0){
+                    $meeting_id = $id;
+                    $core_id = $request->core_id;
+
+                    $generalSetting = GeneralSetting::find(1);
+                    $core_meeting_inbound_point = $generalSetting->core_meeting_inbound_point;
+                    $core_meeting_min_attn_percent = $generalSetting->core_meeting_min_attn_percent;
+                    $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
+                    $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
+
+                    if($request->quorum_percent >= $core_meeting_min_attn_percent){
+                        $getCore = Core::where('id', '=', $core_id)->first();
+                        if($getCore){
+                            $credited_points = 0;
+                            if($request->meeting_type == 'INBOUND'){
+                                $credited_points = $core_meeting_inbound_point;
+                            } elseif($request->meeting_type == 'LOCAL INBOUND'){
+                                $credited_points = $core_meeting_local_outbound_point;
+                            } elseif($request->meeting_type == 'OUTBOUND'){
+                                $credited_points = $core_meeting_outbound_point;
+                            }
+                            $fields2 = [
+                                'core_id'           => $core_id,
+                                'member_id'         => 0,
+                                'event_id'          => 0,
+                                'meeting_id'        => $meeting_id,
+                                'credited_points'   => $credited_points,
+                                'note'              => $credited_points . ' points credited for meeting organize',
+                            ];
+                            CorePoint::insert($fields2);
+
+                            $opening_core_point = (int) $getCore->points;
+                            $core_new_points = ($opening_core_point + $credited_points);
+                            Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
+                        } else {
+                            return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' not found !!!');
+                        }
+                    } else {
+                        return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' meeting quotum percentage not greater than ' . $core_meeting_min_attn_percent);
+                    }
+                }
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
             }
