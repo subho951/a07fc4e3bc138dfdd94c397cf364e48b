@@ -2039,11 +2039,12 @@ class ApiController extends Controller
         {
             $row = UserRegEvent::findOrFail($id);
 
-            // Encrypt ID
             $encryptedId = Crypt::encryptString($row->id);
 
+            $token = urlencode($encryptedId);
+
             // Check-in URL
-            $checkinUrl = url('/event-checkin/'.$encryptedId);
+            $checkinUrl = url('/event-checkin/'.$token);
 
             // Folder
             $folder = public_path('uploads/event/');

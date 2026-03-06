@@ -73,7 +73,7 @@ class FrontController extends Controller
 
             try {
 
-                $id = Crypt::decryptString($token);
+                $id = Crypt::decryptString(urldecode($token));
 
                 $row = UserRegEvent::findOrFail($id);
 
@@ -132,7 +132,7 @@ class FrontController extends Controller
                                     'note'              => $credited_points . ' points credited for event attended',
                                 ];
                                 UserPoint::insert($fields1);
-                                User::where('id', '', $member_id)->update(['points' => $user_new_points]);
+                                User::where('id', '=', $member_id)->update(['points' => $user_new_points]);
                             /* member point calculation */
 
                             /* core point calculation */
@@ -146,7 +146,7 @@ class FrontController extends Controller
                                         'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
                                     ];
                                     UserPoint::insert($fields2);
-                                    Core::where('id', '', $core_id)->update(['points' => $user_new_points]);
+                                    Core::where('id', '=', $core_id)->update(['points' => $user_new_points]);
                                 }
                             /* core point calculation */
 
