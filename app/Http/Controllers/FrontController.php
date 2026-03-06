@@ -51,7 +51,7 @@ date_default_timezone_set("Asia/Calcutta");
 class FrontController extends Controller
 {
     /* home */
-        public function home(Request $request)
+        public function index(Request $request)
         {
             echo 'landing page';
         }
