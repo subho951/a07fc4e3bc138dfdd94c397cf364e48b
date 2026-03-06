@@ -31,13 +31,10 @@
         /* Banner */
         .banner {
             width: 100%;
-            height:300px;
-            /* display: flex;
+            height: 220px;
+            display: flex;
             align-items: center;
-            justify-content: center; */
-            background-position:center;
-            background-size:cover;
-            background-repeat:no-repeat;
+            justify-content: center;
         }
         .banner h1 {
             color: #fff;
@@ -131,7 +128,7 @@
         /* Responsive */
         @media(max-width:600px) {
             .banner {
-                height: 192px;
+                height: 300px;
             }
             .banner h1 {
                 font-size: 28px;
@@ -148,7 +145,7 @@
 </head>
 <body>
     <div class="card">
-        <div class="banner" style="background: url(<?=(($event)?env('UPLOADS_URL').'event/'.$event->photo:env('NO_IMAGE'))?>) no-repeat;">
+        <div class="banner" style="background: url(<?=(($event)?env('UPLOADS_URL').'event/'.$event->photo:env('NO_IMAGE'))?>) center/cover no-repeat;">
             <h1><?= (($event)?$event->title:'') ?></h1>
         </div>
         <div class="content">
