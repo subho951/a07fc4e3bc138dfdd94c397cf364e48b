@@ -1,6 +1,8 @@
 <?php
 use App\Models\CoreMember;
 use App\Helpers\Helper;
+use App\Models\User;
+
 $controllerRoute = $module['controller_route'];
 ?>
 <div class="pagetitle">
@@ -70,7 +72,7 @@ $controllerRoute = $module['controller_route'];
                     <?php }?>
                     <br><br>
                     <?php
-                    $getMemberCount = CoreMember::where('status', '=', 1)->where('core_id', '=', $row->id)->count();
+                    $getMemberCount = User::where('core_id', '=', $row->id)->count();
                     ?>
                     <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/core-members/'.Helper::encoded($row->id))?>" class="btn btn-info btn-sm" title="<?=$module['title']?> Points History"><i class="fa-solid fa-ranking-star"></i> Core Members (<?= $getMemberCount ?>)</a>
                   </td>
