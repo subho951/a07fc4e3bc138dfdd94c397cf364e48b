@@ -57,13 +57,30 @@ class FrontController extends Controller
         }
     /* home */
     /* event checkin */
-        public function eventCheckin(Request $request, $id)
+        public function eventCheckin($token)
         {
-            // Decrypt ID
-            echo $decryptedId = Crypt::encryptString($id);
+            try {
 
-            $row = UserRegEvent::findOrFail($id);
-            Helper::pr($row);
+                $id = Crypt::decryptString($token);
+
+                $row = UserRegEvent::findOrFail($id);
+
+                Helper::pr($row);
+
+                // Prevent duplicate entry
+                if($row->status == 1){
+                    return "Already checked in!";
+                }
+
+                $row->status = 1;
+                $row->entry_timestamp = now();
+                $row->save();
+
+                return "Entry successful";
+
+            } catch (\Exception $e) {
+                return "Invalid QR Code";
+            }
         }
     /* event checkin */
 }
