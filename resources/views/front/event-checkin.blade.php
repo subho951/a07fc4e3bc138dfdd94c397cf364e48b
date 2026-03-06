@@ -128,7 +128,7 @@
         /* Responsive */
         @media(max-width:600px) {
             .banner {
-                height: 300px;
+                height: 550px;
             }
             .banner h1 {
                 font-size: 28px;
