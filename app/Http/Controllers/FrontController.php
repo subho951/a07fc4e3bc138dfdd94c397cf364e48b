@@ -71,7 +71,7 @@ class FrontController extends Controller
             $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
             $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
 
-            try {
+            // try {
 
                 $id = Crypt::decryptString(urldecode($token));
 
@@ -163,9 +163,9 @@ class FrontController extends Controller
                 } else {
                     return "Event registration not found";
                 }
-            } catch (\Exception $e) {
-                return "Invalid QR Code";
-            }
+            // } catch (\Exception $e) {
+            //     return "Invalid QR Code";
+            // }
         }
     /* event checkin */
 }
