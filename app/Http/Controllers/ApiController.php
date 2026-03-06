@@ -2138,7 +2138,7 @@ class ApiController extends Controller
                         $apiResponse = [
                             'theme_name'        => (($getTheme)?$getTheme->heading:''),
                             'theme_description' => (($getTheme)?$getTheme->banner_text:''),
-                            'theme_image'       => (($getTheme)?(($getTheme->photo != '')?env('UPLOADS_URL').'event/'.$getTheme->photo:env('NO_IMAGE')):env('NO_IMAGE')),
+                            'theme_image'       => (($getTheme)?(($getTheme->photo != '')?env('UPLOADS_URL').'theme/'.$getTheme->photo:env('NO_IMAGE')):env('NO_IMAGE')),
                             'upcoming_events'   => $upcoming_events,
                             'about_us_content'  => (($getContent)?$getContent->long_description:''),
                             'registered_events' => $registered_events,
