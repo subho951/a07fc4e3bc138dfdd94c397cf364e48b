@@ -65,8 +65,6 @@ class FrontController extends Controller
 
                 $row = UserRegEvent::findOrFail($id);
 
-                Helper::pr($row);
-
                 // Prevent duplicate entry
                 if($row->status == 1){
                     return "Already checked in!";
