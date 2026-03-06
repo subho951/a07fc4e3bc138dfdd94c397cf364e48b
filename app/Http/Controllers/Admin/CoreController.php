@@ -10,6 +10,7 @@ use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Core;
 use App\Models\CoreMember;
+use App\Models\CorePoint;
 
 use Auth;
 use Session;
@@ -190,4 +191,21 @@ class CoreController extends Controller
         // Helper::pr($data['rows']);
         echo $this->admin_after_login_layout($title,$page_name,$data);
     }
+    /* core points */
+        public function points_history(Request $request, $id){
+            $data['module']                 = $this->data;
+            $id                             = Helper::decoded($id);
+            $page_name                      = 'core.points-history';
+            $data['core']                   = Core::where($this->data['primary_key'], '=', $id)->first();
+            $title                          = $this->data['title'].' Points History : ' . (($data['core'])?$data['core']->name:'');
+
+            $data['rows']                   = CorePoint::select('core_points.*', 'events.title')
+                                                        ->leftjoin('events', 'events.id', '=', 'core_points.event_id')
+                                                        ->where('core_points.member_id', '=', $id)
+                                                        ->orderBy('core_points.id', 'DESC')
+                                                        ->get();
+
+            echo $this->admin_after_login_layout($title,$page_name,$data);
+        }
+    /* core points */
 }

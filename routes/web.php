@@ -126,6 +126,7 @@ Route::get('event-checkin/{id}', [FrontController::class, 'eventCheckin']);
                 Route::get('core/delete/{id}', 'CoreController@delete');
                 Route::get('core/change-status/{id}', 'CoreController@change_status');
                 Route::get('core/core-members/{id}', 'CoreController@core_members');
+                Route::get('core/points-history/{id}', 'CoreController@points_history');
             /* core */
             /* core meeting */
                 Route::get('core-meeting/list', 'CoreMeetingController@list');

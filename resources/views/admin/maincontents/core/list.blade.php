@@ -61,7 +61,10 @@ $controllerRoute = $module['controller_route'];
                       <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
                     <?php }?>
                   </td>
-                  <td><?=$row->points?></td>
+                  <td>
+                    <?=$row->points?><br>
+                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/points-history/'.Helper::encoded($row->id))?>" class="badge badge-info" title="<?=$module['title']?> Points History"><i class="fa-solid fa-ranking-star"></i>&nbsp;Points History</a>
+                  </td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
                     <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a>
