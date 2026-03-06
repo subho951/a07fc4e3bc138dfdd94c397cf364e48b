@@ -77,6 +77,7 @@ class FrontController extends Controller
                 $row = UserRegEvent::findOrFail($id);
 
                 if(!empty($row)){
+                    Helper::pr($row);
                     $member_id = $row->userid;
                     $event_id = $row->eventid;
                     $getMember = User::select('id', 'name', 'phone', 'photo', 'points')->where('id', '', $member_id)->first();
