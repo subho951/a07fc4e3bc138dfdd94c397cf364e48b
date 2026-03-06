@@ -74,9 +74,9 @@ class FrontController extends Controller
             // try {
 
                 $id = Crypt::decryptString(urldecode($token));
-
+                echo $id;
                 $row = UserRegEvent::findOrFail($id);
-
+                Helper::pr($row);
                 if(!empty($row)){
                     $member_id = $row->userid;
                     $event_id = $row->eventid;
