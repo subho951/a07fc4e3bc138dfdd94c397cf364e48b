@@ -74,13 +74,12 @@ class FrontController extends Controller
             // try {
 
                 $id = Crypt::decryptString(urldecode($token));
-                echo $id;
                 $row = UserRegEvent::findOrFail($id);
-                Helper::pr($row);
+                // Helper::pr($row);
                 if(!empty($row)){
                     $member_id = $row->userid;
                     $event_id = $row->eventid;
-                    $getEvent = User::select('id', 'title', 'venue', 'event_date', 'photo')->where('id', '=', $event_id)->first();
+                    $getEvent = Event::select('id', 'title', 'venue', 'event_date', 'photo')->where('id', '=', $event_id)->first();
                     $getMember = User::select('id', 'name', 'phone', 'photo', 'points', 'core_id')->where('id', '=', $member_id)->first();
                     if($getMember){
                         // Prevent duplicate entry
