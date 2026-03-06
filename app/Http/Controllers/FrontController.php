@@ -16,6 +16,7 @@ use App\Models\CommitteeCategory;
 use App\Models\Core;
 use App\Models\CoreMeeting;
 use App\Models\CoreMember;
+use App\Models\CorePoint;
 use App\Models\EmailLog;
 use App\Models\Event;
 use App\Models\EventQuestion;
@@ -79,11 +80,17 @@ class FrontController extends Controller
                 if(!empty($row)){
                     $member_id = $row->userid;
                     $event_id = $row->eventid;
-                    $getMember = User::select('id', 'name', 'phone', 'photo', 'points')->where('id', '=', $member_id)->first();
+                    $getEvent = User::select('id', 'title', 'venue', 'event_date', 'photo')->where('id', '=', $event_id)->first();
+                    $getMember = User::select('id', 'name', 'phone', 'photo', 'points', 'core_id')->where('id', '=', $member_id)->first();
                     if($getMember){
                         // Prevent duplicate entry
                         if($row->status == 1){
-                            return "Already checked in!";
+                            $data['checkin_msg']            = "Already checked in!";
+                            $data['user_event']             = $row;
+                            $data['member']                 = $getMember;
+                            $data['event']                  = $getEvent;
+                            return view('front.event-checkin', $data);
+                            // return "Already checked in!";
                         } else {
                             $row->status = 1;
                             $row->entry_timestamp = now();
@@ -119,20 +126,36 @@ class FrontController extends Controller
 
                                 $user_new_points = ($opening_point + $credited_points);
                                 $fields1 = [
-                                    'member_id' => $member_id,
-                                    'credited_points' => $credited_points,
+                                    'member_id'         => $member_id,
+                                    'event_id'          => $event_id,
+                                    'credited_points'   => $credited_points,
+                                    'note'              => $credited_points . ' points credited for event attended',
                                 ];
-                                Helper::pr($fields1);
                                 UserPoint::insert($fields1);
-
                                 User::where('id', '', $member_id)->update(['points' => $user_new_points]);
                             /* member point calculation */
 
                             /* core point calculation */
-
+                                $core_id = $getMember->core_id;
+                                if($core_id > 0){
+                                    $fields2 = [
+                                        'core_id'           => $core_id,
+                                        'member_id'         => $member_id,
+                                        'event_id'          => $event_id,
+                                        'credited_points'   => $credited_points,
+                                        'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
+                                    ];
+                                    UserPoint::insert($fields2);
+                                    Core::where('id', '', $core_id)->update(['points' => $user_new_points]);
+                                }
                             /* core point calculation */
 
-                            return "Entry successful";
+                            $data['checkin_msg']            = "Entry successful";
+                            $data['user_event']             = $row;
+                            $data['member']                 = $getMember;
+                            $data['event']                  = $getEvent;
+                            return view('front.event-checkin', $data);
+                            // return "Entry successful";
                         }
                     } else {
                         return "Member not found";

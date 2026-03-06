@@ -7,13 +7,14 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UserPoint extends Authenticatable
+class CorePoint extends Authenticatable
 {
     use SoftDeletes;
 
-    protected $table = 'user_points';
+    protected $table = 'core_points';
 
     protected $fillable = [
+        'core_id',
         'member_id',
         'event_id',
         'credited_points',
