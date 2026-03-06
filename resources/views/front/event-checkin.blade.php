@@ -145,13 +145,13 @@
 </head>
 <body>
     <div class="card">
-        <div class="banner" style="background: url(bg.jpg) center/cover no-repeat;">
+        <div class="banner" style="background: url(<?=(($event)?env('UPLOADS_URL').'event/'.$event->photo:env('NO_IMAGE'))?>) center/cover no-repeat;">
             <h1><?= (($event)?$event->title:'') ?></h1>
         </div>
         <div class="content">
-            <div class="title">Congrats !!!</div>
+            <div class="title">Congratulation !!!</div>
             <div class="profile">
-                <img src="<?=(($member)?env('UPLOADS_URL').'user/'.$member->user_photo:env('NO_IMAGE'))?>">
+                <img src="<?=(($member)?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE'))?>">
                 <div class="verify">✓</div>
             </div>
             <div class="name"><?= (($member)?$member->name:'') ?></div>
