@@ -1700,17 +1700,23 @@ class ApiController extends Controller
                                         ->orWhere('company_name', 'LIKE', "%{$search_text}%")
                                         ->orWhere('designation', 'LIKE', "%{$search_text}%");
 
-                                        // Industry Search
                                         if (!empty($industryIds)) {
                                             foreach ($industryIds as $id) {
-                                                $q->orWhereJsonContains('industry_id', (string)$id);
+                                                $q->orWhere(function($sub) use ($id){
+                                                    $sub->whereNotNull('industry_id')
+                                                        ->where('industry_id','!=','')
+                                                        ->whereJsonContains('industry_id', (string)$id);
+                                                });
                                             }
                                         }
 
-                                        // Interest Search
                                         if (!empty($interestIds)) {
                                             foreach ($interestIds as $id) {
-                                                $q->orWhereJsonContains('interest_id', (string)$id);
+                                                $q->orWhere(function($sub) use ($id){
+                                                    $sub->whereNotNull('interest_id')
+                                                        ->where('interest_id','!=','')
+                                                        ->whereJsonContains('interest_id', (string)$id);
+                                                });
                                             }
                                         }
 
