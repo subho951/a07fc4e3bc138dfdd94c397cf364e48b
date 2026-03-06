@@ -17,7 +17,7 @@ use App\Services\Schema\ProductSchemaService;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::match(['get'], '/', 'FrontController@home');
+Route::get('/', [FrontController::class, 'index']);
 Route::match(['get', 'post'], 'event-checkin/{id}', 'FrontController@eventCheckin');
 
 /* Admin Panel */
