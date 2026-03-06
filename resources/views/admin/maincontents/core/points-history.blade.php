@@ -34,7 +34,7 @@ $controllerRoute = $module['controller_route'];
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title pt-0">
-                        Total Points : <?= (($member)?$member->points:'') ?>
+                        Total Points : <?= (($core)?$core->points:'') ?>
                     </h5>
                     <table class="table datatable global_table">
                         <thead>
