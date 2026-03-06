@@ -59,23 +59,72 @@ class FrontController extends Controller
     /* event checkin */
         public function eventCheckin($token)
         {
+            $generalSetting = GeneralSetting::find(1);
+
+            $individual_attn_point = $generalSetting->individual_attn_point;
+            $individual_backtoback_attn_count = $generalSetting->individual_backtoback_attn_count;
+            $individual_backtoback_attn_point = $generalSetting->individual_backtoback_attn_point;
+            $individual_not_attn = $generalSetting->individual_not_attn;
+            $core_meeting_inbound_point = $generalSetting->core_meeting_inbound_point;
+            $core_meeting_min_attn_percent = $generalSetting->core_meeting_min_attn_percent;
+            $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
+            $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
+
             try {
 
                 $id = Crypt::decryptString($token);
 
                 $row = UserRegEvent::findOrFail($id);
 
-                // Prevent duplicate entry
-                if($row->status == 1){
-                    return "Already checked in!";
+                if(!empty($row)){
+                    $member_id = $row->userid;
+                    $event_id = $row->eventid;
+                    $getMember = User::select('id', 'name', 'phone', 'photo', 'points')->where('id', '', $member_id)->first();
+                    if($getMember){
+                        // Prevent duplicate entry
+                        if($row->status == 1){
+                            return "Already checked in!";
+                        } else {
+                            $row->status = 1;
+                            $row->entry_timestamp = now();
+                            $row->save();
+
+                            $currentEvent = Event::find(32);
+
+                            $previousEvents = Event::where('event_date', '<', $currentEvent->event_date)
+                                ->orderBy('event_date', 'desc')
+                                ->limit(3)
+                                ->pluck('id')
+                                ->toArray();
+
+                            Helper::pr($previousEvents);
+
+                            /* member point calculation */
+                                $opening_point = (int) $getMember->points;
+                                $credited_points = (int) $individual_attn_point;
+
+                                $user_new_points = ($opening_point + $credited_points);
+                                $fields1 = [
+                                    'member_id' => $member_id,
+                                    'credited_points' => $credited_points,
+                                ];
+                                UserPoint::insert($fields1);
+
+                                User::where('id', '', $member_id)->update(['points' => $user_new_points]);
+                            /* member point calculation */
+
+                            /* core point calculation */
+
+                            /* core point calculation */
+
+                            return "Entry successful";
+                        }
+                    } else {
+                        return "Member not found";
+                    }
+                } else {
+                    return "Event registration not found";
                 }
-
-                $row->status = 1;
-                $row->entry_timestamp = now();
-                $row->save();
-
-                return "Entry successful";
-
             } catch (\Exception $e) {
                 return "Invalid QR Code";
             }
