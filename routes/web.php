@@ -14,9 +14,11 @@ use App\Services\Schema\ProductSchemaService;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::match(['get', 'post'], '/', 'FrontController@home');
+Route::match(['get', 'post'], 'event-checkin/{id}', 'FrontController@eventCheckin');
 
 /* Admin Panel */
     Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function(){
