@@ -63,7 +63,7 @@
             width: 170px;
             height: 170px;
             border-radius: 50%;
-            object-fit: cover;
+            /* object-fit: cover; */
             border: 6px solid #fec514;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
