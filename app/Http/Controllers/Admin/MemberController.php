@@ -195,10 +195,11 @@ class MemberController extends Controller
             $data['member']                 = User::where($this->data['primary_key'], '=', $id)->first();
             $title                          = $this->data['title'].' Points History : ' . (($data['member'])?$data['member']->name . '('. $data['member']->phone .')':'');
 
-            $data['rows']                   = UserPoint::select('user_reg_events.*', 'events.title as event_name')
+            $data['rows']                   = UserPoint::select('user_reg_events.*', 'events.title')
                                                         ->join('events', 'events.id', '=', 'user_reg_events.eventid')
                                                         ->where('user_reg_events.member_id', '=', $id)
-                                                        ->orderBy('user_reg_events.id', 'DESC')->get();
+                                                        ->orderBy('user_reg_events.id', 'DESC')
+                                                        ->get();
 
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }

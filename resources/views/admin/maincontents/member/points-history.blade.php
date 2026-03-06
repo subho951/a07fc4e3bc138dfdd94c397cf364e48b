@@ -51,7 +51,7 @@ $controllerRoute = $module['controller_route'];
                                 foreach ($rows as $row) { ?>
                                     <tr>
                                         <th scope="row"><?= $sl++ ?></th>
-                                        <td><?= $row->event_name ?></td>
+                                        <td><?= $row->event_nametitle ?></td>
                                         <td><?= date_format(date_create($row->created_at), "d-m-Y h:i A") ?></td>
                                         <td><?= $row->credited_points ?></td>
                                     </tr>
