@@ -144,7 +144,7 @@ class FrontController extends Controller
                                         'credited_points'   => $credited_points,
                                         'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
                                     ];
-                                    UserPoint::insert($fields2);
+                                    CorePoint::insert($fields2);
                                     Core::where('id', '=', $core_id)->update(['points' => $user_new_points]);
                                 }
                             /* core point calculation */
