@@ -174,6 +174,7 @@ Route::get('/', function () {
             Route::match(['get'], '/core', 'ApiController@core');
             Route::match(['get'], '/committee-members', 'ApiController@committeeMembers');
             Route::match(['post'], '/member-directory', 'ApiController@memberDirectory');
+            Route::match(['post'], '/member-detail', 'ApiController@memberDetail');
             Route::match(['get'], '/concierge', 'ApiController@concierge');
             Route::match(['get'], '/privileges', 'ApiController@privileges');
             Route::match(['get'], '/leaderboard', 'ApiController@leaderboard');

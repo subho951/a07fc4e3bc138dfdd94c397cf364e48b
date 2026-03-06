@@ -2122,6 +2122,96 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
+        // member detail
+        public function memberDetail(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source', 'view_user_id'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $view_user_id   = $request->view_user_id;
+                        $row            = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
+                                                ->where('status', '=', 1)
+                                                ->where('id', '=', $view_user_id)
+                                                ->first();
+                        if($row){
+
+                            // industry
+                            $industry_id = (($row->industry_id != '')?json_decode($row->industry_id):[]);
+                            $industry_list = [];
+                            if(!empty($industry_id)){
+                                for($k=0;$k<count($industry_id);$k++){
+                                    $getIndustry = Industry::select('name')->where('id', '=', $industry_id[$k])->first();
+                                    $industry_list[] = (($getIndustry)?$getIndustry->name:'');
+                                }
+                            }
+
+                            // interest
+                            $interest_id = (($row->interest_id != '')?json_decode($row->interest_id):[]);
+                            $interest_list = [];
+                            if(!empty($interest_id)){
+                                for($k=0;$k<count($interest_id);$k++){
+                                    $getInterest = Interest::select('name')->where('id', '=', $interest_id[$k])->first();
+                                    $interest_list[] = (($getInterest)?$getInterest->name:'');
+                                }
+                            }
+                            $apiResponse[] = [
+                                'id'                => $row->id,
+                                'name'              => $row->name,
+                                'company_name'      => $row->company_name,
+                                'designation'       => $row->designation,
+                                'points'            => $row->points,
+                                'dob'               => (($row->dob != '')?date_format(date_create($row->dob), "d/m/Y"):''),
+                                'doj'               => $row->doj,
+                                'spouse_name'       => $row->spouse_name,
+                                'profession'        => $row->profession,
+                                'alumni'            => $row->alumni,
+                                'industry_list'     => implode(', ', $industry_list),
+                                'interest_list'     => implode(', ', $interest_list),
+                                'phone'             => $row->phone,
+                                'email'             => $row->email,
+                                'photo'             => (($row->photo != '')?env('UPLOADS_URL').'user/'.$row->photo:env('NO_IMAGE')),
+                            ];
+                            
+                            $apiStatus          = TRUE;
+                            $apiMessage         = 'Data Available !!!';
+                        } else {
+                            $apiStatus          = FALSE;
+                            $apiMessage         = 'User Not Found !!!';
+                        }
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
     /* after login */
     /*
     Get http response code
