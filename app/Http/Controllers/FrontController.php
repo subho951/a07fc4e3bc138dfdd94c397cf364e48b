@@ -137,15 +137,23 @@ class FrontController extends Controller
                             /* core point calculation */
                                 $core_id = $getMember->core_id;
                                 if($core_id > 0){
-                                    $fields2 = [
-                                        'core_id'           => $core_id,
-                                        'member_id'         => $member_id,
-                                        'event_id'          => $event_id,
-                                        'credited_points'   => $credited_points,
-                                        'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
-                                    ];
-                                    CorePoint::insert($fields2);
-                                    Core::where('id', '=', $core_id)->update(['points' => $user_new_points]);
+                                    $getCore = Core::where('id', '=', $core_id)->first();
+                                    if($getCore){
+                                        $fields2 = [
+                                            'core_id'           => $core_id,
+                                            'member_id'         => $member_id,
+                                            'event_id'          => $event_id,
+                                            'credited_points'   => $credited_points,
+                                            'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
+                                        ];
+                                        CorePoint::insert($fields2);
+
+                                        
+
+                                        $opening_core_point = (int) $getCore->points;
+                                        $core_new_points = ($opening_core_point + $credited_points);
+                                        Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
+                                    }
                                 }
                             /* core point calculation */
 
