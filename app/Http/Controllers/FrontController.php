@@ -93,15 +93,29 @@ class FrontController extends Controller
 
                             $previousEvents = Event::where('event_date', '<', $currentEvent->event_date)
                                 ->orderBy('event_date', 'desc')
-                                ->limit(3)
+                                ->limit($individual_backtoback_attn_count)
                                 ->pluck('id')
                                 ->toArray();
 
-                            Helper::pr($previousEvents);
-
                             /* member point calculation */
                                 $opening_point = (int) $getMember->points;
+                                $credited_points = 0;
                                 $credited_points = (int) $individual_attn_point;
+
+                                $eventAttnCount = 0;
+                                if($previousEvents){
+                                    for($k=0;$k<count($previousEvents);$k++){
+                                        $evid = $previousEvents[$k];
+                                        $checkAttendance = UserRegEvent::where('userid', '=', $member_id)->where('eventid', '=', $evid)->where('status', '=', 1)->count();
+                                        if($checkAttendance > 0){
+                                            $eventAttnCount++;
+                                        }
+                                    }
+                                }
+
+                                if($eventAttnCount >= $individual_backtoback_attn_count){
+                                    $credited_points = (int) $individual_attn_point + (int) $individual_backtoback_attn_point;
+                                }
 
                                 $user_new_points = ($opening_point + $credited_points);
                                 $fields1 = [
