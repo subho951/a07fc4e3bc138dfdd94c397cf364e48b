@@ -59,9 +59,11 @@ class FrontController extends Controller
     /* event checkin */
         public function eventCheckin(Request $request, $id)
         {
-            echo 'check in page';
             // Decrypt ID
             echo $decryptedId = Crypt::encryptString($id);
+
+            $row = UserRegEvent::findOrFail($id);
+            Helper::pr($row);
         }
     /* event checkin */
 }
