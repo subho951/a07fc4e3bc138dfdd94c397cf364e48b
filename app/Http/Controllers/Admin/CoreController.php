@@ -200,7 +200,7 @@ class CoreController extends Controller
             $title                          = $this->data['title'].' Points History : ' . (($data['core'])?$data['core']->name:'');
 
             $data['rows']                   = CorePoint::select('core_points.*')
-                                                        ->where('core_points.member_id', '=', $id)
+                                                        ->where('core_points.core_id', '=', $id)
                                                         ->orderBy('core_points.id', 'DESC')
                                                         ->get();
 
