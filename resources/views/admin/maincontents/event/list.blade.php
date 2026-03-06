@@ -71,7 +71,7 @@ $controllerRoute = $module['controller_route'];
                     <?php }?>
                     <br><br>
                     <?php
-                    $userCount = UserRegEvent::where('eventid', '=', $row->id)->where('status', '=', 1)->count();
+                    $userCount = UserRegEvent::where('eventid', '=', $row->id)->count();
                     ?>
                     <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/registered-users/'.Helper::encoded($row->id))?>" class="btn btn-info btn-sm" title="<?=$module['title']?> Registered Users"><i class="fa fa-users"></i> Registered Users (<?= $userCount ?>)</a>
                   </td>
