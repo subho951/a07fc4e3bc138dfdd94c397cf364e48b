@@ -146,25 +146,25 @@
 <body>
     <div class="card">
         <div class="banner" style="background: url(bg.jpg) center/cover no-repeat;">
-            <h1>DEMO EVENT TWO</h1>
+            <h1><?= (($event)?$event->title:'') ?></h1>
         </div>
         <div class="content">
             <div class="title">Congrats !!!</div>
             <div class="profile">
-                <img src="bg.jpg">
+                <img src="<?=(($member)?env('UPLOADS_URL').'user/'.$member->user_photo:env('NO_IMAGE'))?>">
                 <div class="verify">✓</div>
             </div>
-            <div class="name">PARTHA PRATIM SINHA</div>
-            <div class="username">USERNAME : 9830006120</div>
+            <div class="name"><?= (($member)?$member->name:'') ?></div>
+            <div class="username">USERNAME : <?= (($member)?$member->phone:'') ?></div>
             <div class="message">
                 Your entry to the event <br>
-                <b>Demo Event Two</b> <br>
+                <b><?= (($event)?$event->title:'') ?></b> <br>
                 has been confirmed
             </div>
             <div class="divider"></div>
             <div class="footer">
-                Present on : 06.03.2026 at 05:28 PM <br>
-                At ITC Sonar
+                Present on : <?= (($user_event)?date_format(date_create($user_event->entry_timestamp), "d.m.Y h:i A"):'') ?> <br>
+                At <?= (($event)?$event->venue:'') ?>
             </div>
         </div>
     </div>
