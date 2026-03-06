@@ -1,5 +1,6 @@
 <?php
-
+use App\Models\Event;
+use App\Models\CoreMeeting;
 use App\Helpers\Helper;
 
 $controllerRoute = $module['controller_route'];
@@ -41,6 +42,7 @@ $controllerRoute = $module['controller_route'];
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Event</th>
+                                <th scope="col">Meeting</th>
                                 <th scope="col">Date</th>
                                 <th scope="col">Credited Points</th>
                                 <th scope="col">Note</th>
@@ -52,7 +54,17 @@ $controllerRoute = $module['controller_route'];
                                 foreach ($rows as $row) { ?>
                                     <tr>
                                         <th scope="row"><?= $sl++ ?></th>
-                                        <td><?= $row->title ?></td>
+                                        <td>
+                                            <?php
+                                            $getEvent = Event::select('title', 'venue', 'event_date')->where('id', '=', $row->event_id)->first();
+                                            ?>
+                                            <span><?= (($getEvent)?$getEvent->title:'') ?></span><br>
+                                            <small><?= (($getEvent)?$getEvent->venue:'') ?></small><br>
+                                            <small><?= (($getEvent)?date_format(date_create($getEvent->event_date), "d.m.Y"):'') ?></small>
+                                        </td>
+                                        <td>
+                                            
+                                        </td>
                                         <td><?= date_format(date_create($row->created_at), "d-m-Y h:i A") ?></td>
                                         <td><?= $row->credited_points ?></td>
                                         <td><?= $row->note ?></td>

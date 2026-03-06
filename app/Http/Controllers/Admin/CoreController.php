@@ -199,8 +199,7 @@ class CoreController extends Controller
             $data['core']                   = Core::where($this->data['primary_key'], '=', $id)->first();
             $title                          = $this->data['title'].' Points History : ' . (($data['core'])?$data['core']->name:'');
 
-            $data['rows']                   = CorePoint::select('core_points.*', 'events.title')
-                                                        ->leftjoin('events', 'events.id', '=', 'core_points.event_id')
+            $data['rows']                   = CorePoint::select('core_points.*')
                                                         ->where('core_points.member_id', '=', $id)
                                                         ->orderBy('core_points.id', 'DESC')
                                                         ->get();
