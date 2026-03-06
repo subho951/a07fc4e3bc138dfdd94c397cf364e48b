@@ -1674,17 +1674,51 @@ class ApiController extends Controller
                                                 ->limit($limit)
                                                 ->get();
                         } else {
-                            $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
-                                                    ->where('status', 1)
-                                                    ->where(function ($q) use ($search_text) {
-                                                        $q->where('name', 'LIKE', "%{$search_text}%")
-                                                        ->orWhere('company_name', 'LIKE', "%{$search_text}%")
-                                                        ->orWhere('designation', 'LIKE', "%{$search_text}%");
-                                                    })
-                                                    ->orderBy('name', 'ASC')
-                                                    ->offset($offset)
-                                                    ->limit($limit)
-                                                    ->get();
+                            // $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
+                            //                         ->where('status', 1)
+                            //                         ->where(function ($q) use ($search_text) {
+                            //                             $q->where('name', 'LIKE', "%{$search_text}%")
+                            //                             ->orWhere('company_name', 'LIKE', "%{$search_text}%")
+                            //                             ->orWhere('designation', 'LIKE', "%{$search_text}%");
+                            //                         })
+                            //                         ->orderBy('name', 'ASC')
+                            //                         ->offset($offset)
+                            //                         ->limit($limit)
+                            //                         ->get();
+                            $industryIds = Industry::where('name', 'LIKE', "%{$search_text}%")->pluck('id')->toArray();
+                            $interestIds = Interest::where('name', 'LIKE', "%{$search_text}%")->pluck('id')->toArray();
+
+                            $rows = User::select(
+                                        'id','name','photo','company_name','designation','points',
+                                        'dob','doj','spouse_name','profession','alumni',
+                                        'industry_id','interest_id','phone','email'
+                                    )
+                                    ->where('status', 1)
+                                    ->where(function ($q) use ($search_text, $industryIds, $interestIds) {
+
+                                        $q->where('name', 'LIKE', "%{$search_text}%")
+                                        ->orWhere('company_name', 'LIKE', "%{$search_text}%")
+                                        ->orWhere('designation', 'LIKE', "%{$search_text}%");
+
+                                        // Industry Search
+                                        if (!empty($industryIds)) {
+                                            foreach ($industryIds as $id) {
+                                                $q->orWhereJsonContains('industry_id', (string)$id);
+                                            }
+                                        }
+
+                                        // Interest Search
+                                        if (!empty($interestIds)) {
+                                            foreach ($interestIds as $id) {
+                                                $q->orWhereJsonContains('interest_id', (string)$id);
+                                            }
+                                        }
+
+                                    })
+                                    ->orderBy('name', 'ASC')
+                                    ->offset($offset)
+                                    ->limit($limit)
+                                    ->get();
                         }
 
                         if ($rows) {
