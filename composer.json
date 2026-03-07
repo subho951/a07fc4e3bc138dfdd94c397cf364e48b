@@ -10,6 +10,7 @@
         "barryvdh/laravel-debugbar": "^3.9",
         "dompdf/dompdf": "^3.0",
         "globalpayments/php-sdk": "^12.0",
+        "google/apiclient": "^2.19",
         "guzzlehttp/guzzle": "^7.2",
         "hps/heartland-php": "^3.0",
         "laravel/framework": "^10.10",

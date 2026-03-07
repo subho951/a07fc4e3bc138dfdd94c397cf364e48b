@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\File;
+use App\Services\FirebaseService;
 
 use App\Models\Achievement;
 use App\Models\Admin;
@@ -49,7 +50,6 @@ use App\Libraries\CreatorJwt;
 use App\Libraries\JWT;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use App\Helpers\FcmHelper;
 date_default_timezone_set("Asia/Calcutta");
 class ApiController extends Controller
 {
@@ -2131,24 +2131,12 @@ class ApiController extends Controller
                                     'title'             => $row->title,
                                     'description'       => $row->description,
                                     'venue'             => $row->venue,
-                                    'event_date'        => date_format(date_create($row->event_date), "M d Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
+                                    'event_date'        => date_format(date_create($row->event_date), "d.m.Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
                                     'photo'             => (($row->photo != '')?env('UPLOADS_URL').'event/'.$row->photo:env('NO_IMAGE')),
                                     'qrcode'            => (($row->qrcode != '')?$row->qrcode:env('NO_IMAGE')),
                                 ];
                             }
-                        }
-
-                        $token = 'dzVTesEUQgG2rcFvG_qzVK:APA91bGY8Jw5N5B_B3TTWynRmjptZNTXaBufnGIzaEEIvbP6NTdiygnQFx0TNhOyFkDOKoaoQ2Tv5a0wkeA7LaJVZmet02tyudIWU8vjPTM5tcI0YK_mD7o';
-
-                        $title = "Event Reminder";
-                        $message = "Your event will start soon";
-
-                        $data = [
-                            "event_id" => 32,
-                            "type" => "event"
-                        ];
-
-                        // $firebase_response = FcmHelper::sendNotification($token, $title, $message, $data);
+                        }                        
 
                         $apiResponse = [
                             'theme_name'        => (($getTheme)?$getTheme->heading:''),
@@ -2334,6 +2322,67 @@ class ApiController extends Controller
                 $apiMessage         = 'Unauthenticate Request !!!';
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse);
+        }
+
+        // test fcm
+        public function testFCM(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source', 'title', 'description', 'type'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $getTokenValue              = $this->tokenAuth($app_access_token);
+                if($getTokenValue['status']){
+                    $uId        = $getTokenValue['data'][1];
+                    $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                    $getUser    = User::where('id', '=', $uId)->first();
+                    if($getUser){
+                        $token = 'dzVTesEUQgG2rcFvG_qzVK:APA91bGY8Jw5N5B_B3TTWynRmjptZNTXaBufnGIzaEEIvbP6NTdiygnQFx0TNhOyFkDOKoaoQ2Tv5a0wkeA7LaJVZmet02tyudIWU8vjPTM5tcI0YK_mD7o';
+
+                        $title = $request->title;
+                        $message = $request->description;
+
+                        $data = [
+                            "event_id" => 32,
+                            "type" => $request->type
+                        ];
+
+                        $firebase_response = FirebaseService::sendNotification(
+                                                                                $token,
+                                                                                $title,
+                                                                                $message,
+                                                                                $data
+                                                                            );
+
+                        $apiResponse = $firebase_response;
+
+                        $apiStatus          = TRUE;
+                        $apiMessage         = 'FCM message sent successfully !!!';
+                    } else {
+                        $apiStatus          = FALSE;
+                        $apiMessage         = 'User Not Found !!!';
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = $getTokenValue['data'];
+                    http_response_code(401);
+                    $apiExtraData                   = http_response_code();
+                }                                               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
     /* after login */
     /*
