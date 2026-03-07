@@ -312,5 +312,14 @@ class FrontController extends Controller
             }        
         }
     /* delete account */
-    
+    /* page */
+        public function page($slug){
+            $data['generalSetting']             = GeneralSetting::find('1');
+            $data['page']                       = Page::where('page_slug', '=', 'privacy-policy')->first();
+            
+            $data['title']                      = (($data['page'])?$data['page']->page_name:"Page");
+            $page_name                          = 'page-content';
+            return view('front.page-content', $data);
+        }
+    /* page */
 }
