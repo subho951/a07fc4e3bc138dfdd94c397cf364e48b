@@ -30,12 +30,12 @@
          <!-- <a class="d-flex justify-content-center mb-5" href="javascript:void(0);">
            <img class="zi-2" src="<?=env('UPLOADS_URL').$generalSetting->site_logo?>" alt="Image Description" style="width: 8rem;">
          </a>          -->
-         <h4><?=(($page)?$page->page_name:'')?></h4>
+         <h4><?=(($page)?$page->page_title:'')?></h4>
          <div class="section-content">
             <div class="row">
                <div class="col-lg-12 col-xl-12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.1s">
                   <div class="about-text-content mb-md-30">
-                     <?=(($page)?$page->page_content:'')?>
+                     <?=(($page)?$page->long_description:'')?>
                   </div>
                </div>
             </div>
