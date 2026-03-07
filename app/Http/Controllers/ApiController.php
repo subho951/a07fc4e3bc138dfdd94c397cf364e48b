@@ -2426,6 +2426,7 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         $token = 'eo-CEok6TSiQZM6BRWshl3:APA91bFzTYAl3yedLl86jip5TujJBcYumRy2PCrmrPkkr4WkVe_bpKqN0EfQpduOdp8RRtaTACy2dY3tOz-C4HWw1_f8hZHKcRnix8eZ_3WHpa2Q5SqIoHQ';
+                        
 
                         $title = $request->title;
                         $message = $request->description;
