@@ -2187,7 +2187,7 @@ class ApiController extends Controller
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
                         $view_user_id   = $request->view_user_id;
-                        $row            = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
+                        $row            = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email', 'doa', 'address', 'core_id')
                                                 ->where('status', '=', 1)
                                                 ->where('id', '=', $view_user_id)
                                                 ->first();
@@ -2212,6 +2212,8 @@ class ApiController extends Controller
                                     $interest_list[] = (($getInterest)?$getInterest->name:'');
                                 }
                             }
+
+                            $getCore = Core::select('name')->where('id', '=', $row->core_id)->first();
                             $apiResponse[] = [
                                 'id'                => $row->id,
                                 'name'              => $row->name,
@@ -2219,6 +2221,7 @@ class ApiController extends Controller
                                 'designation'       => $row->designation,
                                 'points'            => $row->points,
                                 'dob'               => (($row->dob != '')?date_format(date_create($row->dob), "d/m/Y"):''),
+                                'doa'               => (($row->doa != '')?date_format(date_create($row->doa), "d/m/Y"):''),
                                 'doj'               => $row->doj,
                                 'spouse_name'       => $row->spouse_name,
                                 'profession'        => $row->profession,
@@ -2227,6 +2230,8 @@ class ApiController extends Controller
                                 'interest_list'     => implode(', ', $interest_list),
                                 'phone'             => $row->phone,
                                 'email'             => $row->email,
+                                'address'           => $row->address,
+                                'core'              => (($getCore)?$getCore->name:''),
                                 'photo'             => (($row->photo != '')?env('UPLOADS_URL').'user/'.$row->photo:env('NO_IMAGE')),
                             ];
                             
