@@ -6,11 +6,16 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\File;
+use App\Services\FirebaseService;
+
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Core;
 use App\Models\CoreMeeting;
 use App\Models\CorePoint;
+use App\Models\Notification;
+use App\Models\CoreMember;
+use App\Models\UserDevice;
 
 use Auth;
 use Session;
@@ -145,6 +150,46 @@ class CoreMeetingController extends Controller
                             $opening_core_point = (int) $getCore->points;
                             $core_new_points = ($opening_core_point + $credited_points);
                             Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
+
+                            // push notification send
+                                if($core_id > 0){
+                                    $coreMembers = CoreMember::where('core_id', '=', $core_id)->get();
+                                    if($coreMembers){
+                                        foreach($coreMembers as $coreMember){
+                                            $users = [];
+                                            $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
+                                            if($getToken){
+                                                $token = $getToken->fcm_token;
+
+                                                $title = 'Meeting points credited';
+                                                $message = 'For '.$request->meeting_type.' meeting held from '.$request->from_date.' to '.$request->to_date.' '.$credited_points.' points credited to core scoreboard';
+
+                                                $image = '';
+
+                                                $data = [
+                                                    "meeting_id" => $id,
+                                                    "type" => 'meeting'
+                                                ];
+
+                                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+
+                                                $users[]            = $coreMember->member_id;
+                                                $notificationFields = [
+                                                    'title'             => $title,
+                                                    'description'       => $message,
+                                                    'to_users'          => $coreMember->member_id,
+                                                    'users'             => json_encode($users),
+                                                    'is_send'           => 1,
+                                                    'send_timestamp'    => date('Y-m-d H:i:s'),
+                                                ];
+                                                Notification::insert($notificationFields);
+                                            }
+                                        }
+                                    }
+                                }
+                            // push notification send
+
+
                         } else {
                             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' not found !!!');
                         }

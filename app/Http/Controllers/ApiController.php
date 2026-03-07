@@ -1089,6 +1089,39 @@ class ApiController extends Controller
                                         ];
                                 // Helper::pr($postData);
                                 User::where('id', '=', $uId)->update($postData);
+
+                                // push notification send
+                                    $users = [];
+                                    $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                                    if($getTokens){
+                                        foreach($getTokens as $getToken){
+                                            $token = $getToken->fcm_token;
+
+                                            $title = 'Profile updated';
+                                            $message = 'Profile info has been updated at ' . date('d.m.Y h:i A');
+
+                                            $image = (($getUser->photo != '')?env('UPLOADS_URL').'user/'.$getUser->photo:env('NO_IMAGE'));
+
+                                            $data = [
+                                                "profile_id" => $uId,
+                                                "type" => 'profile'
+                                            ];
+
+                                            $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+
+                                            $users[]            = $uId;
+                                            $notificationFields = [
+                                                'title'             => $title,
+                                                'description'       => $message,
+                                                'to_users'          => $uId,
+                                                'users'             => json_encode($users),
+                                                'is_send'           => 1,
+                                                'send_timestamp'    => date('Y-m-d H:i:s'),
+                                            ];
+                                            Notification::insert($notificationFields);
+                                        }
+                                    }
+                                // push notification send
                                 
                                 $apiStatus                  = TRUE;
                                 $apiMessage                 = 'Profile Updated Successfully !!!';
@@ -2006,6 +2039,39 @@ class ApiController extends Controller
                                         UserRegEventAnswer::insert($fields2);
                                     }
                                 }
+
+                                // push notification send
+                                    $users = [];
+                                    $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                                    if($getTokens){
+                                        foreach($getTokens as $getToken){
+                                            $token = $getToken->fcm_token;
+
+                                            $title = 'Event Registered';
+                                            $message = 'You are successfully registered in event ' . $getEvent->title . ' at ' . date('d.m.Y h:i A');
+
+                                            $image = (($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE'));
+
+                                            $data = [
+                                                "event_id" => $event_id,
+                                                "type" => 'event'
+                                            ];
+
+                                            $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+
+                                            $users[]            = $uId;
+                                            $notificationFields = [
+                                                'title'             => $title,
+                                                'description'       => $message,
+                                                'to_users'          => $uId,
+                                                'users'             => json_encode($users),
+                                                'is_send'           => 1,
+                                                'send_timestamp'    => date('Y-m-d H:i:s'),
+                                            ];
+                                            Notification::insert($notificationFields);
+                                        }
+                                    }
+                                // push notification send
 
                                 $apiResponse = [
                                     'event_id'      => $event_id,

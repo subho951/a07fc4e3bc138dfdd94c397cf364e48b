@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\File;
+use App\Services\FirebaseService;
 
 use App\Models\Achievement;
 use App\Models\Admin;
@@ -25,6 +26,7 @@ use App\Models\GeneralSetting;
 use App\Models\Industry;
 use App\Models\Interest;
 use App\Models\Magazine;
+use App\Models\Notification;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\Privilege;
@@ -158,6 +160,75 @@ class FrontController extends Controller
                                     }
                                 }
                             /* core point calculation */
+
+                            // push notification send
+                                $users = [];
+                                $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                                if($getTokens){
+                                    foreach($getTokens as $getToken){
+                                        $token = $getToken->fcm_token;
+
+                                        $title = 'Event Checkin';
+                                        $message = 'You are successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
+
+                                        $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
+
+                                        $data = [
+                                            "event_id" => $event_id,
+                                            "type" => 'event'
+                                        ];
+
+                                        $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+
+                                        $users[]            = $member_id;
+                                        $notificationFields = [
+                                            'title'             => $title,
+                                            'description'       => $message,
+                                            'to_users'          => $member_id,
+                                            'users'             => json_encode($users),
+                                            'is_send'           => 1,
+                                            'send_timestamp'    => date('Y-m-d H:i:s'),
+                                        ];
+                                        Notification::insert($notificationFields);
+                                    }
+                                }
+
+                                if($core_id > 0){
+                                    $coreMembers = CoreMember::where('member_id', '!=', $member_id)->where('core_id', '=', $core_id)->get();
+                                    if($coreMembers){
+                                        foreach($coreMembers as $coreMember){
+                                            $users = [];
+                                            $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
+                                            if($getToken){
+                                                $token = $getToken->fcm_token;
+
+                                                $title = 'Event Checkin';
+                                                $message = $getMember->name . ' successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
+
+                                                $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
+
+                                                $data = [
+                                                    "event_id" => $event_id,
+                                                    "type" => 'event'
+                                                ];
+
+                                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+
+                                                $users[]            = $coreMember->member_id;
+                                                $notificationFields = [
+                                                    'title'             => $title,
+                                                    'description'       => $message,
+                                                    'to_users'          => $coreMember->member_id,
+                                                    'users'             => json_encode($users),
+                                                    'is_send'           => 1,
+                                                    'send_timestamp'    => date('Y-m-d H:i:s'),
+                                                ];
+                                                Notification::insert($notificationFields);
+                                            }
+                                        }
+                                    }
+                                }
+                            // push notification send
 
                             $data['checkin_msg']            = "Entry successful";
                             $data['user_event']             = $row;
