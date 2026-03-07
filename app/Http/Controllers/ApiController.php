@@ -1109,7 +1109,7 @@ class ApiController extends Controller
                                             ];
 
                                             $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
-                                            Helper::pr($firebase_response);
+                                            // Helper::pr($firebase_response);
 
                                             $users[]            = $uId;
                                             $notificationFields = [
