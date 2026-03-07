@@ -26,7 +26,7 @@ class FirebaseService
                     "title" => $title,
                     "body" => $body
                 ],
-                "data" => $data
+                "data" => array_map('strval', $data)
             ]
         ];
 
