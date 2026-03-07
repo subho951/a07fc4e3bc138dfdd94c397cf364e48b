@@ -17,6 +17,7 @@ use App\Models\Core;
 use App\Models\CoreMeeting;
 use App\Models\CoreMember;
 use App\Models\CorePoint;
+use App\Models\DeleteAccountRequest;
 use App\Models\EmailLog;
 use App\Models\Event;
 use App\Models\EventQuestion;
@@ -176,4 +177,68 @@ class FrontController extends Controller
             // }
         }
     /* event checkin */
+    /* delete account */
+        public function deleteaccountview(Request $request)
+        {        
+            $data = [];
+            $title                          = 'Delete Account';
+            $page_name                      = 'delete-account';     
+
+            return view('front.delete-account', $data);
+        }
+        public function deleteaccount(Request $request)
+        {
+            if($request->isMethod('post')){
+                $postData           = $request->all();
+                // Helper::pr($postData);
+                $user_type         = $postData['user_type'];
+                $Entityname         = $postData['entity_name'];
+                $email             = $postData['email'];
+                $phone           = $postData['phone'];
+                $comment           = !empty($request->comment) ? $request->comment : null;
+                $rules = [                                 
+                    'user_type'           => 'required',
+                    'entity_name'         => 'required',
+                    'email'               => 'required|email',
+                    'phone'               => 'required|numeric',                
+                ];
+                
+                if ($this->validate($request, $rules)) {
+                    $email_validation    = DeleteAccountRequest::where('email', $email)->first();               
+                    if($email_validation){
+                        $user_id           = $email_validation->id;
+                        $fields = [
+                            'user_type'       => $user_type,
+                            'entity_name'     => $Entityname,
+                            'email'           => $email,
+                            'is_email_verify' => 1,
+                            'is_phone_verify' => 1,
+                            'phone'           => $phone,
+                            'comments'         => $comment,
+                            'created_at'      => date('Y-m-d H:i:s'), 
+                            'updated_at'    => date('Y-m-d H:i:s'),             
+                            'status'          => 1,                                  
+                        ];
+                        DeleteAccountRequest::where('id', $user_id)->update($fields);
+                    }
+                    $fields2 = [
+                        'user_type'       => $user_type,
+                        'entity_name'     => $Entityname,
+                        'email'           => $email,
+                        'is_email_verify' => 1,
+                        'is_phone_verify' => 1,
+                        'phone'           => $phone,
+                        'comments'         => $comment,
+                        'created_at'      => date('Y-m-d H:i:s'),                    
+                        'status'          => 1,                                  
+                    ];                
+                    DeleteAccountRequest::insert($fields2);                
+                    return redirect('delete-account')->with('success_message', 'Delete account request send successfully');
+                } else {
+                    return redirect('delete-account')->with('error_message', 'Please enter valid data');
+                    
+                }
+            }        
+        }
+    /* delete account */
 }
