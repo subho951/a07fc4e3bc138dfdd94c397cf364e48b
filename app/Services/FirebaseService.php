@@ -29,11 +29,30 @@ class FirebaseService
             $notification['image'] = $image;
         }
 
+        // $payload = [
+        //     "message" => [
+        //         "token" => $token,
+        //         "notification" => $notification,
+        //         "data" => array_map('strval', $data)
+        //     ]
+        // ];
+
         $payload = [
             "message" => [
                 "token" => $token,
-                "notification" => $notification,
-                "data" => array_map('strval', $data)
+                "notification" => [
+                    "title" => $title,
+                    "body" => $body
+                ],
+                "data" => array_map('strval', $data),
+                "android" => [
+                    "priority" => "HIGH"
+                ],
+                "apns" => [
+                    "headers" => [
+                        "apns-priority" => "10"
+                    ]
+                ]
             ]
         ];
 
