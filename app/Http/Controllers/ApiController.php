@@ -48,6 +48,7 @@ use App\Libraries\CreatorJwt;
 use App\Libraries\JWT;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Helpers\FcmHelper;
 date_default_timezone_set("Asia/Calcutta");
 class ApiController extends Controller
 {
@@ -2136,6 +2137,18 @@ class ApiController extends Controller
                             }
                         }
 
+                        $token = 'dzVTesEUQgG2rcFvG_qzVK:APA91bGY8Jw5N5B_B3TTWynRmjptZNTXaBufnGIzaEEIvbP6NTdiygnQFx0TNhOyFkDOKoaoQ2Tv5a0wkeA7LaJVZmet02tyudIWU8vjPTM5tcI0YK_mD7o';
+
+                        $title = "Event Reminder";
+                        $message = "Your event will start soon";
+
+                        $data = [
+                            "event_id" => 32,
+                            "type" => "event"
+                        ];
+
+                        $firebase_response = FcmHelper::sendNotification($token, $title, $message, $data);
+
                         $apiResponse = [
                             'theme_name'        => (($getTheme)?$getTheme->heading:''),
                             'theme_description' => (($getTheme)?$getTheme->banner_text:''),
@@ -2143,7 +2156,8 @@ class ApiController extends Controller
                             'upcoming_events'   => $upcoming_events,
                             'about_us_content'  => (($getContent)?$getContent->long_description:''),
                             'registered_events' => $registered_events,
-                        ];
+                            'firebase_response' => $firebase_response
+                        ];                        
                         
                         $apiStatus          = TRUE;
                         $apiMessage         = 'Data Available !!!';
