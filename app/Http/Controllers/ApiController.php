@@ -2147,7 +2147,7 @@ class ApiController extends Controller
                             "type" => "event"
                         ];
 
-                        $firebase_response = FcmHelper::sendNotification($token, $title, $message, $data);
+                        // $firebase_response = FcmHelper::sendNotification($token, $title, $message, $data);
 
                         $apiResponse = [
                             'theme_name'        => (($getTheme)?$getTheme->heading:''),
@@ -2156,7 +2156,7 @@ class ApiController extends Controller
                             'upcoming_events'   => $upcoming_events,
                             'about_us_content'  => (($getContent)?$getContent->long_description:''),
                             'registered_events' => $registered_events,
-                            'firebase_response' => $firebase_response
+                            // 'firebase_response' => $firebase_response
                         ];                        
                         
                         $apiStatus          = TRUE;
