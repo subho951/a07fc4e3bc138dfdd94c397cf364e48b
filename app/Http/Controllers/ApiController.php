@@ -2352,6 +2352,8 @@ class ApiController extends Controller
                         $title = $request->title;
                         $message = $request->description;
 
+                        $image = "https://alfa.subhomoysamanta.info/public/uploads/1770457454ALFA-Logo-Yellow-scaled-2048x754.png";
+
                         $data = [
                             "event_id" => 32,
                             "type" => $request->type
@@ -2361,7 +2363,8 @@ class ApiController extends Controller
                                                                                 $token,
                                                                                 $title,
                                                                                 $message,
-                                                                                $data
+                                                                                $data,
+                                                                                $image
                                                                             );
 
                         $apiResponse = $firebase_response;
