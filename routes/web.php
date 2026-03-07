@@ -20,7 +20,8 @@ use App\Services\Schema\ProductSchemaService;
 Route::get('/', [FrontController::class, 'index']);
 Route::get('event-checkin/{id}', [FrontController::class, 'eventCheckin']);
 Route::get('delete-account', [FrontController::class, 'deleteaccountview']);
-Route::post('delete-account-update', [FrontController::class, 'deleteaccount'])->name('delete-account.store');;
+Route::post('delete-account-update', [FrontController::class, 'deleteaccount'])->name('delete-account.store');
+
 
 /* Admin Panel */
     Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function(){
