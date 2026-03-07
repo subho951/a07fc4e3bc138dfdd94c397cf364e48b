@@ -2347,7 +2347,7 @@ class ApiController extends Controller
                     $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
-                        $token = 'dzVTesEUQgG2rcFvG_qzVK:APA91bGY8Jw5N5B_B3TTWynRmjptZNTXaBufnGIzaEEIvbP6NTdiygnQFx0TNhOyFkDOKoaoQ2Tv5a0wkeA7LaJVZmet02tyudIWU8vjPTM5tcI0YK_mD7o';
+                        $token = 'eWufHCqzRpStX9_rZv_04o:APA91bGxQ0_JLHG0RefD508tWlXCojTjgVerAR-niuUkPpgDk5eWWrM_347lofx17TkJxt3F0yfnCwRzNHi4KWPo-ZdrtyZQJfTGoSzDX87wnuYOLYQS5v4';
 
                         $title = $request->title;
                         $message = $request->description;
