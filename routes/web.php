@@ -185,6 +185,7 @@ Route::get('event-checkin/{id}', [FrontController::class, 'eventCheckin']);
             Route::match(['post'], '/event-detail', 'ApiController@eventDetail');
             Route::match(['post'], '/event-registration', 'ApiController@eventRegistration');
             Route::match(['get'], '/home', 'ApiController@home');
+            Route::match(['get'], '/get-notification', 'ApiController@getNotification');
         /* after login */
     });
 /* Api */
