@@ -188,6 +188,7 @@ Route::post('delete-account-update', [FrontController::class, 'deleteaccount'])-
             Route::match(['post'], '/event-registration', 'ApiController@eventRegistration');
             Route::match(['get'], '/home', 'ApiController@home');
             Route::match(['post'], '/get-notification', 'ApiController@getNotification');
+            Route::match(['get'], 'delete-account', 'ApiController@deleteAccount');
         /* after login */
     });
 /* Api */

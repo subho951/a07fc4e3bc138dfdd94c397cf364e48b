@@ -23,10 +23,7 @@
 <form method="POST" action="{{ route('delete-account.store') }}" class="w-50 mx-auto mt-4">
     @csrf
 
-    <div class="form-group">
-        <label for="entity_name">User Type</label>
-        <input type="text" class="form-control" id="user_type" name="user_type" required>
-    </div>
+    <input type="hidden" class="form-control" id="user_type" name="user_type" value="2">
 
     <div class="form-group">
         <label for="entity_name">Entity Name</label>
