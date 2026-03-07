@@ -2106,7 +2106,7 @@ class ApiController extends Controller
                                     'title'             => $row->title,
                                     'description'       => $row->description,
                                     'venue'             => $row->venue,
-                                    'event_date'        => date_format(date_create($row->event_date), "l, M d Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
+                                    'event_date'        => date_format(date_create($row->event_date), "D, M d Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
                                     'photo'             => (($row->photo != '')?env('UPLOADS_URL').'event/'.$row->photo:env('NO_IMAGE')),
                                 ];
                             }
@@ -2129,7 +2129,7 @@ class ApiController extends Controller
                                     'title'             => $row->title,
                                     'description'       => $row->description,
                                     'venue'             => $row->venue,
-                                    'event_date'        => date_format(date_create($row->event_date), "l, M d Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
+                                    'event_date'        => date_format(date_create($row->event_date), "D, M d Y") . ' ' . date_format(date_create($row->event_time), "h:i A"),
                                     'photo'             => (($row->photo != '')?env('UPLOADS_URL').'event/'.$row->photo:env('NO_IMAGE')),
                                     'qrcode'            => (($row->qrcode != '')?$row->qrcode:env('NO_IMAGE')),
                                 ];
