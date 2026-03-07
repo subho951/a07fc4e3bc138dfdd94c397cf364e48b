@@ -2360,11 +2360,11 @@ class ApiController extends Controller
                             $offset = (($limit * $page_no) - $limit); // ((15 * 3) - 15)
                         }
                         // $notifications    = Notification::select('id', 'title', 'description', 'send_timestamp', 'users')->where('to_users', '=', $uId)->where('status', '=', 1)->where('is_send', '=', 1)->orderBy('id', 'DESC')->offset($offset)->limit($limit)->get();
-                        $notifications    = Notification::select('id', 'title', 'description', 'send_timestamp', 'users')
+                        $notifications    = Notification::selectRaw('MAX(id) as id, title, description, send_timestamp, users')
                                                             ->where('to_users', $uId)
                                                             ->where('status', 1)
                                                             ->where('is_send', 1)
-                                                            ->groupBy('description')
+                                                            ->groupBy('description', 'title', 'send_timestamp', 'users')
                                                             ->orderBy('id', 'DESC')
                                                             ->offset($offset)
                                                             ->limit($limit)
