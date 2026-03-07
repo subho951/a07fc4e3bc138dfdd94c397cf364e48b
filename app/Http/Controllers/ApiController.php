@@ -1093,7 +1093,7 @@ class ApiController extends Controller
                                 // push notification send
                                     $users = [];
                                     $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
-                                    Helper::pr($getTokens);
+                                    
                                     if($getTokens){
                                         foreach($getTokens as $getToken){
                                             $token = $getToken->fcm_token;
@@ -1108,7 +1108,8 @@ class ApiController extends Controller
                                                 "type" => 'profile'
                                             ];
 
-                                            $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+                                            $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                                            Helper::pr($firebase_response);
 
                                             $users[]            = $uId;
                                             $notificationFields = [
