@@ -2496,11 +2496,11 @@ class ApiController extends Controller
                         if($getUser){
                             $data['generalSetting']             = GeneralSetting::find('1');
                             $data['member']                     = $getUser;
-                            $html = view('front.identity-card', $data);
-                            echo $html;die;
+                            $html                               = view('front.identity-card', $data);
+                            $apiResponse                        = $html;
 
-                            $apiStatus          = TRUE;
-                            $apiMessage         = 'Identity card data available !!!';
+                            $apiStatus                          = TRUE;
+                            $apiMessage                         = 'Identity card data available !!!';
                         } else {
                             $apiStatus          = FALSE;
                             $apiMessage         = 'User Not Found !!!';
