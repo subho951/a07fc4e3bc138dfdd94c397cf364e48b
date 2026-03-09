@@ -2494,7 +2494,10 @@ class ApiController extends Controller
                         $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
                         $getUser    = User::where('id', '=', $uId)->first();
                         if($getUser){
-                            Helper::pr($getUser);    
+                            $data['generalSetting']             = GeneralSetting::find('1');
+                            $data['member']                     = $getUser;
+                            $html = view('front.identity-card', $data);
+                            echo $html;die;
 
                             $apiStatus          = TRUE;
                             $apiMessage         = 'Identity card data available !!!';
