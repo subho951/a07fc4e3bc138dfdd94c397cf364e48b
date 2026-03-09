@@ -2468,6 +2468,54 @@ class ApiController extends Controller
             }
             $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
         }
+
+        // identity card
+        public function identityCard(Request $request)
+        {
+            $apiStatus          = TRUE;
+            $apiMessage         = '';
+            $apiResponse        = [];
+            $apiExtraField      = '';
+            $apiExtraData       = '';
+            $requestData        = $request->all();
+            $requiredFields     = ['key', 'source'];
+            $headerData         = $request->header();
+            if (!$this->validateArray($requiredFields, $requestData)){
+                $apiStatus          = FALSE;
+                $apiMessage         = 'All Data Are Not Present !!!';
+            }
+            if($headerData['key'][0] == env('PROJECT_KEY')){
+                $app_access_token           = $headerData['authorization'][0];
+                $checkUserTokenExist        = UserDevice::where('app_access_token', '=', $app_access_token)->where('published', '=', 1)->first();
+                if($checkUserTokenExist){
+                    $getTokenValue              = $this->tokenAuth($app_access_token);
+                    if($getTokenValue['status']){
+                        $uId        = $getTokenValue['data'][1];
+                        $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
+                        $getUser    = User::where('id', '=', $uId)->first();
+                        if($getUser){
+                            Helper::pr($getUser);    
+
+                            $apiStatus          = TRUE;
+                            $apiMessage         = 'Identity card data available !!!';
+                        } else {
+                            $apiStatus          = FALSE;
+                            $apiMessage         = 'User Not Found !!!';
+                        }
+                    } else {
+                        $apiStatus                      = FALSE;
+                        $apiMessage                     = $getTokenValue['data'];
+                    }
+                } else {
+                    $apiStatus                      = FALSE;
+                    $apiMessage                     = 'Something Went Wrong !!!';
+                }               
+            } else {
+                $apiStatus          = FALSE;
+                $apiMessage         = 'Unauthenticate Request !!!';
+            }
+            $this->response_to_json($apiStatus, $apiMessage, $apiResponse, $apiExtraField, $apiExtraData);
+        }
     /* after login */
     /*
     Get http response code

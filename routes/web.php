@@ -191,6 +191,7 @@ Route::get('pages/{id}', [FrontController::class, 'page']);
             Route::match(['post'], '/get-notification', 'ApiController@getNotification');
             Route::match(['get'], 'delete-account', 'ApiController@deleteAccount');
             Route::match(['post'], 'test-fcm', 'ApiController@testFCM');
+            Route::match(['get'], 'identity-card', 'ApiController@identityCard');
         /* after login */
     });
 /* Api */
