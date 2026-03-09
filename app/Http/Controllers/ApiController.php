@@ -2496,7 +2496,7 @@ class ApiController extends Controller
                         if($getUser){
                             $data['generalSetting']             = GeneralSetting::find('1');
                             $data['member']                     = $getUser;
-                            $html                               = view('front.identity-card', $data);
+                            $html                               = view('front.identity-card', $data)->render();
                             $apiResponse['html']                = $html;
 
                             $apiStatus                          = TRUE;
