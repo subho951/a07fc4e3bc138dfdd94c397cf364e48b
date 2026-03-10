@@ -74,6 +74,13 @@ class ApiController extends Controller
                 $apiMessage         = 'All Data Are Not Present !!!';
             }
             if($headerData['key'][0] == env('PROJECT_KEY')){
+                /* member address update */
+                    $address = DB::table('user_address')
+                                    ->select('user_id', 'address')
+                                    ->get();
+                    Helper::pr($address);
+                /* member address update */
+
                 $generalSetting = GeneralSetting::find(1);
                 if($generalSetting){
                     $apiResponse        = [
