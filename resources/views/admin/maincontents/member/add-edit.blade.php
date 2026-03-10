@@ -130,9 +130,9 @@ $controllerRoute = $module['controller_route'];
               </div>
             </div>
             <div class="row mb-3">
-              <label for="designation" class="col-md-2 col-lg-2 col-form-label">Designation <span class="text-danger">*</span></label>
+              <label for="designation" class="col-md-2 col-lg-2 col-form-label">Designation</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="designation" class="form-control" id="designation" value="<?=$designation?>" required>
+                <input type="text" name="designation" class="form-control" id="designation" value="<?=$designation?>">
                 @error('designation') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>

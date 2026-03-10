@@ -315,7 +315,7 @@ class FrontController extends Controller
     /* page */
         public function page($slug){
             $data['generalSetting']             = GeneralSetting::find('1');
-            $data['page']                       = Page::where('slug', '=', 'privacy-policy')->first();
+            $data['page']                       = Page::where('slug', '=', $slug)->first();
             
             $data['title']                      = (($data['page'])?$data['page']->page_title:"Page");
             $page_name                          = 'page-content';
