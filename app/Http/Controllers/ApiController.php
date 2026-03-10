@@ -290,7 +290,7 @@ class ApiController extends Controller
                             'user_type' => 'USER',
                             'ip_address' => $ipAddress,
                             'activity_type' => 0,
-                            'activity_details' => 'OTP Sent To Email Validation !!!',
+                            'activity_details' => 'OTP Sent To Your Registered Email !!!',
                             'platform_type' => 'WEB',
                             'browser_used' => $userAgent,
                             'status' => 1,
@@ -305,7 +305,7 @@ class ApiController extends Controller
                     $apiStatus = true;
 
                     http_response_code(200);
-                    $apiMessage = 'OTP Sent To Email Validation !!!';
+                    $apiMessage = 'OTP Sent To Your Registered Email !!!';
                     $apiExtraField = 'response_code';
                     $apiExtraData = http_response_code();
                     } else{
