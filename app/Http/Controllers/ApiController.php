@@ -77,7 +77,7 @@ class ApiController extends Controller
                 /* member address update */
                     $addressData = DB::table('user_address')
                                     ->select('user_id', 'address')
-                                    ->where('user_id', '=', 9)
+                                    // ->where('user_id', '=', 9)
                                     ->get();
                     if($addressData){
                         foreach($addressData as $addr){
