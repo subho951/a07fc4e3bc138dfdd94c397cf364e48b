@@ -75,10 +75,18 @@ class ApiController extends Controller
             }
             if($headerData['key'][0] == env('PROJECT_KEY')){
                 /* member address update */
-                    $address = DB::table('user_address')
+                    $addressData = DB::table('user_address')
                                     ->select('user_id', 'address')
+                                    ->where('user_id', '=', 9)
                                     ->get();
-                    Helper::pr($address);
+                    if($addressData){
+                        foreach($addressData as $addr){
+                            $user_id = $addr->user_id;
+                            $address = $addr->address;
+
+                            User::where('id', '=', $user_id)->update(['address' => $address]);
+                        }
+                    }
                 /* member address update */
 
                 $generalSetting = GeneralSetting::find(1);
