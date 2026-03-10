@@ -1,39 +1,91 @@
 <?php
+
 use App\Models\GeneralSetting;
-$generalSetting             = GeneralSetting::find('1');
+
+$generalSetting = GeneralSetting::find('1');
 ?>
 <!doctype html>
 <html lang="en">
-  <head>
-    <title><?=$generalSetting->site_name?></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  </head>
-  <body style="padding: 0; margin: 0; box-sizing: border-box;">
-    <section style="padding: 80px 0; height: 80vh; margin: 0 15px;">
-        <div style="max-width: 600px; background: #ffffff; margin: 0 auto; border-radius: 15px; padding: 20px 15px; box-shadow: 0 0 30px -5px #ccc;">
-          <div style="text-align: center;">
-              <img src="<?=env('UPLOADS_URL').$generalSetting->site_logo?>" alt="<?=$generalSetting->site_name?>" style=" width: 100%; max-width: 250px;">
-          </div>
-          <div>
-            <h3 style="text-align: center; font-size: 25px; color: #717171; font-family: sans-serif;">Hi, Welcome to <?=$generalSetting->site_name?>!</h3>
-            <h4 style="text-align: center; font-family: sans-serif; color: #717171 ;">Your OTP</h4>
-            <div style="display: flex; justify-content: center; text-align: center; margin:0 auto;">
-                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
-                font-family: sans-serif;"><?=substr($otp, 0, 1)?></div>
-                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
-                font-family: sans-serif;"><?=substr($otp, 1, 1)?></div>
-                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
-                font-family: sans-serif;"><?=substr($otp, 2, 1)?></div>
-                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
-                font-family: sans-serif;"><?=substr($otp, 3, 1)?></div>
-            </div>
-            </table>
-          </div>
-        </div>
-        <div style="border-top: 2px solid #ccc; margin-top: 50px; text-align: center; font-family: sans-serif;">
-          <div style="text-align: center; margin: 15px 0 10px;">All right reserved: © <?=date('Y')?> <?=$generalSetting->site_name?></div>
-        </div>
-      </div>
-    </section>
-  </body>
+
+<head>
+  <title><?= $generalSetting->site_name ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f6f8;padding:40px 15px;">
+    <tr>
+      <td align="center">
+
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,0.08);">
+
+          <tr>
+            <td style="padding:30px;text-align:center;border-bottom:1px solid #eee;">
+              <img src="<?= env('UPLOADS_URL') . $generalSetting->site_logo ?>"
+                alt="<?= $generalSetting->site_name ?>"
+                style="max-width:200px;width:100%;">
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:30px;text-align:center;">
+
+              <h2 style="margin:0 0 10px;color:#333;font-weight:600;">
+                Welcome to <?= $generalSetting->site_name ?>!
+              </h2>
+
+              <p style="margin:0 0 25px;color:#666;font-size:15px;">
+                Use the following One-Time Password (OTP) to proceed with your verification.
+              </p>
+
+              <table align="center" cellpadding="0" cellspacing="0">
+                <tr>
+
+                  <td style="padding:12px 16px;border:2px solid #FCC312;border-radius:6px;font-size:20px;font-weight:bold;color:#333;margin:5px;">
+                    <?= substr($otp, 0, 1) ?>
+                  </td>
+
+                  <td width="10"></td>
+
+                  <td style="padding:12px 16px;border:2px solid #FCC312;border-radius:6px;font-size:20px;font-weight:bold;color:#333;">
+                    <?= substr($otp, 1, 1) ?>
+                  </td>
+
+                  <td width="10"></td>
+
+                  <td style="padding:12px 16px;border:2px solid #FCC312;border-radius:6px;font-size:20px;font-weight:bold;color:#333;">
+                    <?= substr($otp, 2, 1) ?>
+                  </td>
+
+                  <td width="10"></td>
+
+                  <td style="padding:12px 16px;border:2px solid #FCC312;border-radius:6px;font-size:20px;font-weight:bold;color:#333;">
+                    <?= substr($otp, 3, 1) ?>
+                  </td>
+
+                </tr>
+              </table>
+
+              <p style="margin-top:25px;font-size:14px;color:#888;">
+                This OTP is valid for a limited time. Please do not share it with anyone.
+              </p>
+
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px;text-align:center;border-top:1px solid #eee;font-size:13px;color:#999;">
+              © <?= date('Y') ?> <?= $generalSetting->site_name ?>. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+
 </html>
