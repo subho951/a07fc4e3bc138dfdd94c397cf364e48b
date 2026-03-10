@@ -15,16 +15,16 @@ $generalSetting             = GeneralSetting::find('1');
               <img src="<?=env('UPLOADS_URL').$generalSetting->site_logo?>" alt="<?=$generalSetting->site_name?>" style=" width: 100%; max-width: 250px;">
           </div>
           <div>
-            <h3 style="text-align: center; font-size: 25px; color: #5c5b5b; font-family: sans-serif;">Hi, Welcome to <?=$generalSetting->site_name?>!</h3>
-            <h4 style="text-align: center; font-family: sans-serif; color: #5c5b5b ;">Your OTP</h4>
+            <h3 style="text-align: center; font-size: 25px; color: #717171; font-family: sans-serif;">Hi, Welcome to <?=$generalSetting->site_name?>!</h3>
+            <h4 style="text-align: center; font-family: sans-serif; color: #717171 ;">Your OTP</h4>
             <div style="display: flex; justify-content: center;">
-                <div style="padding: 12px; margin: 5px; border: 2px solid #f9233f;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
+                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
                 font-family: sans-serif;"><?=substr($otp, 0, 1)?></div>
-                <div style="padding: 12px; margin: 5px; border: 2px solid #f9233f;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
+                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
                 font-family: sans-serif;"><?=substr($otp, 1, 1)?></div>
-                <div style="padding: 12px; margin: 5px; border: 2px solid #f9233f;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
+                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
                 font-family: sans-serif;"><?=substr($otp, 2, 1)?></div>
-                <div style="padding: 12px; margin: 5px; border: 2px solid #f9233f;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
+                <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
                 font-family: sans-serif;"><?=substr($otp, 3, 1)?></div>
             </div>
             </table>

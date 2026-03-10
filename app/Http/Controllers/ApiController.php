@@ -208,18 +208,7 @@ class ApiController extends Controller
                             'fcm_token'             => $fcm_token,
                             'app_access_token'      => $app_access_token,
                         ];
-                        /* view analytics track */
-                            $userAgent                      = $request->header('User-Agent', 'unknown');
-                            $acceptLanguage                 = $request->header('Accept-Language', 'en');
-                            $clientIp                       = $request->ip();
-                            $deviceId                       = $this->createDeviceFingerprint($userAgent, $acceptLanguage, $clientIp);
-                            $viewData = [
-                                'device_id'     => $deviceId,
-                                'page'          => 'signin',
-                                'product_id'    => 0,
-                            ];
-                            UserView::insert($viewData);
-                        /* view analytics track */
+                        
                         $apiStatus                          = TRUE;
                         $apiMessage                         = 'SignIn Successfully !!!';
                     } else {
@@ -271,7 +260,7 @@ class ApiController extends Controller
                         $generalSetting = GeneralSetting::find('1');
                         $subject        = $generalSetting->site_name.' :: SignIn OTP';
                         $message        = view('email-templates.otp', $mailData);
-                        // echo $message;die;
+                        echo $message;die;
                         // $this->sendMail($requestData['email'], $subject, $message);
 
                     /* email log capture */
