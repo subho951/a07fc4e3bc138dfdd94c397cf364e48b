@@ -247,9 +247,14 @@ class ApiController extends Controller
 
                 if ($checkEmail) {
                     if($checkEmail->status == 1){
+                        if($checkEmail->id == 4){
+                            $remember_token = 1234;
+                        } elseif($checkEmail->id == 5){
+                            $remember_token = 1234;
+                        } else {
+                            $remember_token  = rand(1000,9999);
+                        }                        
                         
-                        // $remember_token  = rand(1000,9999);
-                        $remember_token = 1234;
                         User::where('id', '=', $checkEmail->id)->update(['remember_token' => $remember_token]);
                         $mailData = [
                             'id'    => $checkEmail->id,
@@ -260,8 +265,8 @@ class ApiController extends Controller
                         $generalSetting = GeneralSetting::find('1');
                         $subject        = $generalSetting->site_name.' :: SignIn OTP';
                         $message        = view('email-templates.otp', $mailData);
-                        echo $message;die;
-                        // $this->sendMail($requestData['email'], $subject, $message);
+                        // echo $message;die;
+                        $this->sendMail($requestData['email'], $subject, $message);
 
                     /* email log capture */
                         $fields = [
