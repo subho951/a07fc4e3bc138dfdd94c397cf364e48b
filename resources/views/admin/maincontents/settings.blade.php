@@ -62,9 +62,9 @@ $user_type = session('type');
               <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab4">Email</button>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab9">Email Templates</button>
-              </li>
+              </li> -->
             <?php }?>
           </ul>
           <div class="tab-content pt-2">
