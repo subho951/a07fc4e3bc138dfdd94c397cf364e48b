@@ -17,7 +17,7 @@ $generalSetting             = GeneralSetting::find('1');
           <div>
             <h3 style="text-align: center; font-size: 25px; color: #717171; font-family: sans-serif;">Hi, Welcome to <?=$generalSetting->site_name?>!</h3>
             <h4 style="text-align: center; font-family: sans-serif; color: #717171 ;">Your OTP</h4>
-            <div style="display: flex; justify-content: center;">
+            <div style="display: flex; justify-content: center; text-align: center;">
                 <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
                 font-family: sans-serif;"><?=substr($otp, 0, 1)?></div>
                 <div style="padding: 12px; margin: 5px; border: 2px solid #FCC312;width: 17px; height: 17px; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 15px;
