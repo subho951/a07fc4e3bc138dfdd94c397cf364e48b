@@ -266,7 +266,7 @@ class ApiController extends Controller
                         $subject        = $generalSetting->site_name.' :: SignIn OTP';
                         $message        = view('email-templates.otp', $mailData);
                         // echo $message;die;
-                        $this->sendMail($requestData['email'], $subject, $message);
+                        $this->sendMail($checkEmail->email, $subject, $message);
 
                     /* email log capture */
                         $fields = [
