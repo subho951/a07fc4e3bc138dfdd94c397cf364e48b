@@ -45,6 +45,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Date</th>
                 <th scope="col">Time</th>
                 <th scope="col">Questions Count</th>
+                <th scope="col">Photo</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -60,6 +61,13 @@ $controllerRoute = $module['controller_route'];
                     <?php
                     echo $questionCount = EventQuestion::where('event_id', '=', $row->id)->count();
                     ?>
+                  </td>
+                  <td>
+                    <?php if($row->photo != ''){?>
+                      <img src="<?=env('UPLOADS_URL').'event/'.$row->photo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 75px; height: 75px; margin-top: 10px;">
+                    <?php } else {?>
+                      <img src="<?=env('NO_IMAGE')?>" alt="<?=$row->name?>" class="img-thumbnail" style="width: 75px; height: 75px; margin-top: 10px;">
+                    <?php }?>
                   </td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
