@@ -51,7 +51,7 @@ $controllerRoute = $module['controller_route'];
                   <th scope="row"><?=$sl++?></th>
                   <td><?=$row->category_name?></td>
                   <td><?=$row->name?></td>
-                  <td><?=$row->short_description?></td>
+                  <td><?=wordwrap($row->short_description,25,"<br>\n")?></td>
                   <td>
                     <?php if($row->logo != ''){?>
                       <img src="<?=env('UPLOADS_URL').'privilege/'.$row->logo?>" class="img-thumbnail" alt="<?=$row->name?>" style="width: 120px; height: 120px; margin-top: 10px; border-radius:50%;">
