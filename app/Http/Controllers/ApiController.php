@@ -280,7 +280,6 @@ class ApiController extends Controller
                         $generalSetting = GeneralSetting::find('1');
                         $subject        = $generalSetting->site_name.' :: SignIn OTP';
                         $message        = view('email-templates.otp', $mailData);
-                        // echo $message;die;
                         $this->sendMail($checkEmail->email, $subject, $message);
 
                     /* email log capture */
