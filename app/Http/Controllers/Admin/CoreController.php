@@ -46,7 +46,7 @@ class CoreController extends Controller
                 $request->validate([
                     'name'          => 'required|string|max:255|unique:users,name',
                     'photo'         => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'description'   => 'required|string|max:500',
+                    // 'description'   => 'required|string|max:500',
                 ]);
 
                 /** Photo Upload */
@@ -110,7 +110,7 @@ class CoreController extends Controller
                 $request->validate([
                     'name'          => 'required|string|max:255|unique:users,name',
                     'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'description'   => 'required|string|max:500',
+                    // 'description'   => 'required|string|max:500',
                     'member_id'     => 'required|array',
                 ]);
 
