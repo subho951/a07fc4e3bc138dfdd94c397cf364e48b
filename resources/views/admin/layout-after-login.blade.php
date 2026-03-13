@@ -119,81 +119,84 @@ $pageFunction = ((count($pageName)>2)?$pageName[1]:'');
   </script>
 <?php } ?>
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.1.0/ckeditor5.css" />
-  <script type="importmap">
-    {
-        "imports": {
-            "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.1.0/ckeditor5.js",
-            "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.1.0/"
-        }
-    }
-  </script>
-  <script type="module">
-    import {
-        ClassicEditor,
-        Essentials,
-        Bold,
-        Italic,
-        Strikethrough,
-        Subscript,
-        Superscript,
-        CodeBlock,
-        Font,
-        Link,
-        List,
-        Paragraph,
-        Image,
-        ImageCaption,
-        ImageResize,
-        ImageStyle,
-        ImageToolbar,
-        LinkImage,
-        PictureEditing,
-        ImageUpload,
-        CloudServices,
-        CKBox,
-        CKBoxImageEdit,
-        SourceEditing,
-        ImageInsert
-    } from 'ckeditor5';
+<script type="importmap">
+  {
+      "imports": {
+          "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.1.0/ckeditor5.js",
+          "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.1.0/"
+      }
+  }
+</script>
+<script type="module">
+  import {
+      ClassicEditor,
+      Essentials,
+      Bold,
+      Italic,
+      Strikethrough,
+      Subscript,
+      Superscript,
+      CodeBlock,
+      Font,
+      Link,
+      List,
+      Paragraph,
+      Alignment,
+      Image,
+      ImageCaption,
+      ImageResize,
+      ImageStyle,
+      ImageToolbar,
+      LinkImage,
+      PictureEditing,
+      ImageUpload,
+      CloudServices,
+      CKBox,
+      CKBoxImageEdit,
+      SourceEditing,
+      ImageInsert
+  } from 'ckeditor5';
 
-    for (let i = 0; i <= 15; i++) {
-      ClassicEditor
-        .create( document.querySelector( '#ckeditor' + i ), {
-          plugins: [ Essentials, Bold, Italic, Strikethrough, Subscript, Superscript, CodeBlock, Font, Link, List, Paragraph, Image, ImageToolbar, ImageCaption, ImageStyle, ImageResize, LinkImage, PictureEditing, ImageUpload, CloudServices, CKBox, CKBoxImageEdit, SourceEditing, ImageInsert ],
-          toolbar: {
-            items: [
-              'undo', 'redo',
-              '|',
-              'heading',
-              '|',
-              'sourceEditing',
-              '|',
-              'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor', 'formatPainter',
-              '|',
-              'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
-              '|',
-              'link', 'uploadImage', 'blockQuote', 'codeBlock',
-              '|',
-              'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent',
-              '|',
-              'ckbox', 'ckboxImageEdit', 'toggleImageCaption', 'imageTextAlternative', 'ckboxImageEdit',
-              '|',
-              'imageStyle:block',
-              'imageStyle:side',
-              '|',
-              'toggleImageCaption',
-              'imageTextAlternative',
-              '|',
-              'linkImage', 'insertImage', 'insertImageViaUrl'
-            ]
-          },
-          menuBar: {
-            isVisible: true
-          }
-        })
-        .then( /* ... */ )
-        .catch( /* ... */ );
-    }
-  </script>
+  for (let i = 0; i <= 15; i++) {
+    ClassicEditor
+      .create( document.querySelector( '#ckeditor' + i ), {
+        plugins: [ Essentials, Bold, Italic, Strikethrough, Subscript, Superscript, CodeBlock, Font, Link, List, Paragraph, Alignment, Image, ImageToolbar, ImageCaption, ImageStyle, ImageResize, LinkImage, PictureEditing, ImageUpload, CloudServices, CKBox, CKBoxImageEdit, SourceEditing, ImageInsert ],
+        toolbar: {
+          items: [
+            'undo', 'redo',
+            '|',
+            'heading',
+            '|',
+            'alignment',
+            '|',
+            'sourceEditing',
+            '|',
+            'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor', 'formatPainter',
+            '|',
+            'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
+            '|',
+            'link', 'uploadImage', 'blockQuote', 'codeBlock',
+            '|',
+            'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent',
+            '|',
+            'ckbox', 'ckboxImageEdit', 'toggleImageCaption', 'imageTextAlternative', 'ckboxImageEdit',
+            '|',
+            'imageStyle:block',
+            'imageStyle:side',
+            '|',
+            'toggleImageCaption',
+            'imageTextAlternative',
+            '|',
+            'linkImage', 'insertImage', 'insertImageViaUrl'
+          ]
+        },
+        menuBar: {
+          isVisible: true
+        }
+      })
+      .then( /* ... */ )
+      .catch( /* ... */ );
+  }
+</script>
 </body>
 </html>
