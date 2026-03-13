@@ -148,7 +148,7 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <select name="doj" class="form-control" id="doj" required>
                   <option value="" selected>Member Since</option>
-                  <?php for($k=1980;$k<date('Y');$k++){?>
+                  <?php for($k=date('Y');$k>=1980;$k--){?>
                     <option value="<?= $k?>" <?= (($doj == $k)?'selected':'') ?>><?= $k?></option>
                   <?php }?>
                 </select>
