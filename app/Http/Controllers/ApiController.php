@@ -1132,7 +1132,7 @@ class ApiController extends Controller
                                             'interest_id'               => !empty($interestIds) ? json_encode($interestIds) : [],
                                             'address'                   => $requestData['address'],
                                         ];
-                                Helper::pr($postData);
+                                // Helper::pr($postData);
                                 User::where('id', '=', $uId)->update($postData);
 
                                 // push notification send
