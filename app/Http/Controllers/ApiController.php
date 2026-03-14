@@ -1078,6 +1078,9 @@ class ApiController extends Controller
                         if(empty($checkEmail)){
                             $checkPhone = User::where('id', '!=', $uId)->where('phone', '=', $requestData['phone'])->first();
                             if(empty($checkPhone)){
+                                $industry_name = $request->industry_name;
+                                $interest_name = $request->interest_name;
+
                                 $postData = [
                                             'name'                      => $requestData['name'],
                                             'email'                     => $requestData['email'],
@@ -1095,7 +1098,7 @@ class ApiController extends Controller
                                             'interest_id'               => (($request->interest_id != '')?json_encode($request->interest_id):[]),
                                             'address'                   => $requestData['address'],
                                         ];
-                                // Helper::pr($postData);
+                                Helper::pr($postData);
                                 User::where('id', '=', $uId)->update($postData);
 
                                 // push notification send

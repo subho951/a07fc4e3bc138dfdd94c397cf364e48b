@@ -26,7 +26,7 @@
             overflow: hidden;
             position: relative;
             color: white;
-            margin-top: 40px;
+            margin: 40px 15px 0;
             /* box-shadow: 0 20px 50px rgba(0, 0, 0, .6); */
         }
         .pattern {
