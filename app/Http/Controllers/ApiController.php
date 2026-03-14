@@ -2549,7 +2549,7 @@ class ApiController extends Controller
                             $data['generalSetting']             = GeneralSetting::find('1');
                             $data['member']                     = $getUser;
                             $html                               = view('front.identity-card-v2', $data)->render();
-                            echo $html;die;
+                            // echo $html;die;
                             $apiResponse['html']                = $html;
 
                             $apiStatus                          = TRUE;
