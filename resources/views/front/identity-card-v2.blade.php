@@ -8,7 +8,7 @@
     <style>
         @font-face {
             font-family: 'League Spartan';
-            src: url(LeagueSpartan-VariableFont_wght.ttf);
+            src: url(<?=env('FRONT_ASSETS_URL')?>LeagueSpartan-VariableFont_wght.ttf);
         }
         * {
             margin: 0;
