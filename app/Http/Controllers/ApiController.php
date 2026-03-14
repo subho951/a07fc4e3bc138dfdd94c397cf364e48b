@@ -1081,7 +1081,39 @@ class ApiController extends Controller
                                 $industry_name = $request->industry_name;
                                 $interest_name = $request->interest_name;
 
-                                
+                                if($industry_name != ''){
+                                    $industryid = Industry::insertGetId(['name' => $industry_name]);
+
+                                    $industryIds = $request->industry_id;
+
+                                    // Remove 48 if exists
+                                    $industryIds = array_diff($industryIds, [48]);
+
+                                    // Add 62
+                                    $industryIds[] = $industryid;
+
+                                    // Remove duplicates
+                                    $industryIds = array_values(array_unique($industryIds));
+                                } else {
+                                    $industryIds = $request->industry_id;
+                                }
+
+                                if($interest_name != ''){
+                                    $interestid = Interest::insertGetId(['name' => $interest_name]);
+
+                                    $interestIds = $request->interest_id;
+
+                                    // Remove 48 if exists
+                                    $interestIds = array_diff($interestIds, [29]);
+
+                                    // Add 62
+                                    $interestIds[] = $interestid;
+
+                                    // Remove duplicates
+                                    $interestIds = array_values(array_unique($interestIds));
+                                } else {
+                                    $interestIds = $request->interest_id;
+                                }
 
                                 $postData = [
                                             'name'                      => $requestData['name'],
@@ -1096,8 +1128,8 @@ class ApiController extends Controller
                                             'spouse_name'               => $requestData['spouse_name'],
                                             'profession'                => $requestData['profession'],
                                             'alumni'                    => $requestData['alumni'],
-                                            'industry_id'               => (($request->industry_id != '')?json_encode($request->industry_id):[]),
-                                            'interest_id'               => (($request->interest_id != '')?json_encode($request->interest_id):[]),
+                                            'industry_id'               => !empty($industryIds) ? json_encode($industryIds) : [],
+                                            'interest_id'               => !empty($interestIds) ? json_encode($interestIds) : [],
                                             'address'                   => $requestData['address'],
                                         ];
                                 Helper::pr($postData);
