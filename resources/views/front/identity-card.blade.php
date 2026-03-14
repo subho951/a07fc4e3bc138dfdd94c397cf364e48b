@@ -135,7 +135,7 @@
         </div>
         <div class="footer">
             <strong><?= $generalSetting->site_name ?></strong><br />
-            <strong>Email:</strong> <a href="mailto:<?= $generalSetting->site_mail ?>" style="color: #fff; text-decoration: none;"><?= $generalSetting->site_mail ?></a> | <strong>Website:</strong> <a href="<?= $generalSetting->site_url ?>" target="_blank" style="color: #fff; text-decoration: none;"><?= $generalSetting->site_url ?></a>
+            <!-- <strong>Email:</strong> <a href="mailto:<?= $generalSetting->site_mail ?>" style="color: #fff; text-decoration: none;"><?= $generalSetting->site_mail ?></a> | <strong>Website:</strong> <a href="<?= $generalSetting->site_url ?>" target="_blank" style="color: #fff; text-decoration: none;"><?= $generalSetting->site_url ?></a> -->
         </div>
     </div>
 </body>
