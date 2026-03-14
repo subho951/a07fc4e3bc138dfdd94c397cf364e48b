@@ -1305,7 +1305,8 @@ class ApiController extends Controller
                                                                 'users.name',
                                                                 'users.points',
                                                                 'users.photo',
-                                                                'users.company_name'
+                                                                'users.company_name',
+                                                                'users.designation',
                                                             )
                                                             ->join('users', 'users.id', '=', 'core_members.member_id')
                                                             ->where('core_members.core_id', $row->id)
@@ -1321,6 +1322,7 @@ class ApiController extends Controller
                                             'points'        => $member->points,
                                             'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
                                             'company_name'  => $member->company_name,
+                                            'designation'   => $member->designation,
                                         ];
                                     }
                                 }
@@ -1398,6 +1400,7 @@ class ApiController extends Controller
                                                                 'photo',
                                                                 'company_name',
                                                                 'committee_member_type',
+                                                                'designation',
                                                             )
                                                             ->where('committee_category_id', $cat->id)
                                                             ->where('status', 1)
@@ -1416,6 +1419,7 @@ class ApiController extends Controller
                                                         'points'        => $member->points,
                                                         'photo'         => (($member->photo != '')?env('UPLOADS_URL').'user/'.$member->photo:env('NO_IMAGE')),
                                                         'company_name'  => $member->company_name,
+                                                        'designation'   => $member->designation,
                                                     ];
                                                 } else {
                                                     $sub_members[] = [
