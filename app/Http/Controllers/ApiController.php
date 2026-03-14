@@ -1500,6 +1500,9 @@ class ApiController extends Controller
                             'facebook_profile'      => $generalSetting->facebook_profile,
                             'instagram_profile'     => $generalSetting->instagram_profile,
                             'linkedin_profile'      => $generalSetting->linkedin_profile,
+                            'concierge_contact_person_name'      => $generalSetting->concierge_contact_person_name,
+                            'concierge_contact_person_phone'      => $generalSetting->concierge_contact_person_phone,
+                            'concierge_contact_person_wp'      => $generalSetting->concierge_contact_person_wp,
                         ];
                         
                         $apiStatus          = TRUE;
