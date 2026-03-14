@@ -1081,6 +1081,8 @@ class ApiController extends Controller
                                 $industry_name = $request->industry_name;
                                 $interest_name = $request->interest_name;
 
+                                
+
                                 $postData = [
                                             'name'                      => $requestData['name'],
                                             'email'                     => $requestData['email'],

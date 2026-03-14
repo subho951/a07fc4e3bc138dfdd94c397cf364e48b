@@ -20,7 +20,7 @@
         }
         .card {
             width: 380px;
-            aspect-ratio: 1.586;
+            /* aspect-ratio: 1.586; */
             background: #0e0e0e;
             border-radius: 14px;
             overflow: hidden;
