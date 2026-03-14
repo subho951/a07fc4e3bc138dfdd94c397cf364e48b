@@ -152,6 +152,26 @@ $user_type = session('type');
                     <textarea name="description" class="form-control" id="description" rows="5"><?=$setting->description?></textarea>
                   </div>
                 </div>
+
+                <div class="row mb-3">
+                  <label for="concierge_contact_person_name" class="col-md-4 col-lg-3 col-form-label">Concierge Contact Person Name</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="concierge_contact_person_name" type="text" class="form-control" id="concierge_contact_person_name" value="<?=$setting->concierge_contact_person_name?>">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="concierge_contact_person_phone" class="col-md-4 col-lg-3 col-form-label">Concierge Contact Person Phone</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="concierge_contact_person_phone" type="text" class="form-control" id="concierge_contact_person_phone" value="<?=$setting->concierge_contact_person_phone?>">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <label for="concierge_contact_person_wp" class="col-md-4 col-lg-3 col-form-label">Concierge Contact Person WP Number</label>
+                  <div class="col-md-8 col-lg-9">
+                    <input name="concierge_contact_person_wp" type="text" class="form-control" id="concierge_contact_person_wp" value="<?=$setting->concierge_contact_person_wp?>">
+                  </div>
+                </div>
+
                 <div class="row mb-3">
                   <label for="theme_color" class="col-md-4 col-lg-3 col-form-label">Theme Color</label>
                   <div class="col-md-8 col-lg-9">
