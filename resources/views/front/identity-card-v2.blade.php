@@ -12,14 +12,17 @@
             box-sizing: border-box;
             font-family: Segoe UI, sans-serif;
         }
+
         body {
             display: flex;
             justify-content: center;
             /* align-items: center; */
             height: 100%;
         }
+
         .card {
             width: 380px;
+            height: 250px;
             /* aspect-ratio: 1.586; */
             background: #0e0e0e;
             border-radius: 14px;
@@ -29,11 +32,13 @@
             margin: 40px 15px 0;
             /* box-shadow: 0 20px 50px rgba(0, 0, 0, .6); */
         }
+
         .pattern {
             position: absolute;
             inset: 0;
-            background: url(<?=env('FRONT_ASSETS_URL')?>bg.jpeg) no-repeat center/cover;
+            background: url(<?=env('FRONT_ASSETS_URL')?>/bg.jpeg) no-repeat center/cover;
         }
+
         .header {
             position: relative;
             display: flex;
@@ -42,18 +47,21 @@
             padding: 16px 20px 0;
             z-index: 2;
         }
+
         .logo {
             font-size: 22px;
             font-weight: 700;
             letter-spacing: 2px;
             color: #f7c948;
         }
+
         .logo span {
             display: block;
             font-size: 12px;
             letter-spacing: 3px;
             color: #fff;
         }
+
         .profile {
             position: relative;
             padding: 0 20px;
@@ -63,37 +71,43 @@
             align-items: center;
             top: -15px;
         }
+
         .photo {
             width: 70px;
             height: 70px;
             object-fit: cover;
         }
+
         /* Info */
-        .info {
+        .info{
             text-align: center;
         }
         .info h2 {
             font-size: 20px;
             font-weight: 700;
         }
+
         .company {
             color: #edecec;
             font-size: 15px;
         }
+
         /* Contact */
+
         .contact {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 10px;
             font-size: 15px;
             color: #edecec;
+            margin-top: 5px;
         }
         .contact span {
             display: flex;
             align-items: center;
-        }
+        } 
         .contact i {
-            margin-right: 8px;
+            margin-right: 5px;
             width: 30px;
             height: 30px;
             display: flex;
@@ -104,6 +118,8 @@
             color: #afafaf;
             font-size: 14px;
         }
+
+
         .address {
             font-size: 13px;
             display: flex;
@@ -111,9 +127,10 @@
             gap: 5px;
             opacity: .8;
         }
+
         .footer {
             position: absolute;
-            bottom: 0;
+            bottom: 2px;
             width: 100%;
             padding: 5px 10px;
             text-align: center;
@@ -121,18 +138,20 @@
             line-height: 1.4;
             z-index: 2;
         }
-        .footer .title {
-            display: inline-block;
-            background: #fcc311;
-            color: #fff;
-            padding: 3px 6px;
-            font-weight: 700;
+
+        .footer .title{
+            display:inline-block;
+            background:#fcc311;
+            color:#fff;
+            padding:3px 6px;
+            font-weight:700;
             letter-spacing: 1px;
         }
-        .footer p {
-            color: #222;
-            font-weight: 600;
-            letter-spacing: 1px;
+
+        .footer p{
+            color:#222;
+            font-weight:600;
+            letter-spacing:1px;
         }
     </style>
 </head>
