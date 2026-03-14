@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>ALFA Network Member Card</title>
     <style>
+        @font-face {
+            font-family: 'League Spartan';
+            src: url(LeagueSpartan-VariableFont_wght.ttf);
+        }
         * {
             margin: 0;
             padding: 0;
