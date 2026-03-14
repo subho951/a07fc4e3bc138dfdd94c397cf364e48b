@@ -36,7 +36,7 @@
         .pattern {
             position: absolute;
             inset: 0;
-            background: url(<?=env('FRONT_ASSETS_URL')?>/bg.jpeg) no-repeat center/cover;
+            background: url(<?=env('FRONT_ASSETS_URL')?>bg.jpeg) no-repeat center/cover;
         }
 
         .header {
