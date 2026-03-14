@@ -126,7 +126,7 @@
             </div>
         </div>
         <div class="profile">
-            <img src="bg.jpg" class="photo">
+            <img src="<?=env('UPLOADS_URL').'user/'.(($member)?$member->photo:'')?>" class="photo">
             <div class="info">
                 <div class="name"><?= (($member)?$member->name:'') ?></div>
                 <div class="phone"><img src="<?=env('FRONT_ASSETS_URL')?>phone-call.png" alt=""> <?= (($member)?$member->phone:'') ?></div>
