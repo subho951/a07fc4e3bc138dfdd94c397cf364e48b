@@ -135,7 +135,7 @@
 
         .footer {
             position: absolute;
-            bottom: 7px;
+            bottom: 12px;
             width: 100%;
             /* padding: 5px 10px; */
             text-align: center;
