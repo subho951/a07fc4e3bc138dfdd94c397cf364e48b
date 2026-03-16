@@ -2236,7 +2236,7 @@ class ApiController extends Controller
 
                         $getContent1 = Page::select('long_description', 'short_description')->where('slug', '=', 'about-us')->first();
                         $getContent2 = Page::select('long_description', 'short_description')->where('slug', '=', 'our-founding-members')->first();
-                        $getContent3 = Page::select('long_description', 'short_description')->where('slug', '=', 'theme-of-the-year')->first();
+                        // $getContent3 = Page::select('long_description', 'short_description')->where('slug', '=', 'theme-of-the-year')->first();
 
                         $registered_events    = [];
                         $registeredEvents = Event::select('events.id', 'events.title', 'events.description', 'events.description', 'events.venue', 'events.event_date', 'events.photo', 'events.event_time', 'user_reg_events.qrcode')
@@ -2270,8 +2270,8 @@ class ApiController extends Controller
                             'about_us_content'  => (($getContent1)?$getContent1->long_description:''),
                             'founding_member_heading'  => (($getContent2)?$getContent2->short_description:''),
                             'founding_member_content'  => (($getContent2)?$getContent2->long_description:''),
-                            'theme_year_heading'  => (($getContent3)?$getContent3->short_description:''),
-                            'theme_year_content'  => (($getContent3)?$getContent3->long_description:''),
+                            // 'theme_year_heading'  => (($getContent3)?$getContent3->short_description:''),
+                            // 'theme_year_content'  => (($getContent3)?$getContent3->long_description:''),
                         ];                        
                         
                         $apiStatus          = TRUE;
