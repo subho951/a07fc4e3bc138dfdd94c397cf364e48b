@@ -59,7 +59,7 @@ class PageController extends Controller
                     $fields = [
                         'page_title'                    => $postData['page_title'],
                         'slug'                          => Helper::clean($postData['page_title']),
-                        // 'short_description'             => $postData['short_description'],
+                        'short_description'             => $postData['short_description'],
                         'long_description'              => $postData['long_description'],
                         'meta_title'                    => $postData['meta_title'],
                         'meta_description'              => $postData['meta_description'],
@@ -111,7 +111,7 @@ class PageController extends Controller
                     $fields = [
                         'page_title'                    => $postData['page_title'],
                         'slug'                          => Helper::clean($postData['page_title']),
-                        // 'short_description'             => $postData['short_description'],
+                        'short_description'             => $postData['short_description'],
                         'long_description'              => $postData['long_description'],
                         'meta_title'                    => $postData['meta_title'],
                         'meta_description'              => $postData['meta_description'],

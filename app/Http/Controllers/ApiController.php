@@ -2234,7 +2234,9 @@ class ApiController extends Controller
                             }
                         }
 
-                        $getContent = Page::select('long_description')->where('slug', '=', 'about-us')->first();
+                        $getContent1 = Page::select('long_description', 'short_description')->where('slug', '=', 'about-us')->first();
+                        $getContent2 = Page::select('long_description', 'short_description')->where('slug', '=', 'our-founding-members')->first();
+                        $getContent3 = Page::select('long_description', 'short_description')->where('slug', '=', 'theme-of-the-year')->first();
 
                         $registered_events    = [];
                         $registeredEvents = Event::select('events.id', 'events.title', 'events.description', 'events.description', 'events.venue', 'events.event_date', 'events.photo', 'events.event_time', 'user_reg_events.qrcode')
@@ -2263,9 +2265,13 @@ class ApiController extends Controller
                             'theme_description' => (($getTheme)?$getTheme->banner_text:''),
                             'theme_image'       => (($getTheme)?(($getTheme->photo != '')?env('UPLOADS_URL').'theme/'.$getTheme->photo:env('NO_IMAGE')):env('NO_IMAGE')),
                             'upcoming_events'   => $upcoming_events,
-                            'about_us_content'  => (($getContent)?$getContent->long_description:''),
                             'registered_events' => $registered_events,
-                            // 'firebase_response' => $firebase_response
+                            'about_us_heading'  => (($getContent1)?$getContent1->short_description:''),
+                            'about_us_content'  => (($getContent1)?$getContent1->long_description:''),
+                            'founding_member_heading'  => (($getContent2)?$getContent2->short_description:''),
+                            'founding_member_content'  => (($getContent2)?$getContent2->long_description:''),
+                            'theme_year_heading'  => (($getContent3)?$getContent3->short_description:''),
+                            'theme_year_content'  => (($getContent3)?$getContent3->long_description:''),
                         ];                        
                         
                         $apiStatus          = TRUE;

@@ -63,12 +63,12 @@ $current_url = url()->current();
                 <input type="text" name="page_title" class="form-control" id="page_title" rows="5" value="<?=$page_title?>" required>
               </div>
             </div>
-            <!-- <div class="row mb-3">
-              <label for="short_description" class="col-md-2 col-lg-2 col-form-label">Short Description</label>
+            <div class="row mb-3">
+              <label for="short_description" class="col-md-2 col-lg-2 col-form-label">Header In App</label>
               <div class="col-md-10 col-lg-10">
-                <textarea type="text" name="short_description" class="form-control" id="ckeditor1" rows="5" required><?=$short_description?></textarea>
+                <input type="text" name="short_description" class="form-control" id="short_description" rows="5" value="<?=$short_description?>">
               </div>
-            </div> -->
+            </div>
             <div class="row mb-3">
               <label for="long_description" class="col-md-2 col-lg-2 col-form-label">Description</label>
               <div class="col-md-10 col-lg-10">
@@ -90,7 +90,7 @@ $current_url = url()->current();
                 <?php }?>
               </div>
             </div> -->
-            <div class="row mb-3">
+            <!-- <div class="row mb-3">
               <label for="meta_title" class="col-md-2 col-lg-2 col-form-label">Meta Title</label>
               <div class="col-md-10 col-lg-10">
                 <textarea type="text" name="meta_title" class="form-control" id="meta_title" rows="5"><?=$meta_title?></textarea>
@@ -107,7 +107,7 @@ $current_url = url()->current();
               <div class="col-md-10 col-lg-10">
                 <textarea type="text" name="meta_keywords" class="form-control" id="meta_keywords" rows="5"><?=$meta_keywords?></textarea>
               </div>
-            </div>
+            </div> -->
             
             <div class="text-center">
               <button type="submit" class="btn btn-primary"><?=(($row)?'Save':'Add')?></button>
