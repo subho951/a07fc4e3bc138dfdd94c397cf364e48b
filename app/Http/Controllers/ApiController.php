@@ -933,7 +933,7 @@ class ApiController extends Controller
                         $getCores = Core::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
                         if($getCores){
                             $cores[]      = [
-                                'id'    => '',
+                                'id'    => 0,
                                 'name'  => 'Select Core',
                             ];
                             foreach($getCores as $row){
