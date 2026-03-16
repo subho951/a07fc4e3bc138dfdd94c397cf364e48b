@@ -26,7 +26,7 @@
 
         .card {
             width: 380px;
-            height: 250px;
+            height: 200px;
             /* aspect-ratio: 1.586; */
             background: #0e0e0e;
             border-radius: 14px;
@@ -80,6 +80,7 @@
             width: 70px;
             height: 70px;
             object-fit: cover;
+            margin-bottom: 10px;
         }
 
         /* Info */
@@ -144,7 +145,7 @@
         }
 
         .footer .title{
-            display:inline-block;
+            display:block;
             background:#fcc311;
             color:#fff;
             padding:3px 6px;
