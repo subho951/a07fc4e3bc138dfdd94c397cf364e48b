@@ -42,9 +42,9 @@ class ThemeController extends Controller
 
             if($request->isMethod('post')){
                 $request->validate([
-                    'heading'          => 'required|string|max:255',
+                    // 'heading'          => 'required|string|max:255',
                     'photo'         => 'required|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'banner_text'   => 'required|string|max:500',
+                    // 'banner_text'   => 'required|string|max:500',
                 ]);
 
                 /** Photo Upload */
@@ -78,9 +78,9 @@ class ThemeController extends Controller
                 $member = Banner::findOrFail($id);
 
                 $request->validate([
-                    'heading'          => 'required|string|max:255',
+                    // 'heading'          => 'required|string|max:255',
                     'photo'         => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'banner_text'   => 'required|string|max:500',
+                    // 'banner_text'   => 'required|string|max:500',
                 ]);
 
                 /** Photo Update */

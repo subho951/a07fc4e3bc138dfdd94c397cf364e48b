@@ -66,17 +66,17 @@ $controllerRoute = $module['controller_route'];
           <form method="POST" action="" enctype="multipart/form-data">
             @csrf
             <div class="row mb-3">
-              <label for="heading" class="col-md-2 col-lg-2 col-form-label">Theme Heading <span class="text-danger">*</span></label>
+              <label for="heading" class="col-md-2 col-lg-2 col-form-label">Theme Heading</label>
               <div class="col-md-10 col-lg-10">
-                <input type="text" name="heading" class="form-control" id="heading" value="<?=$heading?>" required>
+                <input type="text" name="heading" class="form-control" id="heading" value="<?=$heading?>">
                 @error('heading') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 
             <div class="row mb-3">
-              <label for="banner_text" class="col-md-2 col-lg-2 col-form-label">Description <span class="text-danger">*</span></label>
+              <label for="banner_text" class="col-md-2 col-lg-2 col-form-label">Description</label>
               <div class="col-md-10 col-lg-10">
-                <textarea name="banner_text" class="form-control" id="banner_text" rows="3" required><?=$banner_text?></textarea>
+                <textarea name="banner_text" class="form-control" id="banner_text" rows="3"><?=$banner_text?></textarea>
                 @error('banner_text') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
