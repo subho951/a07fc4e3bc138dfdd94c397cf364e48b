@@ -26,7 +26,7 @@
 
         .card {
             width: 380px;
-            height: 200px;
+            height: 250px;
             /* aspect-ratio: 1.586; */
             background: #0e0e0e;
             border-radius: 14px;
@@ -137,7 +137,7 @@
             position: absolute;
             bottom: 2px;
             width: 100%;
-            padding: 5px 10px;
+            /* padding: 5px 10px; */
             text-align: center;
             font-size: 11px;
             line-height: 1.4;
