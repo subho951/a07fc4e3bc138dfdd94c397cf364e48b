@@ -2217,7 +2217,7 @@ class ApiController extends Controller
                     $expiry     = date('d/m/Y H:i:s', $getTokenValue['data'][4]);
                     $getUser    = User::where('id', '=', $uId)->first();
                     if($getUser){
-                        $getTheme = Banner::where('status', '=', 1)->first();
+                        $getTheme = Banner::where('status', '=', 1)->orderBy('id', 'DESC')->first();
 
                         $upcoming_events    = [];
                         $upcomingEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '>', date('Y-m-d'))->orderBy('event_date', 'DESC')->get();
