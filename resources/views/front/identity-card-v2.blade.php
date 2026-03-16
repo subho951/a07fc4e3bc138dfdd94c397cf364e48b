@@ -173,14 +173,14 @@
                 <h2><?= (($member)?$member->name:'') ?></h2>
                 <p class="company"><?= (($member)?$member->company_name:'') ?></p>
                 <div class="contact">
-                    <span><i class="fa-solid fa-envelope"></i> <?= (($member)?$member->email:'') ?></span>
-                    <span><i class="fa-solid fa-phone"></i> <?= (($member)?$member->phone:'') ?></span>
+                    <span><?= (($member)?$member->email:'') ?></span>
+                    <span><?= (($member)?$member->phone:'') ?></span>
                 </div>
             </div>
         </div>
         <div class="footer">
             <div class="title"><?= $generalSetting->site_name ?></div>
-            <p><?= $generalSetting->site_mail ?> | <?= $generalSetting->site_url ?></p>
+            <!-- <p><?= $generalSetting->site_mail ?> | <?= $generalSetting->site_url ?></p> -->
         </div>
     </div>
 </body>
