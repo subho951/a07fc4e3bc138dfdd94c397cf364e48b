@@ -932,6 +932,10 @@ class ApiController extends Controller
                         // core
                         $getCores = Core::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
                         if($getCores){
+                            $cores[]      = [
+                                'id'    => '',
+                                'name'  => 'Select Core',
+                            ];
                             foreach($getCores as $row){
                                 $cores[]      = [
                                     'id'    => $row->id,
@@ -1060,7 +1064,7 @@ class ApiController extends Controller
             $apiExtraField      = '';
             $apiExtraData       = '';
             $requestData        = $request->all();       
-            $requiredFields     = ['key', 'source', 'first_name', 'last_name', 'display_name', 'phone'];
+            $requiredFields     = ['key', 'source', 'name', 'phone'];
             $headerData         = $request->header();
             if (!$this->validateArray($requiredFields, $requestData)){
                 $apiStatus          = FALSE;
