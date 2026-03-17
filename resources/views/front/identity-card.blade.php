@@ -129,7 +129,7 @@
             <img src="<?=env('UPLOADS_URL').'user/'.(($member)?$member->photo:'')?>" class="photo">
             <div class="info">
                 <div class="name"><?= (($member)?$member->name:'') ?></div>
-                <div class="phone"><img src="<?=env('FRONT_ASSETS_URL')?>phone-call.png" alt=""> <?= (($member)?$member->phone:'') ?></div>
+                <div class="phone"><img src="<?=env('FRONT_ASSETS_URL')?>phone-call.png" alt=""> <?= (($member)?$member->phone:'') ?>|</div>
                 <div class="address"><img src="<?=env('FRONT_ASSETS_URL')?>gps.png" alt=""> <?= (($member)?$member->address:'') ?></div>
             </div>
         </div>
