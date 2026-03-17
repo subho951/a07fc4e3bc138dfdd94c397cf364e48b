@@ -174,7 +174,7 @@
                 <h2><?= (($member)?$member->name:'') ?></h2>
                 <p class="company"><?= (($member)?$member->company_name:'') ?></p>
                 <div class="contact">
-                    <span><?= (($member)?$member->email:'') ?></span>
+                    <span><?= (($member)?$member->email:'') ?> |</span>
                     <span><?= (($member)?$member->phone:'') ?></span>
                 </div>
             </div>
