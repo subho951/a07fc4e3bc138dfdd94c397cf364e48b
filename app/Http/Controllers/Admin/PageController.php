@@ -61,9 +61,9 @@ class PageController extends Controller
                         'slug'                          => Helper::clean($postData['page_title']),
                         'short_description'             => $postData['short_description'],
                         'long_description'              => $postData['long_description'],
-                        'meta_title'                    => $postData['meta_title'],
-                        'meta_description'              => $postData['meta_description'],
-                        'meta_keywords'                 => $postData['meta_keywords'],
+                        // 'meta_title'                    => $postData['meta_title'],
+                        // 'meta_description'              => $postData['meta_description'],
+                        // 'meta_keywords'                 => $postData['meta_keywords'],
                         // 'page_banner_image'             => $page_banner_image,
                     ];
                     Page::insert($fields);
@@ -113,9 +113,9 @@ class PageController extends Controller
                         'slug'                          => Helper::clean($postData['page_title']),
                         'short_description'             => $postData['short_description'],
                         'long_description'              => $postData['long_description'],
-                        'meta_title'                    => $postData['meta_title'],
-                        'meta_description'              => $postData['meta_description'],
-                        'meta_keywords'                 => $postData['meta_keywords'],
+                        // 'meta_title'                    => $postData['meta_title'],
+                        // 'meta_description'              => $postData['meta_description'],
+                        // 'meta_keywords'                 => $postData['meta_keywords'],
                         // 'page_banner_image'             => $page_banner_image,
                     ];
                     Page::where($this->data['primary_key'], '=', $id)->update($fields);
