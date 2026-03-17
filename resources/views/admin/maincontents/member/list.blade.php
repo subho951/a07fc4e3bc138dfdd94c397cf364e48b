@@ -76,7 +76,7 @@ $controllerRoute = $module['controller_route'];
                     <br><br>
                     <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/points-history/'.Helper::encoded($row->id))?>" class="badge badge-info" title="<?=$module['title']?> Points History"><i class="fa-solid fa-ranking-star"></i>&nbsp;Points History</a>
                     <br><br>
-                    <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/digital-card/'.Helper::encoded($row->id))?>" class="badge badge-warning" title="<?=$module['title']?> Digital Card"><i class="fa-solid fa-id-card"></i>&nbsp;Digital Card</a>
+                    <!-- <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/digital-card/'.Helper::encoded($row->id))?>" class="badge badge-warning" title="<?=$module['title']?> Digital Card"><i class="fa-solid fa-id-card"></i>&nbsp;Digital Card</a> -->
                   </td>
                 </tr>
               <?php } }?>
