@@ -2238,8 +2238,8 @@ class ApiController extends Controller
                             }
                         }
 
-                        $getContent1 = Page::select('long_description', 'short_description')->where('slug', '=', 'about-us')->first();
-                        $getContent2 = Page::select('long_description', 'short_description')->where('slug', '=', 'the-legacy-of-alfa')->first();
+                        $getContent1 = Page::select('long_description', 'short_description')->where('id', '=', 3)->first();
+                        $getContent2 = Page::select('long_description', 'short_description')->where('id', '=', 5)->first();
                         // $getContent3 = Page::select('long_description', 'short_description')->where('slug', '=', 'theme-of-the-year')->first();
 
                         $registered_events    = [];
