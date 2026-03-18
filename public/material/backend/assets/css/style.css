@@ -2316,3 +2316,304 @@ a.nav-link.active{
         border: none;
     }
 }
+
+/* =====================================================
+   Premium Admin Refresh
+   Note: Header + table color combination remains unchanged.
+===================================================== */
+:root {
+    --brand-gold: #fcc312;
+    --brand-gold-deep: #f7b800;
+    --ink-900: #1f2533;
+    --ink-700: #4b586f;
+    --ink-500: #76829a;
+    --surface-0: #ffffff;
+    --line-soft: #e8edf4;
+    --shadow-soft: 0 10px 30px rgba(16, 24, 40, 0.08);
+    --shadow-card: 0 8px 24px rgba(16, 24, 40, 0.06);
+}
+
+body {
+    font-family: "Manrope", "Open Sans", sans-serif;
+    color: var(--ink-900);
+    background:
+        radial-gradient(circle at 8% -2%, rgba(252, 195, 18, 0.13), transparent 24rem),
+        radial-gradient(circle at 100% 8%, rgba(34, 49, 87, 0.08), transparent 22rem),
+        linear-gradient(180deg, #f8faff 0%, #f3f6fb 100%);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.logo span,
+.card-title {
+    font-family: "Sora", "Nunito", sans-serif;
+    letter-spacing: 0.01em;
+}
+
+#main {
+    padding: 24px 32px;
+    animation: mainFade 0.35s ease-out;
+}
+
+@keyframes mainFade {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.header {
+    background-color: #fcc312;
+    box-shadow: 0 10px 30px rgba(171, 120, 0, 0.28);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.36);
+    position: relative;
+    overflow: hidden;
+}
+
+.header::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(102deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 46%);
+    pointer-events: none;
+}
+
+.logo span {
+    color: #fff;
+    font-size: 24px;
+}
+
+.header .toggle-sidebar-btn,
+.header-nav .nav-profile,
+.header-nav .nav-profile span,
+.header-nav .nav-icon {
+    color: #fff;
+}
+
+.visit-site-btn {
+    margin-right: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    background: rgba(31, 37, 51, 0.22);
+    color: #fff !important;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 8px 14px;
+    transition: 0.25s ease;
+}
+
+.visit-site-btn:hover {
+    border-color: #1f2533;
+    background: #1f2533;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+.sidebar {
+    background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+    border-right: 1px solid var(--line-soft);
+    box-shadow: 0 18px 40px rgba(30, 41, 59, 0.08);
+    padding: 18px 14px 22px;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 7px;
+}
+
+.sidebar-nav .nav-link {
+    border-radius: 12px;
+    background: transparent;
+    color: var(--ink-700);
+    font-weight: 700;
+    padding: 11px 14px;
+    border: 1px solid transparent;
+    transition: all 0.22s ease;
+}
+
+.sidebar-nav .nav-link i {
+    color: #a1aabd;
+    transition: all 0.22s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    background: rgba(252, 195, 18, 0.15) !important;
+    color: var(--ink-900) !important;
+    border-color: rgba(252, 195, 18, 0.45);
+    transform: translateX(3px);
+}
+
+.sidebar-nav .nav-link:hover i {
+    color: #7f5c00 !important;
+}
+
+.sidebar-nav .nav-link.active,
+.sidebar-nav .nav-link:not(.collapsed) {
+    background: rgba(252, 195, 18, 0.22) !important;
+    color: var(--ink-900) !important;
+    border-color: rgba(252, 195, 18, 0.55);
+    box-shadow: 0 8px 18px rgba(252, 195, 18, 0.22);
+}
+
+.sidebar-nav .nav-link.active i,
+.sidebar-nav .nav-link:not(.collapsed) i {
+    color: #7f5c00 !important;
+}
+
+.pagetitle {
+    margin-bottom: 14px;
+}
+
+.pagetitle h1 {
+    color: #1f2533;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.breadcrumb {
+    color: var(--ink-500);
+}
+
+.breadcrumb a {
+    color: #68758c;
+}
+
+.breadcrumb .active {
+    color: #374257;
+}
+
+.card {
+    border: 1px solid var(--line-soft);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    background: var(--surface-0);
+}
+
+.card-title {
+    color: #1f2533;
+    font-weight: 700;
+}
+
+.card-body {
+    padding: 24px;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-success,
+.btn-outline-primary,
+.btn-outline-danger,
+.btn-outline-warning {
+    border-width: 1.5px;
+}
+
+.btn-outline-success:hover,
+.btn-outline-primary:hover,
+.btn-outline-danger:hover,
+.btn-outline-warning:hover {
+    transform: translateY(-1px);
+}
+
+.form-control,
+.form-select,
+.choices__inner,
+.choices__input {
+    border-radius: 12px !important;
+    border: 1px solid var(--line-soft) !important;
+    background: #fff !important;
+    min-height: 44px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #f0c858 !important;
+    box-shadow: 0 0 0 4px rgba(252, 195, 18, 0.16) !important;
+}
+
+/* Keep existing table color combination */
+.global_table {
+    border: 1px solid #efd795;
+    border-radius: 14px;
+    box-shadow: var(--shadow-soft);
+}
+
+.global_table thead {
+    background: linear-gradient(135deg, #fcc312, #f7b800);
+}
+
+.global_table tbody tr:nth-child(even) {
+    background: #fffaf0;
+}
+
+.global_table tbody tr:hover {
+    background: rgba(252, 195, 18, 0.1);
+}
+
+.global_table tbody td,
+.global_table tbody th {
+    color: #2e3748;
+}
+
+.datatable-top,
+.datatable-bottom {
+    padding: 14px 2px;
+}
+
+.datatable-selector,
+.datatable-search input {
+    border-radius: 10px !important;
+    border: 1px solid #e4c977 !important;
+}
+
+.datatable-pagination a {
+    border-radius: 8px;
+}
+
+.badge {
+    border-radius: 999px;
+    padding: 7px 11px !important;
+    font-weight: 700;
+}
+
+.footer {
+    border-top: 1px solid var(--line-soft);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 1199px) {
+    #main {
+        padding: 18px;
+    }
+
+    .sidebar {
+        width: 290px;
+    }
+}
+
+@media (max-width: 767px) {
+    .pagetitle h1 {
+        font-size: 22px;
+    }
+
+    .card-body {
+        padding: 18px;
+    }
+
+    .visit-site-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

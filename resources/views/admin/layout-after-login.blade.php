@@ -15,12 +15,13 @@ $pageFunction = ((count($pageName)>2)?$pageName[1]:'');
   <?=$head?>
   <style type="text/css">
     a.nav-link.active {
-      color: #4154f1;
-      background: #f6f9ff;
+      color: #1f2533;
+      background: rgba(252, 195, 18, 0.22);
+      border: 1px solid rgba(252, 195, 18, 0.55);
     }
     .sidebar-nav .nav-link {
       background: none;
-      color: #012970;
+      color: #4b586f;
     }
   </style>
 </head>
