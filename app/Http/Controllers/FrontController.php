@@ -57,7 +57,9 @@ class FrontController extends Controller
     /* home */
         public function index(Request $request)
         {
-            echo 'landing page';
+            $data['generalSetting'] = GeneralSetting::find(1);
+            $data['title'] = (($data['generalSetting'] && $data['generalSetting']->site_name != '') ? $data['generalSetting']->site_name : 'ALFA Network');
+            return view('front.landing', $data);
         }
     /* home */
     /* event checkin */
