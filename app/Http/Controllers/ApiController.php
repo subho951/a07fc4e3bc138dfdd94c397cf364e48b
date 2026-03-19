@@ -1764,6 +1764,7 @@ class ApiController extends Controller
                         if ($search_text == '') {
                             $rows = User::select('id', 'name', 'photo', 'company_name', 'designation', 'points', 'dob', 'doj', 'spouse_name', 'profession', 'alumni', 'industry_id', 'interest_id', 'phone', 'email')
                                                 ->where('status', '=', 1)
+                                                ->where('id', '!=', 5)
                                                 ->orderBy('name', 'ASC')
                                                 ->offset($offset)
                                                 ->limit($limit)
@@ -1789,6 +1790,7 @@ class ApiController extends Controller
                                         'industry_id','interest_id','phone','email'
                                     )
                                     ->where('status', 1)
+                                    ->where('id', '!=', 5)
                                     ->where(function ($q) use ($search_text, $industryIds, $interestIds) {
 
                                         $q->where('name', 'LIKE', "%{$search_text}%")
