@@ -90,7 +90,7 @@ $controllerRoute = $module['controller_route'];
                 <textarea name="description" class="form-control" id="description" rows="5" required><?=$description?></textarea>
               </div>
             </div>
-            <div class="row mb-3">
+            <!-- <div class="row mb-3">
               <label for="attachment" class="col-md-2 col-lg-2 col-form-label">Attachment</label>
               <div class="col-md-10 col-lg-10">
                 <input type="file" name="attachment" class="form-control" id="attachment">
@@ -101,7 +101,7 @@ $controllerRoute = $module['controller_route'];
                   <img src="<?=env('NO_IMAGE')?>" alt="<?=$title?>" class="img-thumbnail" style="width: 150px; height: 150px; margin-top: 10px;">
                 <?php }?>
               </div>
-            </div>
+            </div> -->
             <div class="text-center">
               <button type="submit" class="btn btn-primary"><?=(($row)?'Save':'Add')?></button>
             </div>

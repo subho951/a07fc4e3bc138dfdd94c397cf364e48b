@@ -43,7 +43,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Users</th>
                 <th scope="col">Title</th>
                 <th scope="col">Description</th>
-                <th scope="col">Attachment</th>
+                <!-- <th scope="col">Attachment</th> -->
                 <th scope="col">Send</th>
                 <th scope="col">Action</th>
               </tr>
@@ -79,13 +79,13 @@ $controllerRoute = $module['controller_route'];
                   </td>
                   <td>{{ $value->title }}</td>
                   <td>{{ $value->description }}</td>
-                  <td>
+                  <!-- <td>
                     <?php if($value->attachment != ''){?>
                       <img src="<?=env('UPLOADS_URL').'newsletter/'.$value->attachment?>" class="img-thumbnail" alt="<?=$value->title?>" style="width: 150px; height: 150px; margin-top: 10px; object-fit: contain; object-position: center center;">
                     <?php } else {?>
                       <img src="<?=env('NO_IMAGE')?>" alt="<?=$value->title?>" class="img-thumbnail" style="width: 150px; height: 150px; margin-top: 10px; object-fit: contain; object-position: center center;">
                     <?php }?>
-                  </td>
+                  </td> -->
                   <td>
                       <?php if($value->is_send){?>
                           <span class="badge bg-success">YES</span>

@@ -44,18 +44,19 @@ class NewsletterController extends Controller
                 ];
                 if($this->validate($request, $rules)){
                     /* image */
-                        $imageFile      = $request->file('attachment');
-                        if($imageFile != ''){
-                            $imageName      = $imageFile->getClientOriginalName();
-                            $uploadedFile   = $this->upload_single_file('attachment', $imageName, 'newsletter', 'image');
-                            if($uploadedFile['status']){
-                                $attachment = $uploadedFile['newFilename'];
-                            } else {
-                                $attachment = '';
-                            }
-                        } else {
-                            $attachment = '';
-                        }
+                        // $imageFile      = $request->file('attachment');
+                        // if($imageFile != ''){
+                        //     $imageName      = $imageFile->getClientOriginalName();
+                        //     $uploadedFile   = $this->upload_single_file('attachment', $imageName, 'newsletter', 'image');
+                        //     if($uploadedFile['status']){
+                        //         $attachment = $uploadedFile['newFilename'];
+                        //     } else {
+                        //         $attachment = '';
+                        //     }
+                        // } else {
+                        //     $attachment = '';
+                        // }
+                        $attachment = '';
                     /* image */
                     $postData = [
                         'title'                     => $request->title,
@@ -96,18 +97,19 @@ class NewsletterController extends Controller
                 ];
                 if($this->validate($request, $rules)){
                     /* image */
-                        $imageFile      = $request->file('attachment');
-                        if($imageFile != ''){
-                            $imageName      = $imageFile->getClientOriginalName();
-                            $uploadedFile   = $this->upload_single_file('attachment', $imageName, 'newsletter', 'image');
-                            if($uploadedFile['status']){
-                                $attachment = $uploadedFile['newFilename'];
-                            } else {
-                                $attachment = '';
-                            }
-                        } else {
-                            $attachment = $data['row']->attachment;
-                        }
+                        // $imageFile      = $request->file('attachment');
+                        // if($imageFile != ''){
+                        //     $imageName      = $imageFile->getClientOriginalName();
+                        //     $uploadedFile   = $this->upload_single_file('attachment', $imageName, 'newsletter', 'image');
+                        //     if($uploadedFile['status']){
+                        //         $attachment = $uploadedFile['newFilename'];
+                        //     } else {
+                        //         $attachment = '';
+                        //     }
+                        // } else {
+                        //     $attachment = $data['row']->attachment;
+                        // }
+                        $attachment = '';
                     /* image */
                     $postData = [
                         'title'                     => $request->title,
