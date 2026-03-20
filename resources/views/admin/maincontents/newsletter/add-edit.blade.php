@@ -59,7 +59,6 @@ $controllerRoute = $module['controller_route'];
                     <option value="" selected>Select User Type</option>
                     <option value="0" <?=(($to_users == 0)?'selected':'')?>>All</option>
                     <option value="1" <?=(($to_users == 1)?'selected':'')?>>Users</option>
-                    <option value="2" <?=(($to_users == 2)?'selected':'')?>>Subscribers</option>
                   </select>
               </div>
             </div>
@@ -68,7 +67,7 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                   <select class="form-control" name="users[]" id="users1" multiple>
                     <?php if($allUsers){ foreach($allUsers as $allUser){?>
-                      <option value="<?=$allUser->id?>" <?=((in_array($allUser->id, $users))?'selected':'')?>><?=$allUser->first_name.' '.$allUser->last_name?></option>
+                      <option value="<?=$allUser->id?>" <?=((in_array($allUser->id, $users))?'selected':'')?>><?=$allUser->name?></option>
                     <?php } }?>
                   </select>
               </div>

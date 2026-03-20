@@ -74,9 +74,7 @@ class NewsletterController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'newsletter.add-edit';
             $data['row']                    = [];
-            $data['allUsers']               = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->get();
-            $data['landlords']              = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->where('type', '=', 1)->get();
-            $data['tenants']                = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->where('type', '=', 2)->get();
+            $data['allUsers']               = User::select('id', 'name')->where('status', '=', 1)->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -87,9 +85,8 @@ class NewsletterController extends Controller
             $title                          = $this->data['title'].' Update';
             $page_name                      = 'newsletter.add-edit';
             $data['row']                    = Newsletter::where($this->data['primary_key'], '=', $id)->first();
-            $data['allUsers']               = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->get();
-            $data['landlords']              = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->where('type', '=', 1)->get();
-            $data['tenants']                = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->where('type', '=', 2)->get();
+            $data['allUsers']               = User::select('id', 'name')->where('status', '=', 1)->get();
+
             if($request->isMethod('post')){
                 $postData = $request->all();
                 $rules = [
@@ -196,11 +193,9 @@ class NewsletterController extends Controller
         $postData           = $request->all();
         $user_type          = $postData['user_type'];
         if($user_type == 0){
-            $users                  = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->get();
+            $users                  = User::select('id', 'name')->where('status', '=', 1)->get();
         } elseif($user_type == 1){
-            $users                  = User::select('id', 'first_name', 'last_name')->where('status', '=', 1)->where('type', '=', 1)->get();
-        } elseif($user_type == 2){
-            $users                  = Subscriber::select('id', 'email')->where('status', '=', 1)->get();
+            $users                  = User::select('id', 'name')->where('status', '=', 1)->where('type', '=', 1)->get();
         }
         /* industry segment dropdown */
             $user_selects                    = [];
@@ -209,7 +204,7 @@ class NewsletterController extends Controller
                     if($user_type != 2){
                         $user_selects[]          = [
                             'id'    => $user->id,
-                            'label' => $user->first_name.' '.$user->last_name,
+                            'label' => $user->name,
                         ];
                     } else {
                         $user_selects[]          = [

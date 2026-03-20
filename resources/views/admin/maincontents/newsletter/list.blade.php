@@ -69,10 +69,10 @@ $controllerRoute = $module['controller_route'];
                       <?php
                       $users = json_decode($value->users);
                       if(!empty($users)){ for($u=0;$u<count($users);$u++){
-                        $user = User::select('first_name', 'last_name')->where('id', '=', $users[$u])->first();
+                        $user = User::select('name')->where('id', '=', $users[$u])->first();
                       ?>
                         <div class="col-md-4">
-                          <span class="badge bg-primary"><?=(($user)?$user->first_name.' '.$user->last_name:'')?></span>
+                          <span class="badge bg-primary"><?=(($user)?$user->name:'')?></span>
                         </div>
                       <?php } }?>
                     </div>
