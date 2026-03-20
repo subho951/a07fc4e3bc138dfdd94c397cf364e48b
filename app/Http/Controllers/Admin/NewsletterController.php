@@ -3,16 +3,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+
+use App\Services\PaymentService;
+use Illuminate\Support\Facades\File;
+use App\Services\FirebaseService;
 use App\Models\GeneralSetting;
 use App\Models\User;
 use App\Models\Newsletter;
-use App\Models\Subscriber;
-use Auth;
+use App\Models\Notification;
+use App\Models\UserDevice;
+
+use Hash;
 use Session;
 use Helper;
-use Hash;
+use Auth;
+
 class NewsletterController extends Controller
 {
     public function __construct()
@@ -158,29 +163,65 @@ class NewsletterController extends Controller
         $id             = Helper::decoded($id);
         $model          = Newsletter::find($id);
         /* mail function */
-            $generalSetting             = GeneralSetting::find('1');
-            $subject                    = $generalSetting->site_name.' :: '.$model->title;
-            $requestData                = [
-                'title'         => $model->title,
-                'description'   => $model->description,
-                'attachment'    => $model->attachment,
-            ];
-            $message                    = view('email-templates.newsletter',$requestData);
-            $attachment  ='';
-            if($model->attachment != ''){
-                // $attachment = env('UPLOADS_URL').'newsletter/'.$model->attachment;
-                $attachment = public_path("uploads/newsletter/".$model->attachment);
-            }
-            // echo $attachment;die;
-            $users = json_decode($model->users);
-            if(!empty($users)){ for($u=0;$u<count($users);$u++){
-                $user = User::select('email')->where('id', '=', $users[$u])->first();
-                $to_email = (($user)?$user->email:'');
-                if($to_email != ''){
-                    $this->sendMail(strtolower($to_email), $subject, $message, $attachment);
-                }
-            } }
+            // $generalSetting             = GeneralSetting::find('1');
+            // $subject                    = $generalSetting->site_name.' :: '.$model->title;
+            // $requestData                = [
+            //     'title'         => $model->title,
+            //     'description'   => $model->description,
+            //     'attachment'    => $model->attachment,
+            // ];
+            // $message                    = view('email-templates.newsletter',$requestData);
+            // $attachment  ='';
+            // if($model->attachment != ''){
+            //     // $attachment = env('UPLOADS_URL').'newsletter/'.$model->attachment;
+            //     $attachment = public_path("uploads/newsletter/".$model->attachment);
+            // }
+            // // echo $attachment;die;
+            // $users = json_decode($model->users);
+            // if(!empty($users)){ for($u=0;$u<count($users);$u++){
+            //     $user = User::select('email')->where('id', '=', $users[$u])->first();
+            //     $to_email = (($user)?$user->email:'');
+            //     if($to_email != ''){
+            //         $this->sendMail(strtolower($to_email), $subject, $message, $attachment);
+            //     }
+            // } }
         /* mail function */
+
+        // push notification send
+            $users = [];
+            $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+            
+            if($getTokens){
+                foreach($getTokens as $getToken){
+                    $token = $getToken->fcm_token;
+
+                    $title = 'Profile updated';
+                    $message = 'Profile info has been updated at ' . date('d.m.Y h:i A');
+
+                    $image = (($getUser->photo != '')?env('UPLOADS_URL').'user/'.$getUser->photo:env('NO_IMAGE'));
+
+                    $data = [
+                        "profile_id" => $uId,
+                        "type" => 'profile'
+                    ];
+
+                    $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                    // Helper::pr($firebase_response);
+
+                    $users[]            = $uId;
+                    $notificationFields = [
+                        'title'             => $title,
+                        'description'       => $message,
+                        'to_users'          => $uId,
+                        'users'             => json_encode($users),
+                        'is_send'           => 1,
+                        'send_timestamp'    => date('Y-m-d H:i:s'),
+                    ];
+                    Notification::insert($notificationFields);
+                }
+            }
+        // push notification send
+
         $model->is_send = 1;
         $model->save();
         return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' Send Successfully !!!');
