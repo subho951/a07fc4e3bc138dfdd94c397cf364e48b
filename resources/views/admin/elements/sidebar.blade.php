@@ -127,9 +127,9 @@ if(!empty($parameters)){
   <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'newsletter')?'active':'')?>" href="{{ url('admin/newsletter/list') }}">
       <i class="fa fa-file-text"></i>
-      <span>Newsletter</span>
+      <span>Notifications</span>
     </a>
-  </li><!-- End Newsletter Nav -->
+  </li><!-- End Notifications Nav -->
 
 
   <li class="nav-item">
