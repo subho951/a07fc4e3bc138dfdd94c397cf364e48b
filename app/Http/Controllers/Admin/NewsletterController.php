@@ -23,7 +23,7 @@ class NewsletterController extends Controller
     public function __construct()
     {        
         $this->data = array(
-            'title'             => 'Newsletter',
+            'title'             => 'Notification',
             'controller'        => 'NewsletterController',
             'controller_route'  => 'newsletter',
             'primary_key'       => 'id',
