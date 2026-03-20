@@ -188,36 +188,39 @@ class NewsletterController extends Controller
         /* mail function */
 
         // push notification send
-            $users = [];
-            $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
-            
-            if($getTokens){
-                foreach($getTokens as $getToken){
-                    $token = $getToken->fcm_token;
+            $uids = [];
+            $users = json_decode($model->users);
+            if(!empty($users)){
+                for($u=0;$u<count($users);$u++){
+                    $uId = $users[$u];
+                    $getTokens = UserDevice::select('fcm_token', 'user_id')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                    if($getTokens){
+                        foreach($getTokens as $getToken){
+                            $token = $getToken->fcm_token;
 
-                    $title = 'Profile updated';
-                    $message = 'Profile info has been updated at ' . date('d.m.Y h:i A');
+                            $title = $model->title;
+                            $message = $model->description;
 
-                    $image = (($getUser->photo != '')?env('UPLOADS_URL').'user/'.$getUser->photo:env('NO_IMAGE'));
+                            $data = [
+                                "profile_id" => $uId,
+                                "type" => 'profile'
+                            ];
 
-                    $data = [
-                        "profile_id" => $uId,
-                        "type" => 'profile'
-                    ];
+                            $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                            // Helper::pr($firebase_response);
 
-                    $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
-                    // Helper::pr($firebase_response);
-
-                    $users[]            = $uId;
-                    $notificationFields = [
-                        'title'             => $title,
-                        'description'       => $message,
-                        'to_users'          => $uId,
-                        'users'             => json_encode($users),
-                        'is_send'           => 1,
-                        'send_timestamp'    => date('Y-m-d H:i:s'),
-                    ];
-                    Notification::insert($notificationFields);
+                            $uids[]            = $uId;
+                            $notificationFields = [
+                                'title'             => $title,
+                                'description'       => $message,
+                                'to_users'          => $uId,
+                                'users'             => json_encode($uids),
+                                'is_send'           => 1,
+                                'send_timestamp'    => date('Y-m-d H:i:s'),
+                            ];
+                            Notification::insert($notificationFields);
+                        }
+                    }
                 }
             }
         // push notification send
