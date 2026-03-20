@@ -125,6 +125,14 @@ if(!empty($parameters)){
   </li><!-- End Theme Nav -->
 
   <li class="nav-item">
+    <a class="nav-link <?=(($pageSegment == 'newsletter')?'active':'')?>" href="{{ url('admin/newsletter/list') }}">
+      <i class="fa fa-file-text"></i>
+      <span>Newsletter</span>
+    </a>
+  </li><!-- End Newsletter Nav -->
+
+
+  <li class="nav-item">
     <a class="nav-link <?=(($pageSegment == 'page')?'active':'')?>" href="{{ url('admin/page/list') }}">
       <i class="fa fa-file-text"></i>
       <span>Pages</span>

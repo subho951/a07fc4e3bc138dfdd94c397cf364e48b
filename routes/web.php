@@ -150,6 +150,16 @@ Route::get('pages/{id}', [FrontController::class, 'page']);
                 Route::get('event/change-status/{id}', 'EventController@change_status');
                 Route::get('event/registered-users/{id}', 'EventController@registered_users');
             /* event */
+            /* newsletter */
+                Route::get('newsletter/list', 'NewsletterController@list');
+                Route::match(['get', 'post'], 'newsletter/add', 'NewsletterController@add');
+                Route::match(['get', 'post'], 'newsletter/edit/{id}', 'NewsletterController@edit');
+                Route::get('newsletter/delete/{id}', 'NewsletterController@delete');
+                Route::get('newsletter/change-status/{id}', 'NewsletterController@change_status');
+                Route::get('newsletter/send/{id}', 'NewsletterController@send');
+                Route::post('newsletter/get-user', 'NewsletterController@getUser');
+                Route::get('newsletter/subscriber-list', 'NewsletterController@subscriber_list');
+            /* newsletter */
         });
     });
 /* Admin Panel */
