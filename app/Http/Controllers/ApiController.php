@@ -1916,7 +1916,7 @@ class ApiController extends Controller
                                                             )
                                                             ->where('category_id', $row->id)
                                                             ->where('status', 1)
-                                                            ->orderBy('id', 'DESC')
+                                                            ->orderBy('name', 'ASC')
                                                             ->get();
                                 $privilege_detail = [];
                                 if($privileges){
@@ -2000,7 +2000,7 @@ class ApiController extends Controller
                         }
 
                         // member
-                        $getMembers = User::select('id', 'name', 'points', 'photo')->where('status', '=', 1)->orderBy('points', 'DESC')->limit(10)->get();
+                        $getMembers = User::select('id', 'name', 'points', 'photo')->where('status', '=', 1)->where('id', '!=', 5)->orderBy('points', 'DESC')->get();
                         if($getMembers){
                             foreach($getMembers as $row){
                                 $member_leaderboard[]    = [
