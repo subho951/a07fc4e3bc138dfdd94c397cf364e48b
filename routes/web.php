@@ -157,8 +157,6 @@ Route::get('pages/{id}', [FrontController::class, 'page']);
                 Route::get('newsletter/delete/{id}', 'NewsletterController@delete');
                 Route::get('newsletter/change-status/{id}', 'NewsletterController@change_status');
                 Route::get('newsletter/send/{id}', 'NewsletterController@send');
-                Route::post('newsletter/get-user', 'NewsletterController@getUser');
-                Route::get('newsletter/subscriber-list', 'NewsletterController@subscriber_list');
             /* newsletter */
         });
     });

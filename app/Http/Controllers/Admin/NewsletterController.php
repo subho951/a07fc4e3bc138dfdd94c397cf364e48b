@@ -32,13 +32,6 @@ class NewsletterController extends Controller
             $data['rows']                   = Newsletter::where('status', '!=', 3)->orderBy('id', 'DESC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
-        public function subscriber_list(){
-            $data['module']                 = $this->data;
-            $title                          = 'Subscriber List';
-            $page_name                      = 'newsletter.subscriber-list';
-            $data['rows']                   = Subscriber::where('status', '!=', 3)->orderBy('id', 'DESC')->get();
-            echo $this->admin_after_login_layout($title,$page_name,$data);
-        }
     /* list */
     /* add */
         public function add(Request $request){
