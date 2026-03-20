@@ -74,7 +74,7 @@ class NewsletterController extends Controller
             $title                          = $this->data['title'].' Add';
             $page_name                      = 'newsletter.add-edit';
             $data['row']                    = [];
-            $data['allUsers']               = User::select('id', 'name')->where('status', '=', 1)->get();
+            $data['allUsers']               = User::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'Asc')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
@@ -85,7 +85,7 @@ class NewsletterController extends Controller
             $title                          = $this->data['title'].' Update';
             $page_name                      = 'newsletter.add-edit';
             $data['row']                    = Newsletter::where($this->data['primary_key'], '=', $id)->first();
-            $data['allUsers']               = User::select('id', 'name')->where('status', '=', 1)->get();
+            $data['allUsers']               = User::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'Asc')->get();
 
             if($request->isMethod('post')){
                 $postData = $request->all();

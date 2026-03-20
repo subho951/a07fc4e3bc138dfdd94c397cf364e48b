@@ -2,10 +2,16 @@
 use App\Helpers\Helper;
 $controllerRoute = $module['controller_route'];
 ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+<script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
 
-
-
-
+<style type="text/css">
+    .choices__list--multiple .choices__item {
+        background-color: #48974e;
+        border: 1px solid #48974e;
+    }
+</style>
 <div class="pagetitle">
   <h1><?=$page_header?></h1>
   <nav>
@@ -65,7 +71,7 @@ $controllerRoute = $module['controller_route'];
             <div class="row mb-3">
               <label for="faq_category_id" class="col-md-2 col-lg-2 col-form-label">Users</label>
               <div class="col-md-10 col-lg-10">
-                  <select class="form-control" name="users[]" id="users1" multiple>
+                  <select class="form-control" name="users[]" id="choices-multiple-remove-button" multiple>
                     <?php if($allUsers){ foreach($allUsers as $allUser){?>
                       <option value="<?=$allUser->id?>" <?=((in_array($allUser->id, $users))?'selected':'')?>><?=$allUser->name?></option>
                     <?php } }?>
@@ -105,3 +111,15 @@ $controllerRoute = $module['controller_route'];
     </div>
   </div>
 </section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+      var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+          removeItemButton: true,
+          maxItemCount: 30,
+          searchResultLimit: 30,
+          renderChoiceLimit: 30
+      });
+  });
+</script>
