@@ -1595,7 +1595,7 @@ class ApiController extends Controller
                         $upcoming_events    = [];
                         $past_events        = [];
 
-                        $upcomingEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '>', date('Y-m-d'))->orderBy('event_date', 'DESC')->get();
+                        $upcomingEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '>=', date('Y-m-d'))->orderBy('event_date', 'DESC')->get();
                         if($upcomingEvents){
                             foreach($upcomingEvents as $row){
                                 $upcoming_events[]      = [
@@ -2226,7 +2226,7 @@ class ApiController extends Controller
                         $getTheme = Banner::where('status', '=', 1)->orderBy('id', 'DESC')->first();
 
                         $upcoming_events    = [];
-                        $upcomingEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '>', date('Y-m-d'))->orderBy('event_date', 'DESC')->get();
+                        $upcomingEvents = Event::select('id', 'title', 'description', 'description', 'venue', 'event_date', 'photo', 'event_time')->where('status', '=', 1)->where('event_date', '>=', date('Y-m-d'))->orderBy('event_date', 'DESC')->get();
                         if($upcomingEvents){
                             foreach($upcomingEvents as $row){
                                 $upcoming_events[]      = [
