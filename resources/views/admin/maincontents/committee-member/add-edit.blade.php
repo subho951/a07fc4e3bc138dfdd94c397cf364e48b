@@ -30,14 +30,25 @@ $controllerRoute = $module['controller_route'];
     </div>
     <?php
     if($row){
-      $committee_category_id              = $row->committee_category_id;
+      $committee_category_ids             = array_values(array_filter(array_map('trim', explode(',', (string)$row->committee_category_id)), function($id){
+        return $id !== '';
+      }));
       $member_id                          = $row->id;
       $committee_member_type              = $row->committee_member_type;
     } else {
-      $committee_category_id              = '';
+      $committee_category_ids             = [];
       $member_id                          = '';
       $committee_member_type              = '';
     }
+
+    $selected_committee_category_ids      = old('committee_category_id', $committee_category_ids);
+    if(!is_array($selected_committee_category_ids)){
+      $selected_committee_category_ids    = array_values(array_filter(array_map('trim', explode(',', (string)$selected_committee_category_ids)), function($id){
+        return $id !== '';
+      }));
+    }
+    $selected_member_id                   = old('member_id', $member_id);
+    $selected_committee_member_type       = old('committee_member_type', $committee_member_type);
     ?>
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -59,13 +70,14 @@ $controllerRoute = $module['controller_route'];
             <div class="row mb-3">
               <label for="committee_category_id" class="col-md-2 col-lg-2 col-form-label">Committee Category <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <select name="committee_category_id" class="form-control" id="committee_category_id" required>
-                    <option value="" selected>Select Committee Category</option>
+                <select name="committee_category_id[]" class="form-control" id="committee_category_id" multiple required>
                   <?php if($cats){ foreach($cats as $cat){?>
-                    <option value="<?= $cat->id?>" <?= (($committee_category_id == $cat->id)?'selected':'') ?>><?= $cat->name?></option>
+                    <option value="<?= $cat->id?>" <?= ((in_array((string)$cat->id, $selected_committee_category_ids))?'selected':'') ?>><?= $cat->name?></option>
                   <?php } }?>
                 </select>
+                <small class="text-muted">Press Ctrl (Windows) or Command (Mac) to select multiple categories.</small><br>
                 @error('committee_category_id') <span class="text-danger">{{ $message }}</span> @enderror
+                @error('committee_category_id.*') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>
 
@@ -75,7 +87,7 @@ $controllerRoute = $module['controller_route'];
                 <select name="member_id" class="form-control" id="member_id" required>
                     <option value="" selected>Select Member</option>
                   <?php if($members){ foreach($members as $member){?>
-                    <option value="<?= $member->id?>" <?= (($member_id == $member->id)?'selected':'') ?>><?= $member->name?></option>
+                    <option value="<?= $member->id?>" <?= (($selected_member_id == $member->id)?'selected':'') ?>><?= $member->name?></option>
                   <?php } }?>
                 </select>
                 @error('member_id') <span class="text-danger">{{ $message }}</span> @enderror
@@ -85,8 +97,8 @@ $controllerRoute = $module['controller_route'];
             <div class="row mb-3">
               <label for="committee_member_type" class="col-md-2 col-lg-2 col-form-label">Type <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <input type="radio" name="committee_member_type" id="type1" value="1" <?= (($committee_member_type == 1)?'checked':'') ?> required>&nbsp;<label for="type1">Committee Members</label>
-                <input type="radio" name="committee_member_type" id="type2" value="0" <?= (($committee_member_type == 0)?'checked':'') ?> required>&nbsp;<label for="type2">Sub Committee Members</label>
+                <input type="radio" name="committee_member_type" id="type1" value="1" <?= (($selected_committee_member_type == 1)?'checked':'') ?> required>&nbsp;<label for="type1">Committee Members</label>
+                <input type="radio" name="committee_member_type" id="type2" value="0" <?= (($selected_committee_member_type == 0)?'checked':'') ?> required>&nbsp;<label for="type2">Sub Committee Members</label>
                 @error('committee_member_type') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>

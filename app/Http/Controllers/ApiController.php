@@ -1443,7 +1443,8 @@ class ApiController extends Controller
                                                                 'committee_member_type',
                                                                 'designation',
                                                             )
-                                                            ->where('committee_category_id', $cat->id)
+                                                            ->whereNotNull('committee_category_id')
+                                                            ->whereRaw("FIND_IN_SET(?, REPLACE(committee_category_id, ' ', '')) > 0", [$cat->id])
                                                             ->where('status', 1)
                                                             ->orderBy('name', 'ASC')
                                                             ->get();

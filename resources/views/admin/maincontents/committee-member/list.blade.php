@@ -53,7 +53,7 @@ $controllerRoute = $module['controller_route'];
               <?php if($rows){ $sl=1; foreach($rows as $row){?>
                 <tr>
                   <th scope="row"><?=$sl++?></th>
-                  <td><?=$row->committee_category_name?></td>
+                  <td><?=($row->committee_category_names ?? '')?></td>
                   <td><?=(($row->committee_member_type)?'Committee Members':'Sub Committee Members')?></td>
                   <td><?=$row->name?></td>
                   <td><?=$row->email?></td>
