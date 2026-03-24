@@ -68,9 +68,9 @@ $controllerRoute = $module['controller_route'];
             @csrf
 
             <div class="row mb-3">
-              <label for="committee_category_id" class="col-md-2 col-lg-2 col-form-label">Committee Category <span class="text-danger">*</span></label>
+              <label for="choices-multiple-remove-button" class="col-md-2 col-lg-2 col-form-label">Committee Category <span class="text-danger">*</span></label>
               <div class="col-md-10 col-lg-10">
-                <select name="committee_category_id[]" class="form-control" id="committee_category_id" multiple required>
+                <select name="committee_category_id[]" class="form-control" id="choices-multiple-remove-button" multiple required>
                   <?php if($cats){ foreach($cats as $cat){?>
                     <option value="<?= $cat->id?>" <?= ((in_array((string)$cat->id, $selected_committee_category_ids))?'selected':'') ?>><?= $cat->name?></option>
                   <?php } }?>
@@ -114,3 +114,15 @@ $controllerRoute = $module['controller_route'];
 </section>
 <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+      var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+          removeItemButton: true,
+          maxItemCount: 30,
+          searchResultLimit: 30,
+          renderChoiceLimit: 30
+      });
+  });
+</script>
