@@ -70,7 +70,8 @@ class CommitteeMemberController extends Controller
             $page_name                      = 'committee-member.add-edit';
             $data['row']                    = [];
             $data['cats']                   = CommitteeCategory::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
-            $data['members']                = User::select('id', 'name')->where('status', '=', 1)->whereNull('committee_category_id')->orderBy('name', 'ASC')->get();
+            // $data['members']                = User::select('id', 'name')->where('status', '=', 1)->whereNull('committee_category_id')->orderBy('name', 'ASC')->get();
+            $data['members']                = User::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
     /* add */
