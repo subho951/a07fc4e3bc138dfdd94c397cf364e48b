@@ -22,6 +22,7 @@ Route::get('event-checkin/{id}', [FrontController::class, 'eventCheckin']);
 Route::get('delete-account', [FrontController::class, 'deleteaccountview']);
 Route::post('delete-account-update', [FrontController::class, 'deleteaccount'])->name('delete-account.store');
 Route::get('pages/{id}', [FrontController::class, 'page']);
+Route::get('cron/birthday-wish', [FrontController::class, 'birthdayWishCron']);
 
 /* Admin Panel */
     Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function(){

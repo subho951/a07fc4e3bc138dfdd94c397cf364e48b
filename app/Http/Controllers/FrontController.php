@@ -250,6 +250,162 @@ class FrontController extends Controller
             // }
         }
     /* event checkin */
+    /* birthday cron */
+        public function birthdayWishCron(Request $request)
+        {
+            $now = Carbon::now('Asia/Calcutta');
+            $today = $now->format('Y-m-d');
+            $monthDay = $now->format('m-d');
+
+            $secureCronKey = env('CRON_KEY', '');
+            if($secureCronKey != '' && $request->query('key') != $secureCronKey){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid cron key.',
+                ], 401);
+            }
+
+            $generalSetting = GeneralSetting::find(1);
+            $siteName = (($generalSetting && $generalSetting->site_name != '') ? $generalSetting->site_name : 'ALFA Network');
+            $themeColor = (($generalSetting && $generalSetting->theme_color != '') ? $generalSetting->theme_color : '#FCC312');
+            $fontColor = (($generalSetting && $generalSetting->font_color != '') ? $generalSetting->font_color : '#1F2937');
+            $fontFamily = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+
+            $birthdayUsers = User::select('id', 'name', 'email', 'photo', 'dob')
+                                ->where('status', '=', 1)
+                                ->whereNotNull('dob')
+                                ->where('dob', '!=', '')
+                                ->whereRaw("DATE_FORMAT(dob, '%m-%d') = ?", [$monthDay])
+                                ->get();
+
+            $report = [
+                'date' => $today,
+                'total_birthday_users' => $birthdayUsers->count(),
+                'push_sent' => 0,
+                'push_skipped' => 0,
+                'email_sent' => 0,
+                'email_skipped' => 0,
+                'errors' => [],
+            ];
+
+            if($birthdayUsers->isEmpty()){
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Birthday cron executed successfully.',
+                    'report' => $report,
+                ]);
+            }
+
+            foreach($birthdayUsers as $user){
+                $userName = (($user->name != '') ? $user->name : 'Member');
+                $pushTitle = 'Happy Birthday, '.$userName.'!';
+                $pushMessage = 'Wishing you joy, success and a fantastic year ahead from '.$siteName.'.';
+                $image = (($user->photo != '') ? env('UPLOADS_URL').'user/'.$user->photo : env('NO_IMAGE'));
+
+                $alreadyPushedToday = Notification::where('to_users', '=', $user->id)
+                                                    ->where('title', '=', $pushTitle)
+                                                    ->whereDate('send_timestamp', '=', $today)
+                                                    ->exists();
+
+                if(!$alreadyPushedToday){
+                    $tokenSentCount = 0;
+                    $tokens = UserDevice::select('fcm_token')
+                                        ->where('user_id', '=', $user->id)
+                                        ->where('published', '=', 1)
+                                        ->where('fcm_token', '!=', '')
+                                        ->get();
+
+                    if($tokens){
+                        foreach($tokens as $device){
+                            try {
+                                FirebaseService::sendNotification(
+                                    $device->fcm_token,
+                                    $pushTitle,
+                                    $pushMessage,
+                                    [
+                                        'member_id' => $user->id,
+                                        'type' => 'birthday'
+                                    ],
+                                    $image
+                                );
+                                $tokenSentCount++;
+                            } catch (\Exception $e) {
+                                $report['errors'][] = 'Push failed for user ID '.$user->id.': '.$e->getMessage();
+                            }
+                        }
+                    }
+
+                    if($tokenSentCount > 0){
+                        $notificationFields = [
+                            'title'             => $pushTitle,
+                            'description'       => $pushMessage,
+                            'to_users'          => $user->id,
+                            'users'             => json_encode([$user->id]),
+                            'is_send'           => 1,
+                            'send_timestamp'    => $now->format('Y-m-d H:i:s'),
+                        ];
+                        Notification::insert($notificationFields);
+                        $report['push_sent']++;
+                    } else {
+                        $report['push_skipped']++;
+                    }
+                } else {
+                    $report['push_skipped']++;
+                }
+
+                if($user->email != ''){
+                    $subject = $siteName.' :: Happy Birthday '.$userName;
+                    $alreadyEmailedToday = EmailLog::where('email', '=', $user->email)
+                                                    ->where('subject', '=', $subject)
+                                                    ->whereDate('created_at', '=', $today)
+                                                    ->exists();
+
+                    if(!$alreadyEmailedToday){
+                        $mailData = [
+                            'name' => $userName,
+                            'site_name' => $siteName,
+                            'generalSetting' => $generalSetting,
+                            'theme_color' => $themeColor,
+                            'font_color' => $fontColor,
+                            'font_family' => $fontFamily,
+                            'wish_message' => 'May your special day be filled with happiness, meaningful moments and continued success.',
+                        ];
+
+                        $message = view('email-templates.birthday-wish', $mailData);
+                        $mailStatus = $this->sendMail(strtolower($user->email), $subject, $message);
+
+                        $emailLogFields = [
+                            'name' => $userName,
+                            'email' => strtolower($user->email),
+                            'subject' => $subject,
+                            'message' => $message,
+                            'status' => (($mailStatus) ? 1 : 0),
+                            'created_at' => $now->format('Y-m-d H:i:s'),
+                            'updated_at' => $now->format('Y-m-d H:i:s'),
+                        ];
+                        EmailLog::insert($emailLogFields);
+
+                        if($mailStatus){
+                            $report['email_sent']++;
+                        } else {
+                            $report['email_skipped']++;
+                            $report['errors'][] = 'Email sending failed for user ID '.$user->id.'.';
+                        }
+                    } else {
+                        $report['email_skipped']++;
+                    }
+                } else {
+                    $report['email_skipped']++;
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Birthday cron executed successfully.',
+                'report' => $report,
+            ]);
+        }
+    /* birthday cron */
     /* delete account */
         public function deleteaccountview(Request $request)
         {        
