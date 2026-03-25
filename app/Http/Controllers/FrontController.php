@@ -299,8 +299,9 @@ class FrontController extends Controller
 
             foreach($birthdayUsers as $user){
                 $userName = (($user->name != '') ? $user->name : 'Member');
-                $pushTitle = 'Happy Birthday, '.$userName.'!';
-                $pushMessage = 'Wishing you joy, success and a fantastic year ahead from '.$siteName.'.';
+                $pushTitle = 'Happy Birthday, '.$userName.'.';
+                // $pushMessage = 'Wishing you joy, success and a fantastic year ahead from '.$siteName.'.';
+                $pushMessage = 'Wishing YOU the Best Year Ahead!';
                 $image = (($user->photo != '') ? env('UPLOADS_URL').'user/'.$user->photo : env('NO_IMAGE'));
 
                 $alreadyPushedToday = Notification::where('to_users', '=', $user->id)
