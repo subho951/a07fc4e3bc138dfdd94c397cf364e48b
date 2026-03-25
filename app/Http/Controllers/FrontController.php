@@ -277,6 +277,7 @@ class FrontController extends Controller
                                 ->where('dob', '!=', '')
                                 ->whereRaw("DATE_FORMAT(dob, '%m-%d') = ?", [$monthDay])
                                 ->get();
+            Helper::pr($birthdayUsers);
 
             $report = [
                 'date' => $today,
