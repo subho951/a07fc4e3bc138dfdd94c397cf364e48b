@@ -196,11 +196,11 @@ $controllerRoute = $module['controller_route'];
                     <select class="form-control" name="event_answer_type[]" required="">
                       <option value="" selected>Select Type</option>
                       <option value="INPUTBOX" <?= (($eventQuestion->event_answer_type == 'INPUTBOX')?'selected':'') ?>>INPUTBOX</option>
-                      <option value="TEXTAREA" <?= (($eventQuestion->event_answer_type == 'TEXTAREA')?'selected':'') ?>>TEXTAREA</option>
-                      <option value="RADIO" <?= (($eventQuestion->event_answer_type == 'RADIO')?'selected':'') ?>>RADIO</option>
-                      <option value="CHECKBOX" <?= (($eventQuestion->event_answer_type == 'CHECKBOX')?'selected':'') ?>>CHECKBOX</option>
+                      <!-- <option value="TEXTAREA" <?= (($eventQuestion->event_answer_type == 'TEXTAREA')?'selected':'') ?>>TEXTAREA</option> -->
+                      <!-- <option value="RADIO" <?= (($eventQuestion->event_answer_type == 'RADIO')?'selected':'') ?>>RADIO</option> -->
+                      <!-- <option value="CHECKBOX" <?= (($eventQuestion->event_answer_type == 'CHECKBOX')?'selected':'') ?>>CHECKBOX</option> -->
                       <option value="DROPDOWN" <?= (($eventQuestion->event_answer_type == 'DROPDOWN')?'selected':'') ?>>DROPDOWN</option>
-                      <option value="FILE" <?= (($eventQuestion->event_answer_type == 'FILE')?'selected':'') ?>>FILE</option>
+                      <!-- <option value="FILE" <?= (($eventQuestion->event_answer_type == 'FILE')?'selected':'') ?>>FILE</option> -->
                     </select>
                   </div>
                   <div class="col-md-4">
