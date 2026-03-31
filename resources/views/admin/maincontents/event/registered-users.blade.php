@@ -31,7 +31,7 @@ $controllerRoute = $module['controller_route'];
       @endif
     </div>
     <?php
-    $regUserCount = UserRegEvent::where('eventid', '=', $event_id)->where('status', '=', 1)->count();
+    $regUserCount = UserRegEvent::where('eventid', '=', $event_id)->count();
     $regAttendedUserCount = UserRegEvent::where('eventid', '=', $event_id)->where('status', '=', 1)->where('entry_timestamp', '!=', NULL)->count();
     ?>
     <div class="col-lg-12">
