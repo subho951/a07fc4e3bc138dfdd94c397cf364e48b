@@ -276,12 +276,39 @@ class FrontController extends Controller
                                 ->whereNotNull('dob')
                                 ->where('dob', '!=', '')
                                 ->whereRaw("DATE_FORMAT(dob, '%m-%d') = ?", [$monthDay])
+                                ->orderBy('name', 'ASC')
                                 ->get();
-            // Helper::pr($birthdayUsers);
+            $birthdayUserIds = $birthdayUsers->pluck('id')->values()->all();
+            $birthdayNames = $birthdayUsers->pluck('name')->filter()->values()->all();
+            $birthdayNamesText = $this->formatBirthdayNames($birthdayNames);
+            $birthdayCount = count($birthdayUserIds);
+            $pushTitle = 'Birthday Celebration Today';
+            $pushMessage = ($birthdayCount === 1)
+                ? 'Today we are celebrating the birthday of ' . $birthdayNamesText . '.'
+                : 'Today we are celebrating the birthdays of ' . $birthdayNamesText . '.';
+            $emailSubject = $siteName . ' :: ' . $pushTitle;
+            $emailWishMessage = 'Please join us in wishing ' . $birthdayNamesText . ' a wonderful birthday and an amazing year ahead.';
+
+            $broadcastMembers = User::select('id', 'name', 'email')
+                                    ->where('status', '=', 1)
+                                    ->orderBy('name', 'ASC')
+                                    ->get();
+            $broadcastRecipientIds = $broadcastMembers->pluck('id')->values()->all();
+            $broadcastDevices = collect();
+            if(!empty($broadcastRecipientIds)){
+                $broadcastDevices = UserDevice::select('user_id', 'fcm_token')
+                                            ->whereIn('user_id', $broadcastRecipientIds)
+                                            ->where('published', '=', 1)
+                                            ->where('fcm_token', '!=', '')
+                                            ->get()
+                                            ->groupBy('user_id');
+            }
 
             $report = [
                 'date' => $today,
                 'total_birthday_users' => $birthdayUsers->count(),
+                'broadcast_recipients' => $broadcastMembers->count(),
+                'birthday_names' => (($birthdayCount > 0) ? $birthdayNamesText : ''),
                 'push_sent' => 0,
                 'push_skipped' => 0,
                 'email_sent' => 0,
@@ -297,27 +324,20 @@ class FrontController extends Controller
                 ]);
             }
 
-            foreach($birthdayUsers as $user){
-                $userName = (($user->name != '') ? $user->name : 'Member');
-                $pushTitle = 'Happy Birthday, '.$userName.'.';
-                // $pushMessage = 'Wishing you joy, success and a fantastic year ahead from '.$siteName.'.';
-                $pushMessage = 'Wishing YOU the Best Year Ahead!';
-                $image = (($user->photo != '') ? env('UPLOADS_URL').'user/'.$user->photo : env('NO_IMAGE'));
+            foreach($broadcastMembers as $member){
+                $memberEmail = strtolower(trim((string) $member->email));
 
-                $alreadyPushedToday = Notification::where('to_users', '=', $user->id)
+                $alreadyPushedToday = Notification::where('to_users', '=', $member->id)
                                                     ->where('title', '=', $pushTitle)
+                                                    ->where('description', '=', $pushMessage)
                                                     ->whereDate('send_timestamp', '=', $today)
                                                     ->exists();
 
                 if(!$alreadyPushedToday){
                     $tokenSentCount = 0;
-                    $tokens = UserDevice::select('fcm_token')
-                                        ->where('user_id', '=', $user->id)
-                                        ->where('published', '=', 1)
-                                        ->where('fcm_token', '!=', '')
-                                        ->get();
+                    $tokens = $broadcastDevices->get($member->id, collect());
 
-                    if($tokens){
+                    if($tokens->isNotEmpty()){
                         foreach($tokens as $device){
                             try {
                                 FirebaseService::sendNotification(
@@ -325,28 +345,29 @@ class FrontController extends Controller
                                     $pushTitle,
                                     $pushMessage,
                                     [
-                                        'member_id' => $user->id,
-                                        'type' => 'birthday'
-                                    ],
-                                    $image
+                                        'type' => 'birthday',
+                                        'birthday_count' => (string) $birthdayCount,
+                                        'birthday_names' => $birthdayNamesText,
+                                        'birthday_user_ids' => json_encode($birthdayUserIds),
+                                    ]
                                 );
                                 $tokenSentCount++;
-                            } catch (\Exception $e) {
-                                $report['errors'][] = 'Push failed for user ID '.$user->id.': '.$e->getMessage();
+                            } catch (\Throwable $e) {
+                                $report['errors'][] = 'Push failed for member ID '.$member->id.': '.$e->getMessage();
                             }
                         }
                     }
 
                     if($tokenSentCount > 0){
-                        $notificationFields = [
+                        Notification::insert([
                             'title'             => $pushTitle,
                             'description'       => $pushMessage,
-                            'to_users'          => $user->id,
-                            'users'             => json_encode([$user->id]),
+                            'to_users'          => $member->id,
+                            'users'             => json_encode([$member->id]),
                             'is_send'           => 1,
                             'send_timestamp'    => $now->format('Y-m-d H:i:s'),
-                        ];
-                        Notification::insert($notificationFields);
+                            'status'            => 1,
+                        ]);
                         $report['push_sent']++;
                     } else {
                         $report['push_skipped']++;
@@ -355,43 +376,46 @@ class FrontController extends Controller
                     $report['push_skipped']++;
                 }
 
-                if($user->email != ''){
-                    $subject = $siteName.' :: Happy Birthday '.$userName;
-                    $alreadyEmailedToday = EmailLog::where('email', '=', $user->email)
-                                                    ->where('subject', '=', $subject)
+                if($memberEmail != ''){
+                    $alreadyEmailedToday = EmailLog::where('email', '=', $memberEmail)
+                                                    ->where('subject', '=', $emailSubject)
                                                     ->whereDate('created_at', '=', $today)
                                                     ->exists();
 
                     if(!$alreadyEmailedToday){
                         $mailData = [
-                            'name' => $userName,
+                            'name' => $birthdayNamesText,
                             'site_name' => $siteName,
                             'generalSetting' => $generalSetting,
                             'theme_color' => $themeColor,
                             'font_color' => $fontColor,
                             'font_family' => $fontFamily,
-                            'wish_message' => 'May your special day be filled with happiness, meaningful moments and continued success.',
+                            'wish_message' => $emailWishMessage,
                         ];
 
-                        $message = view('email-templates.birthday-wish', $mailData);
-                        $mailStatus = $this->sendMail(strtolower($user->email), $subject, $message);
+                        $message = '';
+                        try {
+                            $message = view('email-templates.birthday-wish', $mailData)->render();
+                            $mailStatus = $this->sendMail($memberEmail, $emailSubject, $message);
+                        } catch (\Throwable $e) {
+                            $mailStatus = false;
+                            $report['errors'][] = 'Email sending failed for member ID '.$member->id.': '.$e->getMessage();
+                        }
 
-                        $emailLogFields = [
-                            'name' => $userName,
-                            'email' => strtolower($user->email),
-                            'subject' => $subject,
+                        EmailLog::insert([
+                            'name' => (($member->name != '') ? $member->name : 'Member'),
+                            'email' => $memberEmail,
+                            'subject' => $emailSubject,
                             'message' => $message,
                             'status' => (($mailStatus) ? 1 : 0),
                             'created_at' => $now->format('Y-m-d H:i:s'),
                             'updated_at' => $now->format('Y-m-d H:i:s'),
-                        ];
-                        EmailLog::insert($emailLogFields);
+                        ]);
 
                         if($mailStatus){
                             $report['email_sent']++;
                         } else {
                             $report['email_skipped']++;
-                            $report['errors'][] = 'Email sending failed for user ID '.$user->id.'.';
                         }
                     } else {
                         $report['email_skipped']++;
@@ -406,6 +430,25 @@ class FrontController extends Controller
                 'message' => 'Birthday cron executed successfully.',
                 'report' => $report,
             ]);
+        }
+        private function formatBirthdayNames(array $names)
+        {
+            $names = array_values(array_filter(array_map('trim', $names)));
+
+            if(empty($names)){
+                return 'our members';
+            }
+
+            if(count($names) === 1){
+                return $names[0];
+            }
+
+            if(count($names) === 2){
+                return $names[0].' and '.$names[1];
+            }
+
+            $lastName = array_pop($names);
+            return implode(', ', $names).' and '.$lastName;
         }
     /* birthday cron */
     /* delete account */
