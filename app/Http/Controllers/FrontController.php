@@ -396,21 +396,21 @@ class FrontController extends Controller
                         $message = '';
                         try {
                             $message = view('email-templates.birthday-wish', $mailData)->render();
-                            $mailStatus = $this->sendMail($memberEmail, $emailSubject, $message);
+                            // $mailStatus = $this->sendMail($memberEmail, $emailSubject, $message);
                         } catch (\Throwable $e) {
                             $mailStatus = false;
                             $report['errors'][] = 'Email sending failed for member ID '.$member->id.': '.$e->getMessage();
                         }
 
-                        EmailLog::insert([
-                            'name' => (($member->name != '') ? $member->name : 'Member'),
-                            'email' => $memberEmail,
-                            'subject' => $emailSubject,
-                            'message' => $message,
-                            'status' => (($mailStatus) ? 1 : 0),
-                            'created_at' => $now->format('Y-m-d H:i:s'),
-                            'updated_at' => $now->format('Y-m-d H:i:s'),
-                        ]);
+                        // EmailLog::insert([
+                        //     'name' => (($member->name != '') ? $member->name : 'Member'),
+                        //     'email' => $memberEmail,
+                        //     'subject' => $emailSubject,
+                        //     'message' => $message,
+                        //     'status' => (($mailStatus) ? 1 : 0),
+                        //     'created_at' => $now->format('Y-m-d H:i:s'),
+                        //     'updated_at' => $now->format('Y-m-d H:i:s'),
+                        // ]);
 
                         if($mailStatus){
                             $report['email_sent']++;
