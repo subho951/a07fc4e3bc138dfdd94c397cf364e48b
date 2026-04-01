@@ -257,31 +257,56 @@ class EventController extends Controller
                     ->with('error_message', 'The question "Will you be attending the event?" was not found for this event.');
             }
 
-            $eventUsers = UserRegEvent::select(
-                                    'user_reg_events.date',
-                                    'user_reg_events.time',
-                                    'users.name as user_name',
-                                    'users.email as user_email',
-                                    'users.phone as user_phone',
-                                    'user_reg_event_answers.event_answer as attendance_answer',
+            $eventRegistrations = UserRegEvent::select(
+                                    'userid',
+                                    'date',
+                                    'time',
                                 )
-                                ->join('users', 'users.id', '=', 'user_reg_events.userid')
-                                ->join('user_reg_event_answers', function ($join) use ($attendanceQuestion) {
-                                    $join->on('user_reg_event_answers.userid', '=', 'user_reg_events.userid')
-                                        ->on('user_reg_event_answers.eventid', '=', 'user_reg_events.eventid')
-                                        ->where('user_reg_event_answers.event_question_id', '=', $attendanceQuestion->id);
-                                })
-                                ->where('user_reg_events.status', '!=', 3)
-                                ->where('user_reg_events.eventid', '=', $eventId)
-                                ->orderBy('user_reg_events.id', 'DESC')
+                                ->where('status', '!=', 3)
+                                ->where('eventid', '=', $eventId)
+                                ->orderBy('id', 'DESC')
                                 ->get();
 
-            $eventUsers = $eventUsers->filter(function ($row) {
-                return strcasecmp(trim((string) ($row->attendance_answer ?? '')), 'YES') === 0;
-            })->values();
+            $userIds = $eventRegistrations->pluck('userid')
+                                ->map(function ($userId) {
+                                    return (int) $userId;
+                                })
+                                ->filter()
+                                ->unique()
+                                ->values()
+                                ->all();
+
+            $usersById = collect();
+            if (!empty($userIds)) {
+                $usersById = User::whereIn('id', $userIds)
+                                ->get(['id', 'name', 'email', 'phone'])
+                                ->keyBy(function ($user) {
+                                    return (string) ((int) $user->id);
+                                });
+            }
+
+            $answersByUserId = UserRegEventAnswer::select('userid', 'event_answer')
+                                ->where('eventid', '=', $eventId)
+                                ->where('event_question_id', '=', $attendanceQuestion->id)
+                                ->get()
+                                ->keyBy(function ($answer) {
+                                    return (string) ((int) $answer->userid);
+                                });
 
             $exportRows = [];
-            foreach ($eventUsers as $row) {
+            foreach ($eventRegistrations as $row) {
+                $userId = (string) ((int) $row->userid);
+                $attendanceAnswer = (string) (($answersByUserId[$userId]->event_answer ?? ''));
+
+                if (strcasecmp(trim($attendanceAnswer), 'YES') !== 0) {
+                    continue;
+                }
+
+                $user = $usersById[$userId] ?? null;
+                if (!$user) {
+                    continue;
+                }
+
                 $registeredOn = '';
                 if (!empty($row->date)) {
                     $registeredOn = date('d-m-Y', strtotime($row->date));
@@ -291,9 +316,9 @@ class EventController extends Controller
                 }
 
                 $exportRows[] = [
-                    (string) ($row->user_name ?? ''),
-                    (string) ($row->user_email ?? ''),
-                    (string) ($row->user_phone ?? ''),
+                    (string) ($user->name ?? ''),
+                    (string) ($user->email ?? ''),
+                    (string) ($user->phone ?? ''),
                     $registeredOn,
                 ];
             }
