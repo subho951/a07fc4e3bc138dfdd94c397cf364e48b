@@ -37,6 +37,11 @@ $controllerRoute = $module['controller_route'];
     <div class="col-lg-12">
       <div class="card">
         <div class="card-body">
+          <div class="d-flex justify-content-end mb-3">
+            <a href="<?=url('admin/' . $controllerRoute . '/download-registered-data/'.Helper::encoded($event_id))?>" class="btn btn-success btn-sm">
+              Download registered data
+            </a>
+          </div>
           <div class="row">
             <div class="col-md-4">
                 <div class="card">

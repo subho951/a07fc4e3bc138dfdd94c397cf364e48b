@@ -12,6 +12,7 @@ use App\Models\Event;
 use App\Models\EventQuestion;
 use App\Models\UserRegEvent;
 use App\Models\UserRegEventAnswer;
+use App\Services\EventRegisteredUsersExportService;
 
 use Auth;
 use Session;
@@ -238,4 +239,84 @@ class EventController extends Controller
             
             echo $this->admin_after_login_layout($title,$page_name,$data);
         }
+
+    public function download_registered_data($id)
+    {
+            $eventId = Helper::decoded($id);
+            $event = Event::where($this->data['primary_key'], '=', $eventId)->first();
+
+            if (!$event) {
+                return redirect('admin/' . $this->data['controller_route'] . '/list')
+                    ->with('error_message', 'Event not found.');
+            }
+
+            $attendanceQuestion = $this->findAttendanceQuestion($eventId);
+
+            if (!$attendanceQuestion) {
+                return redirect('admin/' . $this->data['controller_route'] . '/registered-users/' . Helper::encoded($eventId))
+                    ->with('error_message', 'The question "Will you be attending the event?" was not found for this event.');
+            }
+
+            $eventUsers = UserRegEvent::select(
+                                    'user_reg_events.date',
+                                    'user_reg_events.time',
+                                    'users.name as user_name',
+                                    'users.email as user_email',
+                                    'users.phone as user_phone',
+                                )
+                                ->join('users', 'users.id', '=', 'user_reg_events.userid')
+                                ->join('user_reg_event_answers', function ($join) use ($attendanceQuestion) {
+                                    $join->on('user_reg_event_answers.userid', '=', 'user_reg_events.userid')
+                                        ->on('user_reg_event_answers.eventid', '=', 'user_reg_events.eventid')
+                                        ->where('user_reg_event_answers.event_question_id', '=', $attendanceQuestion->id);
+                                })
+                                ->where('user_reg_events.status', '!=', 3)
+                                ->where('user_reg_events.eventid', '=', $eventId)
+                                ->whereRaw('UPPER(TRIM(user_reg_event_answers.event_answer)) = ?', ['YES'])
+                                ->orderBy('user_reg_events.id', 'DESC')
+                                ->get();
+
+            $exportRows = [];
+            foreach ($eventUsers as $row) {
+                $registeredOn = '';
+                if (!empty($row->date)) {
+                    $registeredOn = date('d-m-Y', strtotime($row->date));
+                }
+                if (!empty($row->time)) {
+                    $registeredOn .= (($registeredOn != '') ? ' ' : '') . date('h:i a', strtotime($row->time));
+                }
+
+                $exportRows[] = [
+                    (string) ($row->user_name ?? ''),
+                    (string) ($row->user_email ?? ''),
+                    (string) ($row->user_phone ?? ''),
+                    $registeredOn,
+                ];
+            }
+
+            return app(EventRegisteredUsersExportService::class)->download($event->title ?? 'event', $exportRows);
+    }
+
+    private function findAttendanceQuestion($eventId)
+    {
+            $targetQuestion = $this->normalizeText('Will you be attending the event?');
+            $eventQuestions = EventQuestion::where('event_id', '=', $eventId)->get(['id', 'event_question']);
+
+            foreach ($eventQuestions as $question) {
+                if ($this->normalizeText($question->event_question) === $targetQuestion) {
+                    return $question;
+                }
+            }
+
+            return null;
+    }
+
+    private function normalizeText($value)
+    {
+            $value = strtolower(trim((string) $value));
+            $value = preg_replace('/[^\pL\pN]+/u', ' ', $value) ?? '';
+            $value = preg_replace('/\s+/u', ' ', $value) ?? '';
+
+            return trim($value);
+    }
 }

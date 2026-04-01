@@ -150,6 +150,7 @@ Route::get('cron/birthday-wish', [FrontController::class, 'birthdayWishCron']);
                 Route::get('event/delete/{id}', 'EventController@delete');
                 Route::get('event/change-status/{id}', 'EventController@change_status');
                 Route::get('event/registered-users/{id}', 'EventController@registered_users');
+                Route::get('event/download-registered-data/{id}', 'EventController@download_registered_data');
             /* event */
             /* newsletter */
                 Route::get('newsletter/list', 'NewsletterController@list');
