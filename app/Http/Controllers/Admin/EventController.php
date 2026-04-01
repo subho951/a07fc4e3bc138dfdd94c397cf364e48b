@@ -263,6 +263,7 @@ class EventController extends Controller
                                     'users.name as user_name',
                                     'users.email as user_email',
                                     'users.phone as user_phone',
+                                    'user_reg_event_answers.event_answer as attendance_answer',
                                 )
                                 ->join('users', 'users.id', '=', 'user_reg_events.userid')
                                 ->join('user_reg_event_answers', function ($join) use ($attendanceQuestion) {
@@ -272,9 +273,12 @@ class EventController extends Controller
                                 })
                                 ->where('user_reg_events.status', '!=', 3)
                                 ->where('user_reg_events.eventid', '=', $eventId)
-                                ->whereRaw('UPPER(TRIM(user_reg_event_answers.event_answer)) = ?', ['YES'])
                                 ->orderBy('user_reg_events.id', 'DESC')
                                 ->get();
+
+            $eventUsers = $eventUsers->filter(function ($row) {
+                return strcasecmp(trim((string) ($row->attendance_answer ?? '')), 'YES') === 0;
+            })->values();
 
             $exportRows = [];
             foreach ($eventUsers as $row) {
