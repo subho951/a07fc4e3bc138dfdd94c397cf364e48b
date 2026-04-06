@@ -98,6 +98,7 @@ class FrontController extends Controller
                         } else {
                             $row->status = 1;
                             $row->entry_timestamp = now();
+                            Helper::pr($row);
                             $row->save();
 
                             $currentEvent = Event::find(32);
