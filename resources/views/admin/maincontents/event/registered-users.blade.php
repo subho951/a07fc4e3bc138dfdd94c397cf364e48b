@@ -83,6 +83,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">Event QR Code</th>
                 <th scope="col">Event Registered On</th>
                 <th scope="col">Event Entry On</th>
+                <th scope="col">Event Entry Location</th>
               </tr>
             </thead>
             <tbody>
@@ -121,6 +122,7 @@ $controllerRoute = $module['controller_route'];
                         <span class="badge bg-danger">NOT ATTENDED</span>
                     <?php }?>
                     </td>
+                    <td><?= $row->location ?></td>
                 </tr>
               <?php } } else {?>
                 <tr>
