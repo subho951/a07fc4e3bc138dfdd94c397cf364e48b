@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\File;
 use App\Services\FirebaseService;
@@ -63,7 +64,7 @@ class FrontController extends Controller
         }
     /* home */
     /* event checkin */
-        public function eventCheckin($token)
+        public function eventCheckin(Request $request, $token)
         {
             $generalSetting = GeneralSetting::find(1);
 
@@ -76,179 +77,224 @@ class FrontController extends Controller
             $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
             $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
 
-            // try {
-
+            try {
                 $id = Crypt::decryptString(urldecode($token));
-                $row = UserRegEvent::findOrFail($id);
-                // Helper::pr($row);
-                if(!empty($row)){
-                    $member_id = $row->userid;
-                    $event_id = $row->eventid;
-                    $getEvent = Event::select('id', 'title', 'venue', 'event_date', 'photo')->where('id', '=', $event_id)->first();
-                    $getMember = User::select('id', 'name', 'phone', 'photo', 'points', 'core_id')->where('id', '=', $member_id)->first();
-                    if($getMember){
-                        // Prevent duplicate entry
-                        if($row->status == 1){
-                            $data['checkin_msg']            = "Already checked in!";
-                            $data['user_event']             = $row;
-                            $data['member']                 = $getMember;
-                            $data['event']                  = $getEvent;
-                            return view('front.event-checkin', $data);
-                            // return "Already checked in!";
-                        } else {
-                            $row->status = 1;
-                            $row->entry_timestamp = now();
-                            Helper::pr($row);
-                            $row->save();
+            } catch (\Throwable $e) {
+                return "Invalid QR Code";
+            }
 
-                            $currentEvent = Event::find(32);
+            $row = UserRegEvent::findOrFail($id);
+            $member_id = $row->userid;
+            $event_id = $row->eventid;
+            $getEvent = Event::select('id', 'title', 'venue', 'event_date', 'photo')->where('id', '=', $event_id)->first();
+            $getMember = User::select('id', 'name', 'phone', 'photo', 'points', 'core_id')->where('id', '=', $member_id)->first();
 
-                            $previousEvents = Event::where('event_date', '<', $currentEvent->event_date)
-                                ->orderBy('event_date', 'desc')
-                                ->limit($individual_backtoback_attn_count)
-                                ->pluck('id')
-                                ->toArray();
+            if(!$getMember){
+                return "Member not found";
+            }
 
-                            /* member point calculation */
-                                $opening_point = (int) $getMember->points;
-                                $credited_points = 0;
-                                $credited_points = (int) $individual_attn_point;
+            $data = [
+                'user_event' => $row,
+                'member' => $getMember,
+                'event' => $getEvent,
+                'checkin_pending' => false,
+            ];
 
-                                $eventAttnCount = 0;
-                                if($previousEvents){
-                                    for($k=0;$k<count($previousEvents);$k++){
-                                        $evid = $previousEvents[$k];
-                                        $checkAttendance = UserRegEvent::where('userid', '=', $member_id)->where('eventid', '=', $evid)->where('status', '=', 1)->count();
-                                        if($checkAttendance > 0){
-                                            $eventAttnCount++;
-                                        }
-                                    }
-                                }
+            if($request->isMethod('post')){
+                $latitude = trim((string) $request->input('latitude', ''));
+                $longitude = trim((string) $request->input('longitude', ''));
+                $location = trim((string) $request->input('location', ''));
 
-                                if($eventAttnCount >= $individual_backtoback_attn_count){
-                                    $credited_points = (int) $individual_attn_point + (int) $individual_backtoback_attn_point;
-                                }
-
-                                $user_new_points = ($opening_point + $credited_points);
-                                $fields1 = [
-                                    'member_id'         => $member_id,
-                                    'event_id'          => $event_id,
-                                    'credited_points'   => $credited_points,
-                                    'note'              => $credited_points . ' points credited for event attended',
-                                ];
-                                UserPoint::insert($fields1);
-                                User::where('id', '=', $member_id)->update(['points' => $user_new_points]);
-                            /* member point calculation */
-
-                            /* core point calculation */
-                                $core_id = $getMember->core_id;
-                                if($core_id > 0){
-                                    $getCore = Core::where('id', '=', $core_id)->first();
-                                    if($getCore){
-                                        $fields2 = [
-                                            'core_id'           => $core_id,
-                                            'member_id'         => $member_id,
-                                            'event_id'          => $event_id,
-                                            'meeting_id'        => 0,
-                                            'credited_points'   => $credited_points,
-                                            'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
-                                        ];
-                                        CorePoint::insert($fields2);
-
-                                        
-
-                                        $opening_core_point = (int) $getCore->points;
-                                        $core_new_points = ($opening_core_point + $credited_points);
-                                        Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
-                                    }
-                                }
-                            /* core point calculation */
-
-                            // push notification send
-                                $users = [];
-                                $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
-                                if($getTokens){
-                                    foreach($getTokens as $getToken){
-                                        $token = $getToken->fcm_token;
-
-                                        $title = 'Event Checkin';
-                                        $message = 'You are successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
-
-                                        $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
-
-                                        $data = [
-                                            "event_id" => $event_id,
-                                            "type" => 'event'
-                                        ];
-
-                                        $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
-
-                                        $users[]            = $member_id;
-                                        $notificationFields = [
-                                            'title'             => $title,
-                                            'description'       => $message,
-                                            'to_users'          => $member_id,
-                                            'users'             => json_encode($users),
-                                            'is_send'           => 1,
-                                            'send_timestamp'    => date('Y-m-d H:i:s'),
-                                        ];
-                                        Notification::insert($notificationFields);
-                                    }
-                                }
-
-                                if($core_id > 0){
-                                    $coreMembers = CoreMember::where('member_id', '!=', $member_id)->where('core_id', '=', $core_id)->get();
-                                    if($coreMembers){
-                                        foreach($coreMembers as $coreMember){
-                                            $users = [];
-                                            $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
-                                            if($getToken){
-                                                $token = $getToken->fcm_token;
-
-                                                $title = 'Event Checkin';
-                                                $message = $getMember->name . ' successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
-
-                                                $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
-
-                                                $data = [
-                                                    "event_id" => $event_id,
-                                                    "type" => 'event'
-                                                ];
-
-                                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
-
-                                                $users[]            = $coreMember->member_id;
-                                                $notificationFields = [
-                                                    'title'             => $title,
-                                                    'description'       => $message,
-                                                    'to_users'          => $coreMember->member_id,
-                                                    'users'             => json_encode($users),
-                                                    'is_send'           => 1,
-                                                    'send_timestamp'    => date('Y-m-d H:i:s'),
-                                                ];
-                                                Notification::insert($notificationFields);
-                                            }
-                                        }
-                                    }
-                                }
-                            // push notification send
-
-                            $data['checkin_msg']            = "Entry successful";
-                            $data['user_event']             = $row;
-                            $data['member']                 = $getMember;
-                            $data['event']                  = $getEvent;
-                            return view('front.event-checkin', $data);
-                            // return "Entry successful";
-                        }
-                    } else {
-                        return "Member not found";
-                    }
-                } else {
-                    return "Event registration not found";
+                if($latitude === '' || $longitude === '' || !is_numeric($latitude) || !is_numeric($longitude)){
+                    $data['checkin_msg'] = 'Location access is required to complete check-in.';
+                    $data['checkin_error'] = true;
+                    return view('front.event-checkin', $data);
                 }
-            // } catch (\Exception $e) {
-            //     return "Invalid QR Code";
-            // }
+
+                if($row->status == 1){
+                    return redirect()->to(url()->current())->with('checkin_msg', 'Already checked in!');
+                }
+
+                if($location === ''){
+                    $location = $this->resolveLocationFromCoordinates($latitude, $longitude);
+                }
+
+                $row->status = 1;
+                $row->entry_timestamp = now();
+                $row->latitude = $latitude;
+                $row->longitude = $longitude;
+                $row->location = $location;
+                $row->save();
+
+                $currentEvent = Event::find(32);
+                $previousEvents = [];
+
+                if($currentEvent){
+                    $previousEvents = Event::where('event_date', '<', $currentEvent->event_date)
+                        ->orderBy('event_date', 'desc')
+                        ->limit($individual_backtoback_attn_count)
+                        ->pluck('id')
+                        ->toArray();
+                }
+
+                /* member point calculation */
+                    $opening_point = (int) $getMember->points;
+                    $credited_points = 0;
+                    $credited_points = (int) $individual_attn_point;
+
+                    $eventAttnCount = 0;
+                    if($previousEvents){
+                        for($k=0;$k<count($previousEvents);$k++){
+                            $evid = $previousEvents[$k];
+                            $checkAttendance = UserRegEvent::where('userid', '=', $member_id)->where('eventid', '=', $evid)->where('status', '=', 1)->count();
+                            if($checkAttendance > 0){
+                                $eventAttnCount++;
+                            }
+                        }
+                    }
+
+                    if($eventAttnCount >= $individual_backtoback_attn_count){
+                        $credited_points = (int) $individual_attn_point + (int) $individual_backtoback_attn_point;
+                    }
+
+                    $user_new_points = ($opening_point + $credited_points);
+                    $fields1 = [
+                        'member_id'         => $member_id,
+                        'event_id'          => $event_id,
+                        'credited_points'   => $credited_points,
+                        'note'              => $credited_points . ' points credited for event attended',
+                    ];
+                    UserPoint::insert($fields1);
+                    User::where('id', '=', $member_id)->update(['points' => $user_new_points]);
+                /* member point calculation */
+
+                /* core point calculation */
+                    $core_id = $getMember->core_id;
+                    if($core_id > 0){
+                        $getCore = Core::where('id', '=', $core_id)->first();
+                        if($getCore){
+                            $fields2 = [
+                                'core_id'           => $core_id,
+                                'member_id'         => $member_id,
+                                'event_id'          => $event_id,
+                                'meeting_id'        => 0,
+                                'credited_points'   => $credited_points,
+                                'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
+                            ];
+                            CorePoint::insert($fields2);
+
+                            $opening_core_point = (int) $getCore->points;
+                            $core_new_points = ($opening_core_point + $credited_points);
+                            Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
+                        }
+                    }
+                /* core point calculation */
+
+                // push notification send
+                    $users = [];
+                    $getTokens = UserDevice::select('fcm_token')->where('user_id', '=', $member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                    if($getTokens){
+                        foreach($getTokens as $getToken){
+                            $token = $getToken->fcm_token;
+
+                            $title = 'Event Checkin';
+                            $message = 'You are successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
+
+                            $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
+
+                            $data = [
+                                "event_id" => $event_id,
+                                "type" => 'event'
+                            ];
+
+                            $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+
+                            $users[]            = $member_id;
+                            $notificationFields = [
+                                'title'             => $title,
+                                'description'       => $message,
+                                'to_users'          => $member_id,
+                                'users'             => json_encode($users),
+                                'is_send'           => 1,
+                                'send_timestamp'    => date('Y-m-d H:i:s'),
+                            ];
+                            Notification::insert($notificationFields);
+                        }
+                    }
+
+                    if($core_id > 0){
+                        $coreMembers = CoreMember::where('member_id', '!=', $member_id)->where('core_id', '=', $core_id)->get();
+                        if($coreMembers){
+                            foreach($coreMembers as $coreMember){
+                                $users = [];
+                                $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
+                                if($getToken){
+                                    $token = $getToken->fcm_token;
+
+                                    $title = 'Event Checkin';
+                                    $message = $getMember->name . ' successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
+
+                                    $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
+
+                                    $data = [
+                                        "event_id" => $event_id,
+                                        "type" => 'event'
+                                    ];
+
+                                    $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data,$image);
+
+                                    $users[]            = $coreMember->member_id;
+                                    $notificationFields = [
+                                        'title'             => $title,
+                                        'description'       => $message,
+                                        'to_users'          => $coreMember->member_id,
+                                        'users'             => json_encode($users),
+                                        'is_send'           => 1,
+                                        'send_timestamp'    => date('Y-m-d H:i:s'),
+                                    ];
+                                    Notification::insert($notificationFields);
+                                }
+                            }
+                        }
+                    }
+                // push notification send
+
+                return redirect()->to(url()->current())->with('checkin_msg', 'Entry successful');
+            }
+
+            if($row->status == 1){
+                $data['checkin_msg'] = session('checkin_msg', 'Already checked in!');
+                return view('front.event-checkin', $data);
+            }
+
+            $data['checkin_msg'] = session('checkin_msg', 'Fetching your location...');
+            $data['checkin_pending'] = true;
+            return view('front.event-checkin', $data);
+        }
+
+        private function resolveLocationFromCoordinates($latitude, $longitude)
+        {
+            try {
+                $response = Http::withHeaders([
+                    'User-Agent' => ((config('app.name') != '') ? config('app.name') : 'Laravel') . ' Event Checkin',
+                    'Accept-Language' => 'en',
+                ])->timeout(10)->get('https://nominatim.openstreetmap.org/reverse', [
+                    'format' => 'jsonv2',
+                    'lat' => $latitude,
+                    'lon' => $longitude,
+                ]);
+
+                if($response->successful()){
+                    $location = $response->json('display_name');
+                    if(!empty($location)){
+                        return $location;
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Fall back to coordinates below.
+            }
+
+            return 'Latitude: ' . $latitude . ', Longitude: ' . $longitude;
         }
     /* event checkin */
     /* birthday cron */

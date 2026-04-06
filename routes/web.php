@@ -18,7 +18,7 @@ use App\Services\Schema\ProductSchemaService;
 //     return view('welcome');
 // });
 Route::get('/', [FrontController::class, 'index']);
-Route::get('event-checkin/{id}', [FrontController::class, 'eventCheckin']);
+Route::match(['get', 'post'], 'event-checkin/{id}', [FrontController::class, 'eventCheckin']);
 Route::get('delete-account', [FrontController::class, 'deleteaccountview']);
 Route::post('delete-account-update', [FrontController::class, 'deleteaccount'])->name('delete-account.store');
 Route::get('pages/{id}', [FrontController::class, 'page']);
