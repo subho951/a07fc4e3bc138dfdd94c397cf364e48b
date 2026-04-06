@@ -193,7 +193,7 @@
         $isError = !empty($checkin_error);
     ?>
     <div class="card">
-        <div class="banner" style="background: url(<?=(($event)?env('UPLOADS_URL').'event/'.$event->photo:env('NO_IMAGE'))?>) center/cover no-repeat;">
+        <div class="banner" style="background: url('<?=(($event)?env('UPLOADS_URL').'event/'.$event->photo:env('NO_IMAGE'))?>') center/cover no-repeat;">
             <h1><?= (($event)?$event->title:'') ?></h1>
         </div>
         <div class="content">
