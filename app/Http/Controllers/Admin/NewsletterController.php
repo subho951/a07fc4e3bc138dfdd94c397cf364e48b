@@ -68,7 +68,7 @@ class NewsletterController extends Controller
                         'description'               => $request->description,
                         'attachment'                => $attachment,
                         'to_users'                  => $request->to_users,
-                        'users'                     => json_encode($request->users),
+                        'users'                     => (($request->to_users == 1)?json_encode($request->users):NULL),
                     ];
                     Newsletter::insert($postData);
                     return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' Inserted Successfully !!!');
