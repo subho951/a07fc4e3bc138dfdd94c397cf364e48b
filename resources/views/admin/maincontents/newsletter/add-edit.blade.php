@@ -49,7 +49,7 @@ $controllerRoute = $module['controller_route'];
       $title          = '';
       $description    = '';
       $attachment     = '';
-      $to_users       = [];
+      $to_users       = 0;
       $users          = [];
     }
     ?>

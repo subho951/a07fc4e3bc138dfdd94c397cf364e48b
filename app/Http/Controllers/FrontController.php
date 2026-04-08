@@ -297,6 +297,143 @@ class FrontController extends Controller
             return 'Latitude: ' . $latitude . ', Longitude: ' . $longitude;
         }
     /* event checkin */
+    /* event notification cron */
+        public function eventNotificationCron(Request $request)
+        {
+            $now = Carbon::now('Asia/Calcutta');
+            $today = $now->format('Y-m-d');
+
+            $secureCronKey = env('CRON_KEY', '');
+            if($secureCronKey != '' && $request->query('key') != $secureCronKey){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid cron key.',
+                ], 401);
+            }
+
+            $todayEvents = Event::select('id', 'title', 'venue', 'event_date', 'event_time', 'photo')
+                                ->where('status', '=', 1)
+                                ->whereDate('event_date', '=', $today)
+                                ->orderBy('event_time', 'ASC')
+                                ->get();
+
+            $broadcastMembers = User::select('id', 'name')
+                                    ->where('status', '=', 1)
+                                    ->orderBy('name', 'ASC')
+                                    ->get();
+
+            $broadcastRecipientIds = $broadcastMembers->pluck('id')->values()->all();
+            $broadcastDevices = collect();
+            if(!empty($broadcastRecipientIds)){
+                $broadcastDevices = UserDevice::select('user_id', 'fcm_token')
+                                            ->whereIn('user_id', $broadcastRecipientIds)
+                                            ->where('published', '=', 1)
+                                            ->where('fcm_token', '!=', '')
+                                            ->get()
+                                            ->groupBy('user_id');
+            }
+
+            $report = [
+                'date' => $today,
+                'total_events' => $todayEvents->count(),
+                'broadcast_recipients' => $broadcastMembers->count(),
+                'push_sent' => 0,
+                'push_skipped' => 0,
+                'errors' => [],
+            ];
+
+            if($todayEvents->isEmpty()){
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Event cron executed successfully.',
+                    'report' => $report,
+                ]);
+            }
+
+            foreach($todayEvents as $event){
+                $eventTitle = (($event->title != '') ? $event->title : 'Event');
+                $eventTime = '';
+                if(!empty($event->event_time)){
+                    try {
+                        $eventTime = Carbon::parse($event->event_time)->format('h:i A');
+                    } catch (\Throwable $e) {
+                        $eventTime = '';
+                    }
+                }
+
+                $pushTitle = 'Event Reminder - ' . $eventTitle;
+                $pushMessage = 'There is an event today: ' . $eventTitle;
+                if($eventTime != ''){
+                    $pushMessage .= ' at ' . $eventTime;
+                }
+                if(!empty($event->venue)){
+                    $pushMessage .= ' in ' . $event->venue;
+                }
+                $pushMessage .= '.';
+
+                $eventImage = (!empty($event->photo) ? env('UPLOADS_URL').'event/'.$event->photo : null);
+
+                foreach($broadcastMembers as $member){
+                    $alreadyPushedToday = Notification::where('to_users', '=', $member->id)
+                                                        ->where('title', '=', $pushTitle)
+                                                        ->where('description', '=', $pushMessage)
+                                                        ->whereDate('send_timestamp', '=', $today)
+                                                        ->exists();
+
+                    if($alreadyPushedToday){
+                        $report['push_skipped']++;
+                        continue;
+                    }
+
+                    $tokenSentCount = 0;
+                    $tokens = $broadcastDevices->get($member->id, collect());
+
+                    if($tokens->isNotEmpty()){
+                        foreach($tokens as $device){
+                            try {
+                                FirebaseService::sendNotification(
+                                    $device->fcm_token,
+                                    $pushTitle,
+                                    $pushMessage,
+                                    [
+                                        'event_id' => $event->id,
+                                        'event_date' => (string) $event->event_date,
+                                        'event_time' => (string) $event->event_time,
+                                        'type' => 'event',
+                                    ],
+                                    $eventImage
+                                );
+                                $tokenSentCount++;
+                            } catch (\Throwable $e) {
+                                $report['errors'][] = 'Push failed for member ID '.$member->id.' and event ID '.$event->id.': '.$e->getMessage();
+                            }
+                        }
+                    }
+
+                    if($tokenSentCount > 0){
+                        Notification::insert([
+                            'title'             => $pushTitle,
+                            'description'       => $pushMessage,
+                            'to_users'          => $member->id,
+                            'users'             => json_encode([$member->id]),
+                            'is_send'           => 1,
+                            'send_timestamp'    => $now->format('Y-m-d H:i:s'),
+                            'status'            => 1,
+                        ]);
+                        $report['push_sent']++;
+                    } else {
+                        $report['push_skipped']++;
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Event cron executed successfully.',
+                'report' => $report,
+            ]);
+        }
+    /* event notification cron */
     /* birthday cron */
         public function birthdayWishCron(Request $request)
         {
