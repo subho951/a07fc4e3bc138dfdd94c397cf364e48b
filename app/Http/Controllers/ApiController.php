@@ -2249,7 +2249,7 @@ class ApiController extends Controller
                         $registeredEvents = Event::select('events.id', 'events.title', 'events.description', 'events.description', 'events.venue', 'events.event_date', 'events.photo', 'events.event_time', 'user_reg_events.qrcode')
                                                     ->join('user_reg_events', 'user_reg_events.eventid', '=', 'events.id')
                                                     ->where('user_reg_events.status', '=', 0)
-                                                    ->where('events.event_date', '>', date('Y-m-d'))
+                                                    ->where('events.event_date', '>=', date('Y-m-d'))
                                                     ->where('user_reg_events.userid', '=', $uId)
                                                     ->orderBy('events.event_date', 'DESC')
                                                     ->get();
