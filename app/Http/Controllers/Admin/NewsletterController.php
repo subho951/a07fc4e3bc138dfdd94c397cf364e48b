@@ -225,7 +225,7 @@ class NewsletterController extends Controller
                     }
                 }
             } else {
-                $allUsers               = User::select('id', 'name')->where('status', '=', 1)->orderBy('name', 'ASC')->get();
+                $allUsers               = User::select('id', 'name')->where('status', '=', 1)->where('id', '=', 64)->orderBy('name', 'ASC')->get();
                 if($allUsers){
                     foreach($allUsers as $allUser){
                         $uId = $allUser->id;
