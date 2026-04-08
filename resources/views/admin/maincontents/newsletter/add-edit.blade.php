@@ -44,7 +44,7 @@ $controllerRoute = $module['controller_route'];
       $description    = $row->description;
       $attachment     = $row->attachment;
       $to_users       = $row->to_users;
-      $users          = json_decode($row->users);
+      $users          = (($row->users != '')?json_decode($row->users):[]);
     } else {
       $title          = '';
       $description    = '';
