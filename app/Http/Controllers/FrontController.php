@@ -198,7 +198,7 @@ class FrontController extends Controller
                             $token = $getToken->fcm_token;
 
                             $title = 'Event Checkin';
-                            $message = 'You are successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
+                            $message = 'You are successfully attended the event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
 
                             $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
 
@@ -232,7 +232,7 @@ class FrontController extends Controller
                                     $token = $getToken->fcm_token;
 
                                     $title = 'Event Checkin';
-                                    $message = $getMember->name . ' successfully attended in event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
+                                    $message = $getMember->name . ' successfully attended the event ' . (($getEvent)?$getEvent->title:'') . ' at ' . date('d.m.Y h:i A');
 
                                     $image = (($getEvent)?(($getEvent->photo != '')?env('UPLOADS_URL').'event/'.$getEvent->photo:env('NO_IMAGE')):env('NO_IMAGE'));
 
