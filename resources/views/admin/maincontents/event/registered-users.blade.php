@@ -110,7 +110,7 @@ $controllerRoute = $module['controller_route'];
                   <?php } }?>
                   <td>
                     <?php if($row->qrcode != ''){?>
-                      <img src="<?=$row->qrcode?>" class="img-thumbnail" alt="<?=$row->user_name?>" style="width: 75px; height: 75px; margin-top: 10px;">
+                      <img src="<?=$row->qrcode?>" class="img-thumbnail" alt="<?=$row->user_name?>" style="width: 100px; height: 100px; margin-top: 10px;">
                     <?php }?>
                   </td>
                   <td><?=date_format(date_create($row->date), "d-m-Y")?> <?=date_format(date_create($row->time), "h:i a")?></td>
