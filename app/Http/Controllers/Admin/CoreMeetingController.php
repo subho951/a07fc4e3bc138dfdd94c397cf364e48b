@@ -254,7 +254,7 @@ class CoreMeetingController extends Controller
                         $getCore = Core::where('id', '=', $core_id)->first();
                         if($getCore){
                             $credited_points = 0;
-                            if($meeting_type == 'INBOUND'){
+                            if($meeting_type == 'CORE MEETING'){
                                 $credited_points = $core_meeting_inbound_point;
                             } elseif($meeting_type == 'LOCAL INBOUND'){
                                 $credited_points = $core_meeting_local_outbound_point;

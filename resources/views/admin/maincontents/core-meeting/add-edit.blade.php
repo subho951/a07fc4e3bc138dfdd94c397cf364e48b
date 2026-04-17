@@ -83,7 +83,7 @@ $controllerRoute = $module['controller_route'];
               <div class="col-md-10 col-lg-10">
                 <select name="meeting_type" class="form-control" id="meeting_type" required>
                     <option value="" selected>Select Meeting Type</option>
-                    <option value="INBOUND" <?= (($meeting_type == 'INBOUND')?'selected':'') ?>>INBOUND</option>
+                    <option value="CORE MEETING" <?= (($meeting_type == 'CORE MEETING')?'selected':'') ?>>CORE MEETING</option>
                     <option value="LOCAL INBOUND" <?= (($meeting_type == 'LOCAL INBOUND')?'selected':'') ?>>LOCAL INBOUND</option>
                     <option value="OUTBOUND" <?= (($meeting_type == 'OUTBOUND')?'selected':'') ?>>OUTBOUND</option>
                 </select>

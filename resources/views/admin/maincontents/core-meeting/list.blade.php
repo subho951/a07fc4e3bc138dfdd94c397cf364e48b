@@ -60,7 +60,7 @@ $controllerRoute = $module['controller_route'];
                   <td><?=$row->short_description?></td>
                   <td>
                     <?php if($row->is_credit_point){?>
-                      <span class="badge bg-success">MEETING POINT ADDED</span>
+                      <span class="badge bg-success">MEETING POINTS ADDED</span>
                     <?php } else {?>
                       <a href="<?=url('admin/' . $controllerRoute . '/credit-point/'.Helper::encoded($row->id))?>" class="btn btn-primary btn-sm" onclick="return confirm('Do You Want To Credit Point For This Meeting ?');">Credit Meeting Points</a>
                     <?php }?>
