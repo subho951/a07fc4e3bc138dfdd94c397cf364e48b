@@ -44,6 +44,7 @@ $controllerRoute = $module['controller_route'];
                 <th scope="col">To Date</th>
                 <th scope="col">Venue</th>
                 <th scope="col">Short Description</th>
+                <th scope="col">Meeting Points</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -57,6 +58,13 @@ $controllerRoute = $module['controller_route'];
                   <td><?=date_format(date_create($row->to_date), "d-m-Y")?></td>
                   <td><?=$row->venue?></td>
                   <td><?=$row->short_description?></td>
+                  <td>
+                    <?php if($row->is_credit_point){?>
+                      <span class="badge bg-success">MEETING POINT ADDED</span>
+                    <?php } else {?>
+                      <a href="" class="btn btn-primary btn-sm">Credit Meeting Points</a>
+                    <?php }?>
+                  </td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
                     <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a>

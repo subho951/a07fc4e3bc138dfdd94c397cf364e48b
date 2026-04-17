@@ -139,6 +139,7 @@ Route::get('cron/event-notification', [FrontController::class, 'eventNotificatio
                 Route::match(['get', 'post'], 'core-meeting/edit/{id}', 'CoreMeetingController@edit');
                 Route::get('core-meeting/delete/{id}', 'CoreMeetingController@delete');
                 Route::get('core-meeting/change-status/{id}', 'CoreMeetingController@change_status');
+                Route::get('core-meeting/credit-point/{id}', 'CoreMeetingController@creditPoint');
             /* core meeting */
             /* leader board */
                 Route::get('leader-board/core', 'LeaderboardController@core');

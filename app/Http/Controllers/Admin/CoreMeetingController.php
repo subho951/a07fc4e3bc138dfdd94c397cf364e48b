@@ -116,87 +116,87 @@ class CoreMeetingController extends Controller
                     'quorum_percent'            => $request->quorum_percent,
                 ]);
 
-                if($request->attendance > 0 && $request->quorum_percent > 0){
-                    $meeting_id = $id;
-                    $core_id = $request->core_id;
+                // if($request->attendance > 0 && $request->quorum_percent > 0){
+                //     $meeting_id = $id;
+                //     $core_id = $request->core_id;
 
-                    $generalSetting = GeneralSetting::find(1);
-                    $core_meeting_inbound_point = $generalSetting->core_meeting_inbound_point;
-                    $core_meeting_min_attn_percent = $generalSetting->core_meeting_min_attn_percent;
-                    $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
-                    $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
+                //     $generalSetting = GeneralSetting::find(1);
+                //     $core_meeting_inbound_point = $generalSetting->core_meeting_inbound_point;
+                //     $core_meeting_min_attn_percent = $generalSetting->core_meeting_min_attn_percent;
+                //     $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
+                //     $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
 
-                    if($request->quorum_percent >= $core_meeting_min_attn_percent){
-                        $getCore = Core::where('id', '=', $core_id)->first();
-                        if($getCore){
-                            $credited_points = 0;
-                            if($request->meeting_type == 'INBOUND'){
-                                $credited_points = $core_meeting_inbound_point;
-                            } elseif($request->meeting_type == 'LOCAL INBOUND'){
-                                $credited_points = $core_meeting_local_outbound_point;
-                            } elseif($request->meeting_type == 'OUTBOUND'){
-                                $credited_points = $core_meeting_outbound_point;
-                            }
-                            $fields2 = [
-                                'core_id'           => $core_id,
-                                'member_id'         => 0,
-                                'event_id'          => 0,
-                                'meeting_id'        => $meeting_id,
-                                'credited_points'   => $credited_points,
-                                'note'              => $credited_points . ' points credited for meeting organize',
-                            ];
-                            CorePoint::insert($fields2);
+                //     if($request->quorum_percent >= $core_meeting_min_attn_percent){
+                //         $getCore = Core::where('id', '=', $core_id)->first();
+                //         if($getCore){
+                //             $credited_points = 0;
+                //             if($request->meeting_type == 'INBOUND'){
+                //                 $credited_points = $core_meeting_inbound_point;
+                //             } elseif($request->meeting_type == 'LOCAL INBOUND'){
+                //                 $credited_points = $core_meeting_local_outbound_point;
+                //             } elseif($request->meeting_type == 'OUTBOUND'){
+                //                 $credited_points = $core_meeting_outbound_point;
+                //             }
+                //             $fields2 = [
+                //                 'core_id'           => $core_id,
+                //                 'member_id'         => 0,
+                //                 'event_id'          => 0,
+                //                 'meeting_id'        => $meeting_id,
+                //                 'credited_points'   => $credited_points,
+                //                 'note'              => $credited_points . ' points credited for meeting organize',
+                //             ];
+                //             CorePoint::insert($fields2);
 
-                            $opening_core_point = (int) $getCore->points;
-                            $core_new_points = ($opening_core_point + $credited_points);
-                            Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
+                //             $opening_core_point = (int) $getCore->points;
+                //             $core_new_points = ($opening_core_point + $credited_points);
+                //             Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
 
-                            // push notification send
-                                if($core_id > 0){
-                                    $coreMembers = CoreMember::where('core_id', '=', $core_id)->get();
-                                    if($coreMembers){
-                                        foreach($coreMembers as $coreMember){
-                                            $users = [];
-                                            $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
-                                            if($getToken){
-                                                $token = $getToken->fcm_token;
+                //             // push notification send
+                //                 if($core_id > 0){
+                //                     $coreMembers = CoreMember::where('core_id', '=', $core_id)->get();
+                //                     if($coreMembers){
+                //                         foreach($coreMembers as $coreMember){
+                //                             $users = [];
+                //                             $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
+                //                             if($getToken){
+                //                                 $token = $getToken->fcm_token;
 
-                                                $title = 'Meeting points credited';
-                                                $message = 'For '.$request->meeting_type.' meeting held from '.$request->from_date.' to '.$request->to_date.' '.$credited_points.' points credited to core scoreboard';
+                //                                 $title = 'Meeting points credited';
+                //                                 $message = 'For '.$request->meeting_type.' meeting held from '.$request->from_date.' to '.$request->to_date.' '.$credited_points.' points credited to core scoreboard';
 
-                                                $image = '';
+                //                                 $image = '';
 
-                                                $data = [
-                                                    "meeting_id" => $id,
-                                                    "type" => 'meeting'
-                                                ];
+                //                                 $data = [
+                //                                     "meeting_id" => $id,
+                //                                     "type" => 'meeting'
+                //                                 ];
 
-                                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                //                                 $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
 
-                                                $users[]            = $coreMember->member_id;
-                                                $notificationFields = [
-                                                    'title'             => $title,
-                                                    'description'       => $message,
-                                                    'to_users'          => $coreMember->member_id,
-                                                    'users'             => json_encode($users),
-                                                    'is_send'           => 1,
-                                                    'send_timestamp'    => date('Y-m-d H:i:s'),
-                                                ];
-                                                Notification::insert($notificationFields);
-                                            }
-                                        }
-                                    }
-                                }
-                            // push notification send
+                //                                 $users[]            = $coreMember->member_id;
+                //                                 $notificationFields = [
+                //                                     'title'             => $title,
+                //                                     'description'       => $message,
+                //                                     'to_users'          => $coreMember->member_id,
+                //                                     'users'             => json_encode($users),
+                //                                     'is_send'           => 1,
+                //                                     'send_timestamp'    => date('Y-m-d H:i:s'),
+                //                                 ];
+                //                                 Notification::insert($notificationFields);
+                //                             }
+                //                         }
+                //                     }
+                //                 }
+                //             // push notification send
 
 
-                        } else {
-                            return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' not found !!!');
-                        }
-                    } else {
-                        return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' meeting quotum percentage not greater than ' . $core_meeting_min_attn_percent);
-                    }
-                }
+                //         } else {
+                //             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' not found !!!');
+                //         }
+                //     } else {
+                //         return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' meeting quotum percentage not greater than ' . $core_meeting_min_attn_percent);
+                //     }
+                // }
 
                 return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' updated successfully !!!');
             }
@@ -229,4 +229,102 @@ class CoreMeetingController extends Controller
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' '.$msg.' successfully !!!');
         }
     /* change status */
+    /* credit points */
+        public function creditPoint($id){
+            $id                             = Helper::decoded($id);
+            $getMeeting                     = CoreMeeting::where($this->data['primary_key'], '=', $id)->first();
+            if($getMeeting){
+                $attendance             = $getMeeting->attendance;
+                $quorum_percent         = $getMeeting->quorum_percent;
+                $core_id                = $getMeeting->core_id;
+                $meeting_type           = $getMeeting->meeting_type;
+                $from_date              = $getMeeting->from_date;
+                $to_date                = $getMeeting->to_date;
+
+                if($attendance > 0 && $quorum_percent > 0){
+                    $meeting_id = $id;
+
+                    $generalSetting = GeneralSetting::find(1);
+                    $core_meeting_inbound_point = $generalSetting->core_meeting_inbound_point;
+                    $core_meeting_min_attn_percent = $generalSetting->core_meeting_min_attn_percent;
+                    $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
+                    $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
+
+                    if($quorum_percent >= $core_meeting_min_attn_percent){
+                        $getCore = Core::where('id', '=', $core_id)->first();
+                        if($getCore){
+                            $credited_points = 0;
+                            if($meeting_type == 'INBOUND'){
+                                $credited_points = $core_meeting_inbound_point;
+                            } elseif($meeting_type == 'LOCAL INBOUND'){
+                                $credited_points = $core_meeting_local_outbound_point;
+                            } elseif($meeting_type == 'OUTBOUND'){
+                                $credited_points = $core_meeting_outbound_point;
+                            }
+                            $fields2 = [
+                                'core_id'           => $core_id,
+                                'member_id'         => 0,
+                                'event_id'          => 0,
+                                'meeting_id'        => $meeting_id,
+                                'credited_points'   => $credited_points,
+                                'note'              => $credited_points . ' points credited for meeting organize',
+                            ];
+                            CorePoint::insert($fields2);
+
+                            $opening_core_point = (int) $getCore->points;
+                            $core_new_points = ($opening_core_point + $credited_points);
+                            Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
+                            CoreMeeting::where('id', '=', $id)->update(['is_credit_point' => 1]);
+
+                            // push notification send
+                                if($core_id > 0){
+                                    $coreMembers = CoreMember::where('core_id', '=', $core_id)->get();
+                                    if($coreMembers){
+                                        foreach($coreMembers as $coreMember){
+                                            $users = [];
+                                            $getToken = UserDevice::select('fcm_token')->where('user_id', '=', $coreMember->member_id)->where('published', '=', 1)->where('fcm_token', '!=', '')->first();
+                                            if($getToken){
+                                                $token = $getToken->fcm_token;
+
+                                                $title = 'Meeting points credited';
+                                                $message = 'For '.$meeting_type.' meeting held from '.$from_date.' to '.$to_date.' '.$credited_points.' points credited to core scoreboard';
+
+                                                $image = '';
+
+                                                $data = [
+                                                    "meeting_id" => $id,
+                                                    "type" => 'meeting'
+                                                ];
+
+                                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+
+                                                $users[]            = $coreMember->member_id;
+                                                $notificationFields = [
+                                                    'title'             => $title,
+                                                    'description'       => $message,
+                                                    'to_users'          => $coreMember->member_id,
+                                                    'users'             => json_encode($users),
+                                                    'is_send'           => 1,
+                                                    'send_timestamp'    => date('Y-m-d H:i:s'),
+                                                ];
+                                                Notification::insert($notificationFields);
+                                            }
+                                        }
+                                    }
+                                }
+                            // push notification send
+
+                            return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', 'Core meeting points credited successfully !!!');
+                        } else {
+                            return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', 'Core not found !!!');
+                        }
+                    } else {
+                        return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', 'Core meeting quotum percentage not greater than ' . $core_meeting_min_attn_percent);
+                    }
+                }
+            } else {
+                return redirect('admin/'.$this->data['controller_route'] . "/list")->with('error_message', $this->data['title'].' not found !!!');
+            }
+        }
+    /* credit points */
 }
