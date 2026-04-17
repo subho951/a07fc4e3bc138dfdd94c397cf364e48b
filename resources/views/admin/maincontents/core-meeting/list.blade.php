@@ -62,12 +62,12 @@ $controllerRoute = $module['controller_route'];
                     <?php if($row->is_credit_point){?>
                       <span class="badge bg-success">MEETING POINT ADDED</span>
                     <?php } else {?>
-                      <a href="" class="btn btn-primary btn-sm">Credit Meeting Points</a>
+                      <a href="<?=url('admin/' . $controllerRoute . '/credit-point/'.Helper::encoded($row->id))?>" class="btn btn-primary btn-sm" onclick="return confirm('Do You Want To Credit Point For This Meeting ?');">Credit Meeting Points</a>
                     <?php }?>
                   </td>
                   <td>
                     <a href="<?=url('admin/' . $controllerRoute . '/edit/'.Helper::encoded($row->id))?>" class="btn btn-outline-primary btn-sm" title="Edit <?=$module['title']?>"><i class="fa fa-edit"></i></a>
-                    <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a>
+                    <!-- <a href="<?=url('admin/' . $controllerRoute . '/delete/'.Helper::encoded($row->id))?>" class="btn btn-outline-danger btn-sm" title="Delete <?=$module['title']?>" onclick="return confirm('Do You Want To Delete This <?=$module['title']?>');"><i class="fa fa-trash"></i></a> -->
                     <?php if($row->status){?>
                       <a href="<?=url('admin/' . $controllerRoute . '/change-status/'.Helper::encoded($row->id))?>" class="btn btn-outline-success btn-sm" title="Activate <?=$module['title']?>"><i class="fa fa-check"></i></a>
                     <?php } else {?>
