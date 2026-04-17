@@ -114,9 +114,9 @@ $controllerRoute = $module['controller_route'];
             </div>
 
             <div class="row mb-3">
-              <label for="short_description" class="col-md-2 col-lg-2 col-form-label">Short Description <span class="text-danger">*</span></label>
+              <label for="short_description" class="col-md-2 col-lg-2 col-form-label">Short Description</label>
               <div class="col-md-10 col-lg-10">
-                <textarea name="short_description" class="form-control" id="short_description" required><?=$short_description?></textarea>
+                <textarea name="short_description" class="form-control" id="short_description"><?=$short_description?></textarea>
                 @error('short_description') <span class="text-danger">{{ $message }}</span> @enderror
               </div>
             </div>

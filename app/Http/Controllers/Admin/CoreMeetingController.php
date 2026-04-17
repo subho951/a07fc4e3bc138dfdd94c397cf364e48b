@@ -59,7 +59,7 @@ class CoreMeetingController extends Controller
                     'from_date'                 => 'required|string',
                     'to_date'                   => 'required|string',
                     'venue'                     => 'required|string',
-                    'short_description'         => 'required|string',
+                    // 'short_description'         => 'required|string',
                 ]);
 
                 CoreMeeting::create([
@@ -102,7 +102,7 @@ class CoreMeetingController extends Controller
                     'from_date'                 => 'required|string',
                     'to_date'                   => 'required|string',
                     'venue'                     => 'required|string',
-                    'short_description'         => 'required|string',
+                    // 'short_description'         => 'required|string',
                 ]);
 
                 $member->update([
