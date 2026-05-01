@@ -118,7 +118,8 @@ class FrontController extends Controller
                 $row->save();
 
                 /* member point calculation */
-                    $credited_points = $this->creditUserEventAttendancePoints($getMember, $getEvent, $generalSetting);
+                    $attendancePointCredit = $this->creditUserEventAttendancePoints($getMember, $getEvent, $generalSetting);
+                    $credited_points = $attendancePointCredit['credited_points'];
                 /* member point calculation */
 
                 /* core point calculation */
@@ -140,6 +141,10 @@ class FrontController extends Controller
                             $core_new_points = ($opening_core_point + $credited_points);
                             Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
                         }
+                    }
+
+                    if($attendancePointCredit['is_back_to_back_bonus']){
+                        $this->creditCoreBackToBackBonusPoints($member_id, $core_id, $event_id, $getMember->name);
                     }
                 /* core point calculation */
 
@@ -253,7 +258,10 @@ class FrontController extends Controller
         private function creditUserEventAttendancePoints($member, $event, $generalSetting)
         {
             if(!$member || !$event || !$generalSetting){
-                return 0;
+                return [
+                    'credited_points' => 0,
+                    'is_back_to_back_bonus' => false,
+                ];
             }
 
             $member_id = $member->id;
@@ -317,7 +325,39 @@ class FrontController extends Controller
 
             User::where('id', '=', $member_id)->increment('points', $credited_points);
 
-            return $credited_points;
+            return [
+                'credited_points' => $credited_points,
+                'is_back_to_back_bonus' => $isBackToBackAttendance,
+            ];
+        }
+
+        private function creditCoreBackToBackBonusPoints($member_id, $core_id, $event_id, $member_name = '')
+        {
+            $coreBonusPoint = 5;
+
+            if($core_id <= 0){
+                return false;
+            }
+
+            $getCore = Core::where('id', '=', $core_id)->first();
+            if(!$getCore){
+                return false;
+            }
+
+            $memberNameText = (($member_name != '') ? ' of ' . $member_name : '');
+
+            CorePoint::insert([
+                'core_id'           => $core_id,
+                'member_id'         => $member_id,
+                'event_id'          => $event_id,
+                'meeting_id'        => 0,
+                'credited_points'   => $coreBonusPoint,
+                'note'              => $coreBonusPoint . ' points credited for member back to back attendance bonus' . $memberNameText,
+            ]);
+
+            Core::where('id', '=', $core_id)->increment('points', $coreBonusPoint);
+
+            return true;
         }
     /* event checkin */
     /* back to back attendance bonus cron */
@@ -343,6 +383,8 @@ class FrontController extends Controller
                 'members_checked' => 0,
                 'bonus_credited_count' => 0,
                 'bonus_skipped_count' => 0,
+                'core_bonus_credited_count' => 0,
+                'total_core_points_credited' => 0,
                 'total_points_credited' => 0,
                 'credited' => [],
             ];
@@ -415,6 +457,17 @@ class FrontController extends Controller
 
                     User::where('id', '=', $memberId)->increment('points', $backToBackPoint);
 
+                    $member = User::select('id', 'name', 'core_id')->where('id', '=', $memberId)->first();
+                    $coreBonusCredited = false;
+                    if($member){
+                        $coreBonusCredited = $this->creditCoreBackToBackBonusPoints($member->id, $member->core_id, $event->id, $member->name);
+                    }
+
+                    if($coreBonusCredited){
+                        $report['core_bonus_credited_count']++;
+                        $report['total_core_points_credited'] += 5;
+                    }
+
                     $report['bonus_credited_count']++;
                     $report['total_points_credited'] += $backToBackPoint;
                     $report['credited'][] = [
@@ -422,6 +475,7 @@ class FrontController extends Controller
                         'event_id' => $event->id,
                         'event_title' => $event->title,
                         'credited_points' => $backToBackPoint,
+                        'core_bonus_points_credited' => (($coreBonusCredited) ? 5 : 0),
                     ];
                 }
             }
