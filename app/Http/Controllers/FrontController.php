@@ -68,15 +68,6 @@ class FrontController extends Controller
         {
             $generalSetting = GeneralSetting::find(1);
 
-            $individual_attn_point = $generalSetting->individual_attn_point;
-            $individual_backtoback_attn_count = $generalSetting->individual_backtoback_attn_count;
-            $individual_backtoback_attn_point = $generalSetting->individual_backtoback_attn_point;
-            $individual_not_attn = $generalSetting->individual_not_attn;
-            $core_meeting_inbound_point = $generalSetting->core_meeting_inbound_point;
-            $core_meeting_min_attn_percent = $generalSetting->core_meeting_min_attn_percent;
-            $core_meeting_local_outbound_point = $generalSetting->core_meeting_local_outbound_point;
-            $core_meeting_outbound_point = $generalSetting->core_meeting_outbound_point;
-
             try {
                 $id = Crypt::decryptString(urldecode($token));
             } catch (\Throwable $e) {
@@ -126,46 +117,8 @@ class FrontController extends Controller
                 $row->location = $location;
                 $row->save();
 
-                $currentEvent = Event::find(32);
-                $previousEvents = [];
-
-                if($currentEvent){
-                    $previousEvents = Event::where('event_date', '<', $currentEvent->event_date)
-                        ->orderBy('event_date', 'desc')
-                        ->limit($individual_backtoback_attn_count)
-                        ->pluck('id')
-                        ->toArray();
-                }
-
                 /* member point calculation */
-                    $opening_point = (int) $getMember->points;
-                    $credited_points = 0;
-                    $credited_points = (int) $individual_attn_point;
-
-                    $eventAttnCount = 0;
-                    if($previousEvents){
-                        for($k=0;$k<count($previousEvents);$k++){
-                            $evid = $previousEvents[$k];
-                            $checkAttendance = UserRegEvent::where('userid', '=', $member_id)->where('eventid', '=', $evid)->where('status', '=', 1)->count();
-                            if($checkAttendance > 0){
-                                $eventAttnCount++;
-                            }
-                        }
-                    }
-
-                    if($eventAttnCount >= $individual_backtoback_attn_count){
-                        $credited_points = (int) $individual_attn_point + (int) $individual_backtoback_attn_point;
-                    }
-
-                    $user_new_points = ($opening_point + $credited_points);
-                    $fields1 = [
-                        'member_id'         => $member_id,
-                        'event_id'          => $event_id,
-                        'credited_points'   => $credited_points,
-                        'note'              => $credited_points . ' points credited for event attended',
-                    ];
-                    UserPoint::insert($fields1);
-                    User::where('id', '=', $member_id)->update(['points' => $user_new_points]);
+                    $credited_points = $this->creditUserEventAttendancePoints($getMember, $getEvent, $generalSetting);
                 /* member point calculation */
 
                 /* core point calculation */
@@ -296,7 +249,190 @@ class FrontController extends Controller
 
             return 'Latitude: ' . $latitude . ', Longitude: ' . $longitude;
         }
+
+        private function creditUserEventAttendancePoints($member, $event, $generalSetting)
+        {
+            if(!$member || !$event || !$generalSetting){
+                return 0;
+            }
+
+            $member_id = $member->id;
+            $event_id = $event->id;
+            $attendancePoint = (int) $generalSetting->individual_attn_point;
+            $backToBackCount = (int) $generalSetting->individual_backtoback_attn_count;
+            $backToBackPoint = (int) $generalSetting->individual_backtoback_attn_point;
+            $credited_points = $attendancePoint;
+            $isBackToBackAttendance = false;
+
+            if($backToBackCount > 1 && $backToBackPoint > 0){
+                $eventIds = Event::where(function($query) use ($event){
+                                    $query->where('event_date', '<', $event->event_date)
+                                        ->orWhere(function($query) use ($event){
+                                            $query->where('event_date', '=', $event->event_date)
+                                                ->where('id', '<=', $event->id);
+                                        });
+                                })
+                                ->orderBy('event_date', 'DESC')
+                                ->orderBy('id', 'DESC')
+                                ->pluck('id')
+                                ->toArray();
+
+                $attendedEventIds = UserRegEvent::where('userid', '=', $member_id)
+                                                ->whereIn('eventid', $eventIds)
+                                                ->where('status', '=', 1)
+                                                ->pluck('eventid')
+                                                ->toArray();
+
+                $attendedEventIds = array_flip($attendedEventIds);
+                $backToBackAttendanceStreak = 0;
+
+                foreach($eventIds as $eventId){
+                    if(!isset($attendedEventIds[$eventId])){
+                        break;
+                    }
+
+                    $backToBackAttendanceStreak++;
+                }
+
+                $isBackToBackAttendance = ($backToBackAttendanceStreak > 0 && $backToBackAttendanceStreak % $backToBackCount == 0);
+            } elseif($backToBackCount == 1 && $backToBackPoint > 0){
+                $isBackToBackAttendance = true;
+            }
+
+            if($isBackToBackAttendance){
+                $credited_points += $backToBackPoint;
+            }
+
+            $note = $credited_points . ' points credited for event attended';
+            if($isBackToBackAttendance){
+                $note = $credited_points . ' points credited for event attended with back to back attendance bonus';
+            }
+
+            UserPoint::insert([
+                'member_id'         => $member_id,
+                'event_id'          => $event_id,
+                'credited_points'   => $credited_points,
+                'note'              => $note,
+            ]);
+
+            User::where('id', '=', $member_id)->increment('points', $credited_points);
+
+            return $credited_points;
+        }
     /* event checkin */
+    /* back to back attendance bonus cron */
+        public function backToBackAttendanceBonusCron(Request $request)
+        {
+            $secureCronKey = env('CRON_KEY', '');
+            if($secureCronKey != '' && $request->query('key') != $secureCronKey){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Invalid cron key.',
+                ], 401);
+            }
+
+            $generalSetting = GeneralSetting::find(1);
+            $backToBackCount = (($generalSetting) ? (int) $generalSetting->individual_backtoback_attn_count : 0);
+            $backToBackPoint = (($generalSetting) ? (int) $generalSetting->individual_backtoback_attn_point : 0);
+            $memberIdFilter = (int) $request->query('member_id', 0);
+
+            $report = [
+                'back_to_back_count' => $backToBackCount,
+                'back_to_back_bonus_point' => $backToBackPoint,
+                'member_id_filter' => $memberIdFilter,
+                'members_checked' => 0,
+                'bonus_credited_count' => 0,
+                'bonus_skipped_count' => 0,
+                'total_points_credited' => 0,
+                'credited' => [],
+            ];
+
+            if(!$generalSetting || $backToBackCount <= 0 || $backToBackPoint <= 0){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Back to back attendance bonus settings are not configured.',
+                    'report' => $report,
+                ], 422);
+            }
+
+            $memberQuery = UserRegEvent::where('status', '=', 1);
+            if($memberIdFilter > 0){
+                $memberQuery->where('userid', '=', $memberIdFilter);
+            }
+
+            $memberIds = $memberQuery->pluck('userid')
+                                    ->unique()
+                                    ->values()
+                                    ->toArray();
+
+            if(empty($memberIds)){
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Back to back attendance bonus cron executed successfully.',
+                    'report' => $report,
+                ]);
+            }
+
+            $report['members_checked'] = count($memberIds);
+
+            foreach($memberIds as $memberId){
+                $attendedEvents = Event::select('events.id', 'events.title', 'events.event_date')
+                                        ->join('user_reg_events', 'user_reg_events.eventid', '=', 'events.id')
+                                        ->where('user_reg_events.userid', '=', $memberId)
+                                        ->where('user_reg_events.status', '=', 1)
+                                        ->groupBy('events.id', 'events.title', 'events.event_date')
+                                        ->orderBy('events.event_date', 'ASC')
+                                        ->orderBy('events.id', 'ASC')
+                                        ->get();
+
+                $backToBackAttendanceStreak = 0;
+
+                foreach($attendedEvents as $event){
+                    $backToBackAttendanceStreak++;
+
+                    if($backToBackAttendanceStreak % $backToBackCount != 0){
+                        continue;
+                    }
+
+                    $alreadyCredited = UserPoint::where('member_id', '=', $memberId)
+                                                ->where('event_id', '=', $event->id)
+                                                ->where('note', 'LIKE', '%back to back attendance bonus%')
+                                                ->exists();
+
+                    if($alreadyCredited){
+                        $report['bonus_skipped_count']++;
+                        continue;
+                    }
+
+                    $note = $backToBackPoint . ' points credited for back to back attendance bonus';
+
+                    UserPoint::insert([
+                        'member_id'         => $memberId,
+                        'event_id'          => $event->id,
+                        'credited_points'   => $backToBackPoint,
+                        'note'              => $note,
+                    ]);
+
+                    User::where('id', '=', $memberId)->increment('points', $backToBackPoint);
+
+                    $report['bonus_credited_count']++;
+                    $report['total_points_credited'] += $backToBackPoint;
+                    $report['credited'][] = [
+                        'member_id' => $memberId,
+                        'event_id' => $event->id,
+                        'event_title' => $event->title,
+                        'credited_points' => $backToBackPoint,
+                    ];
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Back to back attendance bonus cron executed successfully.',
+                'report' => $report,
+            ]);
+        }
+    /* back to back attendance bonus cron */
     /* event notification cron */
         public function eventNotificationCron(Request $request)
         {

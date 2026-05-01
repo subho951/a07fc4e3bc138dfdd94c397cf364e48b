@@ -24,6 +24,7 @@ Route::post('delete-account-update', [FrontController::class, 'deleteaccount'])-
 Route::get('pages/{id}', [FrontController::class, 'page']);
 Route::get('cron/birthday-wish', [FrontController::class, 'birthdayWishCron']);
 Route::get('cron/event-notification', [FrontController::class, 'eventNotificationCron']);
+Route::get('cron/back-to-back-attendance-bonus', [FrontController::class, 'backToBackAttendanceBonusCron']);
 
 /* Admin Panel */
     Route::prefix('/admin')->namespace('App\Http\Controllers\Admin')->group(function(){
