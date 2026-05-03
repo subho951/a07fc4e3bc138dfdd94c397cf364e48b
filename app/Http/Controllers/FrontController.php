@@ -786,11 +786,11 @@ class FrontController extends Controller
                         //     'updated_at' => $now->format('Y-m-d H:i:s'),
                         // ]);
 
-                        if($mailStatus){
-                            $report['email_sent']++;
-                        } else {
-                            $report['email_skipped']++;
-                        }
+                        // if($mailStatus){
+                        //     $report['email_sent']++;
+                        // } else {
+                        //     $report['email_skipped']++;
+                        // }
                     } else {
                         $report['email_skipped']++;
                     }
