@@ -126,7 +126,7 @@ class MemberController extends Controller
                 $member = User::findOrFail($id);
 
                 $request->validate([
-                    'name'         => 'required|string|max:255|unique:users,name,'.$member->id,
+                    'name'         => 'required|string|max:255',
                     'email'        => 'required|email|max:255|unique:users,email,'.$member->id,
                     'phone'        => 'required|digits:10|unique:users,phone,'.$member->id,
                     // 'company_name' => 'required|string|max:255',
