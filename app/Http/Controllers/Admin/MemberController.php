@@ -49,6 +49,7 @@ class MemberController extends Controller
             $generalSetting             = GeneralSetting::find('1');
             $data['module']             = $this->data;
             if($request->isMethod('post')){
+                Helper::pr($request->all());
                 $request->validate([
                     'name'         => 'required|string|max:255',
                     'email'        => 'required|email|max:255|unique:users,email',
