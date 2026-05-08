@@ -67,26 +67,7 @@ class MemberController extends Controller
                 /** Photo Upload */
                 $photoName = time().'_'.$request->photo->getClientOriginalName();
                 $request->photo->move(public_path('uploads/user'), $photoName);
-
-                Helper::pr([
-                    'type'                          => 1,
-                    'name'                          => $request->name,
-                    'email'                         => $request->email,
-                    'phone'                         => $request->phone,
-                    'company_name'                  => $request->company_name,
-                    'designation'                   => $request->designation,
-                    'photo'                         => $photoName,
-                    'dob'                           => $request->dob,
-                    'doj'                           => $request->doj,
-                    'doa'                           => $request->doa,
-                    'core_id'                       => $request->core_id,
-                    'spouse_name'                   => $request->spouse_name,
-                    'profession'                    => $request->profession,
-                    'alumni'                        => $request->alumni,
-                    'industry_id'                   => ((array_key_exists("industry_id",$postData))?(($request->industry_id != '')?json_encode($request->industry_id):[]):[]),
-                    'interest_id'                   => ((array_key_exists("interest_id",$postData))?(($request->interest_id != '')?json_encode($request->interest_id):[]):[]),
-                    'address'                       => $request->address,
-                ]);
+                
 
                 User::create([
                     'type'                          => 1,
@@ -103,7 +84,7 @@ class MemberController extends Controller
                     'spouse_name'                   => $request->spouse_name,
                     'profession'                    => $request->profession,
                     'alumni'                        => $request->alumni,
-                    'industry_id'                   => ((array_key_exists("Volvo",$a))?(($request->industry_id != '')?json_encode($request->industry_id):[]):[]),
+                    'industry_id'                   => ((array_key_exists("industry_id",$postData))?(($request->industry_id != '')?json_encode($request->industry_id):[]):[]),
                     'interest_id'                   => ((array_key_exists("interest_id",$postData))?(($request->interest_id != '')?json_encode($request->interest_id):[]):[]),
                     'address'                       => $request->address,
                 ]);
