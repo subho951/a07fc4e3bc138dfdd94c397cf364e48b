@@ -29,6 +29,17 @@ class MemberController extends Controller
             'primary_key'       => 'id',
         );
     }
+
+    private function encodeMultiSelectIds($value)
+    {
+        $ids = is_array($value) ? $value : [];
+        $ids = array_values(array_filter($ids, function ($id) {
+            return $id !== null && $id !== '';
+        }));
+
+        return json_encode($ids);
+    }
+
     /* list */
         public function list(){
             $data['module']                 = $this->data;
@@ -49,7 +60,6 @@ class MemberController extends Controller
             $generalSetting             = GeneralSetting::find('1');
             $data['module']             = $this->data;
             if($request->isMethod('post')){
-                $postData = $request->all();
                 $request->validate([
                     'name'         => 'required|string|max:255',
                     'email'        => 'required|email|max:255|unique:users,email',
@@ -57,8 +67,8 @@ class MemberController extends Controller
                     // 'company_name' => 'required|string|max:255',
                     // 'designation'  => 'required|string|max:255',
                     'photo'        => 'nullable|image|mimes:jpg,jpeg,png|max:' . $generalSetting->photo_size,
-                    'dob'          => 'required|date',
-                    'doj'          => 'required',
+                    // 'dob'          => 'required|date',
+                    // 'doj'          => 'required',
                     // 'profession'   => 'required',
                     // 'address'      => 'required',
                 ]);
@@ -83,8 +93,8 @@ class MemberController extends Controller
                     'spouse_name'                   => $request->spouse_name,
                     'profession'                    => $request->profession,
                     'alumni'                        => $request->alumni,
-                    'industry_id'                   => ((array_key_exists("industry_id",$postData))?json_encode($request->industry_id):[]),
-                    'interest_id'                   => ((array_key_exists("interest_id",$postData))?json_encode($request->interest_id):[]),
+                    'industry_id'                   => $this->encodeMultiSelectIds($request->input('industry_id', [])),
+                    'interest_id'                   => $this->encodeMultiSelectIds($request->input('interest_id', [])),
                     'address'                       => $request->address,
                 ]);
 
@@ -153,8 +163,8 @@ class MemberController extends Controller
                     'spouse_name'                   => $request->spouse_name,
                     'profession'                    => $request->profession,
                     'alumni'                        => $request->alumni,
-                    'industry_id'                   => (($request->industry_id != '')?json_encode($request->industry_id):[]),
-                    'interest_id'                   => (($request->interest_id != '')?json_encode($request->interest_id):[]),
+                    'industry_id'                   => $this->encodeMultiSelectIds($request->input('industry_id', [])),
+                    'interest_id'                   => $this->encodeMultiSelectIds($request->input('interest_id', [])),
                     'address'                       => $request->address,
                 ]);
 
