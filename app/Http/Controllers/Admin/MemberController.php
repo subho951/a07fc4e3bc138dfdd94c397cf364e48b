@@ -83,7 +83,7 @@ class MemberController extends Controller
                     'spouse_name'                   => $request->spouse_name,
                     'profession'                    => $request->profession,
                     'alumni'                        => $request->alumni,
-                    'industry_id'                   => ((array_key_exists("Volvo",$a))?(($request->industry_id != '')?json_encode($request->industry_id):[]):[]),
+                    'industry_id'                   => ((array_key_exists("Volvo",$postData))?(($request->industry_id != '')?json_encode($request->industry_id):[]):[]),
                     'interest_id'                   => ((array_key_exists("interest_id",$postData))?(($request->interest_id != '')?json_encode($request->interest_id):[]):[]),
                     'address'                       => $request->address,
                 ]);
