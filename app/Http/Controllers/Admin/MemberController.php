@@ -50,7 +50,7 @@ class MemberController extends Controller
             $data['module']             = $this->data;
             if($request->isMethod('post')){
                 $request->validate([
-                    'name'         => 'required|string|max:255|unique:users,name',
+                    'name'         => 'required|string|max:255',
                     'email'        => 'required|email|max:255|unique:users,email',
                     'phone'        => 'required|digits:10|unique:users,phone',
                     // 'company_name' => 'required|string|max:255',
