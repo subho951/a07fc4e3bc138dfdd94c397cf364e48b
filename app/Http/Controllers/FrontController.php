@@ -370,7 +370,6 @@ class FrontController extends Controller
                     'message' => 'Invalid cron key.',
                 ], 401);
             }
-
             $generalSetting = GeneralSetting::find(1);
             $backToBackCount = (($generalSetting) ? (int) $generalSetting->individual_backtoback_attn_count : 0);
             $backToBackPoint = (($generalSetting) ? (int) $generalSetting->individual_backtoback_attn_point : 0);
@@ -638,6 +637,7 @@ class FrontController extends Controller
                     'message' => 'Invalid cron key.',
                 ], 401);
             }
+            $forcePush = in_array(strtolower((string) $request->query('force_push', '')), ['1', 'true', 'yes', 'on'], true);
 
             $generalSetting = GeneralSetting::find(1);
             $siteName = (($generalSetting && $generalSetting->site_name != '') ? $generalSetting->site_name : 'ALFA Network');
@@ -684,11 +684,13 @@ class FrontController extends Controller
                 'total_birthday_users' => $birthdayUsers->count(),
                 'broadcast_recipients' => $broadcastMembers->count(),
                 'birthday_names' => (($birthdayCount > 0) ? $birthdayNamesText : ''),
+                'force_push' => $forcePush,
                 'push_eligible_recipients' => $broadcastDevices->count(),
                 'push_eligible_devices' => $broadcastDevices->flatten(1)->count(),
                 'push_sent' => 0,
                 'push_skipped' => 0,
                 'push_already_sent' => 0,
+                'push_forced' => 0,
                 'push_no_token' => 0,
                 'push_failed' => 0,
                 'push_device_attempts' => 0,
@@ -715,10 +717,15 @@ class FrontController extends Controller
                                                     ->whereDate('send_timestamp', '=', $today)
                                                     ->exists();
 
-                if($alreadyPushedToday){
+                if($alreadyPushedToday && !$forcePush){
                     $report['push_skipped']++;
                     $report['push_already_sent']++;
                 } else {
+                    if($alreadyPushedToday && $forcePush){
+                        $report['push_already_sent']++;
+                        $report['push_forced']++;
+                    }
+
                     $tokenSentCount = 0;
                     $tokens = $broadcastDevices->get($member->id, collect());
 
