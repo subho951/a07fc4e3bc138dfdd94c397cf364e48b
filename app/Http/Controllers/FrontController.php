@@ -673,6 +673,7 @@ class FrontController extends Controller
                 $broadcastDevices = UserDevice::select('user_id', 'fcm_token')
                                             ->whereIn('user_id', $broadcastRecipientIds)
                                             ->where('published', '=', 1)
+                                            ->whereNotNull('fcm_token')
                                             ->where('fcm_token', '!=', '')
                                             ->get()
                                             ->groupBy('user_id');
@@ -683,10 +684,17 @@ class FrontController extends Controller
                 'total_birthday_users' => $birthdayUsers->count(),
                 'broadcast_recipients' => $broadcastMembers->count(),
                 'birthday_names' => (($birthdayCount > 0) ? $birthdayNamesText : ''),
+                'push_eligible_recipients' => $broadcastDevices->count(),
+                'push_eligible_devices' => $broadcastDevices->flatten(1)->count(),
                 'push_sent' => 0,
                 'push_skipped' => 0,
+                'push_already_sent' => 0,
+                'push_no_token' => 0,
+                'push_failed' => 0,
+                'push_device_attempts' => 0,
                 'email_sent' => 0,
                 'email_skipped' => 0,
+                'error_count' => 0,
                 'errors' => [],
             ];
 
@@ -707,15 +715,26 @@ class FrontController extends Controller
                                                     ->whereDate('send_timestamp', '=', $today)
                                                     ->exists();
 
-                if(!$alreadyPushedToday){
+                if($alreadyPushedToday){
+                    $report['push_skipped']++;
+                    $report['push_already_sent']++;
+                } else {
                     $tokenSentCount = 0;
                     $tokens = $broadcastDevices->get($member->id, collect());
 
-                    if($tokens->isNotEmpty()){
+                    if($tokens->isEmpty()){
+                        $report['push_skipped']++;
+                        $report['push_no_token']++;
+                    } else {
                         foreach($tokens as $device){
+                            $token = trim((string) $device->fcm_token);
+                            if($token == ''){
+                                continue;
+                            }
+
                             try {
-                                FirebaseService::sendNotification(
-                                    $device->fcm_token,
+                                $firebaseResponse = FirebaseService::sendNotification(
+                                    $token,
                                     $pushTitle,
                                     $pushMessage,
                                     [
@@ -725,29 +744,35 @@ class FrontController extends Controller
                                         'birthday_user_ids' => json_encode($birthdayUserIds),
                                     ]
                                 );
-                                $tokenSentCount++;
+                                $report['push_device_attempts']++;
+
+                                if($this->firebaseResponseSuccessful($firebaseResponse)){
+                                    $tokenSentCount++;
+                                } else {
+                                    $report['push_failed']++;
+                                    $this->addCronError($report, 'Push failed for member ID '.$member->id.': '.$this->firebaseResponseError($firebaseResponse));
+                                }
                             } catch (\Throwable $e) {
-                                $report['errors'][] = 'Push failed for member ID '.$member->id.': '.$e->getMessage();
+                                $report['push_failed']++;
+                                $this->addCronError($report, 'Push failed for member ID '.$member->id.': '.$e->getMessage());
                             }
                         }
-                    }
 
-                    if($tokenSentCount > 0){
-                        Notification::insert([
-                            'title'             => $pushTitle,
-                            'description'       => $pushMessage,
-                            'to_users'          => $member->id,
-                            'users'             => json_encode([$member->id]),
-                            'is_send'           => 1,
-                            'send_timestamp'    => $now->format('Y-m-d H:i:s'),
-                            'status'            => 1,
-                        ]);
-                        $report['push_sent']++;
-                    } else {
-                        $report['push_skipped']++;
+                        if($tokenSentCount > 0){
+                            Notification::insert([
+                                'title'             => $pushTitle,
+                                'description'       => $pushMessage,
+                                'to_users'          => $member->id,
+                                'users'             => json_encode([$member->id]),
+                                'is_send'           => 1,
+                                'send_timestamp'    => $now->format('Y-m-d H:i:s'),
+                                'status'            => 1,
+                            ]);
+                            $report['push_sent']++;
+                        } else {
+                            $report['push_skipped']++;
+                        }
                     }
-                } else {
-                    $report['push_skipped']++;
                 }
 
                 if($memberEmail != ''){
@@ -773,7 +798,7 @@ class FrontController extends Controller
                             // $mailStatus = $this->sendMail($memberEmail, $emailSubject, $message);
                         } catch (\Throwable $e) {
                             $mailStatus = false;
-                            $report['errors'][] = 'Email sending failed for member ID '.$member->id.': '.$e->getMessage();
+                            $this->addCronError($report, 'Email sending failed for member ID '.$member->id.': '.$e->getMessage());
                         }
 
                         // EmailLog::insert([
@@ -823,6 +848,34 @@ class FrontController extends Controller
 
             $lastName = array_pop($names);
             return implode(', ', $names).' and '.$lastName;
+        }
+        private function firebaseResponseSuccessful($response)
+        {
+            return is_array($response) && isset($response['name']) && !isset($response['error']);
+        }
+        private function firebaseResponseError($response)
+        {
+            if(is_array($response) && isset($response['error'])){
+                if(is_array($response['error'])){
+                    return $response['error']['message'] ?? json_encode($response['error']);
+                }
+
+                return (string) $response['error'];
+            }
+
+            if(empty($response)){
+                return 'Empty Firebase response.';
+            }
+
+            return 'Unexpected Firebase response: '.json_encode($response);
+        }
+        private function addCronError(array &$report, $message)
+        {
+            $report['error_count']++;
+
+            if(count($report['errors']) < 20){
+                $report['errors'][] = $message;
+            }
         }
     /* birthday cron */
     /* delete account */
