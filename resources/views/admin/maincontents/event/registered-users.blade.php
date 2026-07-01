@@ -5,6 +5,93 @@ use App\Models\UserRegEventAnswer;
 use App\Helpers\Helper;
 $controllerRoute = $module['controller_route'];
 ?>
+<style>
+  .event-registered-users-card > .card-body {
+    overflow: hidden;
+  }
+
+  .event-registered-users-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .event-registered-users-table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0;
+  }
+
+  .event-registered-users-table thead th,
+  .event-registered-users-table tbody th,
+  .event-registered-users-table tbody td {
+    padding: 8px 7px !important;
+    font-size: 12px !important;
+    line-height: 1.35;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    vertical-align: middle;
+  }
+
+  .event-registered-users-table thead th {
+    font-size: 11px !important;
+    letter-spacing: 0;
+  }
+
+  .event-registered-users-table th:first-child,
+  .event-registered-users-table td:first-child {
+    width: 34px;
+    text-align: center;
+  }
+
+  .event-registered-users-table th:nth-child(2),
+  .event-registered-users-table td:nth-child(2) {
+    width: 58px;
+    text-align: center;
+  }
+
+  .event-registered-users-table tbody tr:hover {
+    transform: none;
+  }
+
+  .event-registered-users-table img {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto !important;
+  }
+
+  .event-registered-users-table td:nth-child(2) img {
+    width: 42px !important;
+    height: 42px !important;
+    object-fit: cover;
+  }
+
+  .event-registered-users-table td:nth-last-child(4) img {
+    width: 46px !important;
+    height: 46px !important;
+    object-fit: contain;
+  }
+
+  .event-registered-users-table .badge {
+    font-size: 10px;
+    white-space: normal;
+  }
+
+  @media (max-width: 1399.98px) {
+    .event-registered-users-table thead th,
+    .event-registered-users-table tbody th,
+    .event-registered-users-table tbody td {
+      padding: 6px 5px !important;
+      font-size: 11px !important;
+    }
+
+    .event-registered-users-table thead th {
+      font-size: 10px !important;
+    }
+  }
+</style>
 <div class="pagetitle">
   <h1><?=$page_header?></h1>
   <nav>
@@ -35,7 +122,7 @@ $controllerRoute = $module['controller_route'];
     $regAttendedUserCount = UserRegEvent::where('eventid', '=', $event_id)->where('status', '=', 1)->where('entry_timestamp', '!=', NULL)->count();
     ?>
     <div class="col-lg-12">
-      <div class="card">
+      <div class="card event-registered-users-card">
         <div class="card-body">
           <div class="d-flex justify-content-end mb-3">
             <a target="_blank" href="<?=url('admin/' . $controllerRoute . '/download-registered-data/'.Helper::encoded($event_id))?>" class="btn btn-success btn-sm">
@@ -69,7 +156,8 @@ $controllerRoute = $module['controller_route'];
             </div>
           </div>
 
-          <table class="table global_table">
+          <div class="event-registered-users-table-wrap">
+          <table class="table global_table event-registered-users-table">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -131,6 +219,7 @@ $controllerRoute = $module['controller_route'];
               <?php }?>
             </tbody>
           </table>
+          </div>
           <!-- End Table with stripped rows -->
         </div>
       </div>
