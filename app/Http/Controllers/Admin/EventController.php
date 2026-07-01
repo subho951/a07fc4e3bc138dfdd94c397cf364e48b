@@ -257,6 +257,23 @@ class EventController extends Controller
                     ->with('error_message', 'The question "Will you be attending the event?" was not found for this event.');
             }
 
+            $eventQuestions = EventQuestion::where('event_id', '=', $eventId)
+                                ->orderBy('id', 'ASC')
+                                ->get(['id', 'event_question']);
+            $questionIds = $eventQuestions->pluck('id')
+                                ->map(function ($questionId) {
+                                    return (int) $questionId;
+                                })
+                                ->filter()
+                                ->values()
+                                ->all();
+            $exportHeaders = array_merge(
+                ['Name', 'Email', 'Phone', 'Event Registered On'],
+                $eventQuestions->pluck('event_question')->map(function ($question) {
+                    return (string) $question;
+                })->values()->all()
+            );
+
             $eventRegistrations = UserRegEvent::select(
                                     'userid',
                                     'date',
@@ -285,18 +302,23 @@ class EventController extends Controller
                                 });
             }
 
-            $answersByUserId = UserRegEventAnswer::select('userid', 'event_answer')
-                                ->where('eventid', '=', $eventId)
-                                ->where('event_question_id', '=', $attendanceQuestion->id)
-                                ->get()
-                                ->keyBy(function ($answer) {
-                                    return (string) ((int) $answer->userid);
-                                });
+            $answersByUserAndQuestion = collect();
+            if (!empty($userIds) && !empty($questionIds)) {
+                $answersByUserAndQuestion = UserRegEventAnswer::select('userid', 'event_question_id', 'event_answer')
+                                    ->where('eventid', '=', $eventId)
+                                    ->whereIn('userid', $userIds)
+                                    ->whereIn('event_question_id', $questionIds)
+                                    ->get()
+                                    ->keyBy(function ($answer) {
+                                        return ((int) $answer->userid) . '_' . ((int) $answer->event_question_id);
+                                    });
+            }
 
             $exportRows = [];
             foreach ($eventRegistrations as $row) {
                 $userId = (string) ((int) $row->userid);
-                $attendanceAnswer = (string) (($answersByUserId[$userId]->event_answer ?? ''));
+                $attendanceAnswerKey = $userId . '_' . ((int) $attendanceQuestion->id);
+                $attendanceAnswer = (string) (($answersByUserAndQuestion[$attendanceAnswerKey]->event_answer ?? ''));
 
                 if (strcasecmp(trim($attendanceAnswer), 'YES') !== 0) {
                     continue;
@@ -315,15 +337,22 @@ class EventController extends Controller
                     $registeredOn .= (($registeredOn != '') ? ' ' : '') . date('h:i a', strtotime($row->time));
                 }
 
-                $exportRows[] = [
+                $exportRow = [
                     (string) ($user->name ?? ''),
                     (string) ($user->email ?? ''),
                     (string) ($user->phone ?? ''),
                     $registeredOn,
                 ];
+
+                foreach ($eventQuestions as $eventQuestion) {
+                    $answerKey = $userId . '_' . ((int) $eventQuestion->id);
+                    $exportRow[] = (string) (($answersByUserAndQuestion[$answerKey]->event_answer ?? ''));
+                }
+
+                $exportRows[] = $exportRow;
             }
 
-            return app(EventRegisteredUsersExportService::class)->download($event->title ?? 'event', $exportRows);
+            return app(EventRegisteredUsersExportService::class)->download($event->title ?? 'event', $exportRows, $exportHeaders);
     }
 
     private function findAttendanceQuestion($eventId)

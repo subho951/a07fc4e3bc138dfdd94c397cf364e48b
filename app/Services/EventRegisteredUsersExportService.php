@@ -8,10 +8,11 @@ use ZipArchive;
 
 class EventRegisteredUsersExportService
 {
-    private array $headers = ['Name', 'Email', 'Phone', 'Event Registered On'];
+    private array $defaultHeaders = ['Name', 'Email', 'Phone', 'Event Registered On'];
 
-    public function download(string $eventTitle, array $rows)
+    public function download(string $eventTitle, array $rows, array $headers = [])
     {
+        $headers = !empty($headers) ? array_values($headers) : $this->defaultHeaders;
         $fileName = $this->makeFileName($eventTitle);
         $tempPath = tempnam(sys_get_temp_dir(), 'event_reg_');
 
@@ -19,7 +20,7 @@ class EventRegisteredUsersExportService
             throw new RuntimeException('Unable to create a temporary export file.');
         }
 
-        $this->buildWorkbook($tempPath, $rows, 'Registered Data');
+        $this->buildWorkbook($tempPath, $rows, 'Registered Data', $headers);
 
         return response()->download($tempPath, $fileName, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -39,7 +40,7 @@ class EventRegisteredUsersExportService
         return $safeTitle . '_registered_data.xlsx';
     }
 
-    private function buildWorkbook(string $filePath, array $rows, string $sheetName): void
+    private function buildWorkbook(string $filePath, array $rows, string $sheetName, array $headers): void
     {
         $zip = new ZipArchive();
 
@@ -54,7 +55,7 @@ class EventRegisteredUsersExportService
         $zip->addFromString('xl/workbook.xml', $this->workbookXml($sheetName));
         $zip->addFromString('xl/_rels/workbook.xml.rels', $this->workbookRelsXml());
         $zip->addFromString('xl/styles.xml', $this->stylesXml());
-        $zip->addFromString('xl/worksheets/sheet1.xml', $this->sheetXml($rows));
+        $zip->addFromString('xl/worksheets/sheet1.xml', $this->sheetXml($rows, $headers));
 
         $zip->close();
     }
@@ -206,10 +207,10 @@ XML;
 XML;
     }
 
-    private function sheetXml(array $rows): string
+    private function sheetXml(array $rows, array $headers): string
     {
-        $allRows = array_merge([$this->headers], $rows);
-        $lastColumn = $this->columnName(count($this->headers));
+        $allRows = array_merge([$headers], $rows);
+        $lastColumn = $this->columnName(count($headers));
         $lastRow = count($allRows);
         $sheetRows = '';
 
@@ -217,7 +218,7 @@ XML;
             $excelRowNumber = $rowIndex + 1;
             $cells = '';
 
-            foreach ($this->headers as $columnIndex => $header) {
+            foreach ($headers as $columnIndex => $header) {
                 $value = (string) ($rowValues[$columnIndex] ?? '');
                 $cellReference = $this->columnName($columnIndex + 1) . $excelRowNumber;
                 $spaceAttribute = preg_match('/^\s|\s$/u', $value) ? ' xml:space="preserve"' : '';
