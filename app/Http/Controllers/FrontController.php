@@ -119,7 +119,7 @@ class FrontController extends Controller
 
                 /* member point calculation */
                     $attendancePointCredit = $this->creditUserEventAttendancePoints($getMember, $getEvent, $generalSetting);
-                    $credited_points = $attendancePointCredit['credited_points'];
+                    $core_credited_points = $attendancePointCredit['attendance_points'];
                 /* member point calculation */
 
                 /* core point calculation */
@@ -132,13 +132,13 @@ class FrontController extends Controller
                                 'member_id'         => $member_id,
                                 'event_id'          => $event_id,
                                 'meeting_id'        => 0,
-                                'credited_points'   => $credited_points,
-                                'note'              => $credited_points . ' points credited for event attended of ' . $getMember->name,
+                                'credited_points'   => $core_credited_points,
+                                'note'              => $core_credited_points . ' points credited for event attended of ' . $getMember->name,
                             ];
                             CorePoint::insert($fields2);
 
                             $opening_core_point = (int) $getCore->points;
-                            $core_new_points = ($opening_core_point + $credited_points);
+                            $core_new_points = ($opening_core_point + $core_credited_points);
                             Core::where('id', '=', $core_id)->update(['points' => $core_new_points]);
                         }
                     }
@@ -260,6 +260,7 @@ class FrontController extends Controller
             if(!$member || !$event || !$generalSetting){
                 return [
                     'credited_points' => 0,
+                    'attendance_points' => 0,
                     'is_back_to_back_bonus' => false,
                 ];
             }
@@ -327,6 +328,7 @@ class FrontController extends Controller
 
             return [
                 'credited_points' => $credited_points,
+                'attendance_points' => $attendancePoint,
                 'is_back_to_back_bonus' => $isBackToBackAttendance,
             ];
         }
