@@ -161,7 +161,9 @@ class NewsletterController extends Controller
     public function send(Request $request, $id)
     {
         $id             = Helper::decoded($id);
-        $model          = Newsletter::find($id);
+        $model          = Newsletter::findOrFail($id);
+        $accepted = 0;
+        $failed = 0;
         /* mail function */
             // $generalSetting             = GeneralSetting::find('1');
             // $subject                    = $generalSetting->site_name.' :: '.$model->title;
@@ -207,7 +209,21 @@ class NewsletterController extends Controller
                                     "type" => 'profile'
                                 ];
 
-                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                                try {
+                                    $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                                } catch (\Throwable $exception) {
+                                    // Keep sending to other devices without exposing credentials in logs.
+                                    \Illuminate\Support\Facades\Log::warning('Push notification transport failed.', [
+                                        'exception_type' => get_class($exception),
+                                    ]);
+                                    $failed++;
+                                    continue;
+                                }
+                                if (empty($firebase_response['name'])) {
+                                    $failed++;
+                                    continue;
+                                }
+                                $accepted++;
                                 // Helper::pr($firebase_response);
 
                                 $uids[]            = $uId;
@@ -242,7 +258,21 @@ class NewsletterController extends Controller
                                     "type" => 'profile'
                                 ];
 
-                                $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                                try {
+                                    $firebase_response = FirebaseService::sendNotification($token,$title,$message,$data);
+                                } catch (\Throwable $exception) {
+                                    // Keep sending to other devices without exposing credentials in logs.
+                                    \Illuminate\Support\Facades\Log::warning('Push notification transport failed.', [
+                                        'exception_type' => get_class($exception),
+                                    ]);
+                                    $failed++;
+                                    continue;
+                                }
+                                if (empty($firebase_response['name'])) {
+                                    $failed++;
+                                    continue;
+                                }
+                                $accepted++;
 
                                 $uids[]            = $uId;
                                 $notificationFields = [
@@ -262,9 +292,19 @@ class NewsletterController extends Controller
             
         // push notification send
 
+        if ($accepted === 0 || $failed > 0) {
+            return redirect('admin/'.$this->data['controller_route'] . "/list")->with(
+                'error_message',
+                "Firebase accepted {$accepted} notification(s); {$failed} failed. " .
+                ($accepted === 0 && $failed === 0
+                    ? 'No active device tokens were found.'
+                    : 'Check the server log for Firebase errors. Retrying also resends to devices already accepted.')
+            );
+        }
+
         $model->is_send = 1;
         $model->save();
-        return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', $this->data['title'].' Send Successfully !!!');
+        return redirect('admin/'.$this->data['controller_route'] . "/list")->with('success_message', "Firebase accepted {$accepted} notification(s) for delivery.");
     }
     public function getUser(Request $request)
     {
