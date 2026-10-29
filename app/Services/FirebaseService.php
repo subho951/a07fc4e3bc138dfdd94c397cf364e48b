@@ -78,10 +78,42 @@ class FirebaseService
                 'http_status' => $response->status(),
                 'status' => $result['error']['status'] ?? 'UNKNOWN',
                 'error_codes' => array_column($result['error']['details'] ?? [], 'errorCode'),
+                'invalid_registration' => self::hasInvalidRegistration($result ?? []),
+                'invalid_fields' => self::invalidFields($result ?? []),
             ]);
             return $result ?: ['error' => ['status' => 'UNKNOWN']];
         }
 
         return $result;
+    }
+
+    public static function hasInvalidRegistration(array $result): bool
+    {
+        $error = $result['error'] ?? [];
+        $codes = array_column($error['details'] ?? [], 'errorCode');
+        if (in_array('UNREGISTERED', $codes, true)) {
+            return true;
+        }
+
+        // INVALID_ARGUMENT can also describe a bad payload. Only retire a token
+        // when Firebase explicitly identifies the registration token as invalid.
+        $message = rtrim(strtolower(trim($error['message'] ?? '')), '.');
+        return ($error['status'] ?? '') === 'INVALID_ARGUMENT'
+            && $message === 'the registration token is not a valid fcm registration token';
+    }
+
+    private static function invalidFields(array $result): array
+    {
+        $fields = [];
+        foreach ($result['error']['details'] ?? [] as $detail) {
+            foreach ($detail['fieldViolations'] ?? [] as $violation) {
+                // Field paths help diagnose payload errors without logging values.
+                $field = $violation['field'] ?? '';
+                if (preg_match('/^message(?:\.[a-zA-Z_]+|\[\d+\])*$/', $field)) {
+                    $fields[] = $field;
+                }
+            }
+        }
+        return array_values(array_unique($fields));
     }
 }

@@ -164,6 +164,7 @@ class NewsletterController extends Controller
         $model          = Newsletter::findOrFail($id);
         $accepted = 0;
         $failed = 0;
+        $invalidRegistrations = 0;
         /* mail function */
             // $generalSetting             = GeneralSetting::find('1');
             // $subject                    = $generalSetting->site_name.' :: '.$model->title;
@@ -196,7 +197,7 @@ class NewsletterController extends Controller
                 if(!empty($users)){
                     for($u=0;$u<count($users);$u++){
                         $uId = $users[$u];
-                        $getTokens = UserDevice::select('fcm_token', 'user_id')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                        $getTokens = UserDevice::select('id', 'device_type', 'fcm_token', 'user_id')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
                         if($getTokens){
                             foreach($getTokens as $getToken){
                                 $token = $getToken->fcm_token;
@@ -221,6 +222,22 @@ class NewsletterController extends Controller
                                 }
                                 if (empty($firebase_response['name'])) {
                                     $failed++;
+                                    $invalidRegistration = FirebaseService::hasInvalidRegistration($firebase_response);
+                                    if ($invalidRegistration) {
+                                        // Clear only the rejected push token; published also controls API authentication.
+                                        // Match the original token so a concurrently refreshed token is preserved.
+                                        UserDevice::where('id', $getToken->id)
+                                            ->where('fcm_token', $token)
+                                            ->update(['fcm_token' => '']);
+                                        $invalidRegistrations++;
+                                    }
+                                    \Illuminate\Support\Facades\Log::warning('Notification device rejected.', [
+                                        'device_id' => $getToken->id,
+                                        'device_type' => $getToken->device_type,
+                                        'user_id' => $uId,
+                                        'status' => $firebase_response['error']['status'] ?? 'UNKNOWN',
+                                        'invalid_registration' => $invalidRegistration,
+                                    ]);
                                     continue;
                                 }
                                 $accepted++;
@@ -245,7 +262,7 @@ class NewsletterController extends Controller
                 if($allUsers){
                     foreach($allUsers as $allUser){
                         $uId = $allUser->id;
-                        $getTokens = UserDevice::select('fcm_token', 'user_id')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
+                        $getTokens = UserDevice::select('id', 'device_type', 'fcm_token', 'user_id')->where('user_id', '=', $uId)->where('published', '=', 1)->where('fcm_token', '!=', '')->get();
                         if($getTokens){
                             foreach($getTokens as $getToken){
                                 $token = $getToken->fcm_token;
@@ -270,6 +287,22 @@ class NewsletterController extends Controller
                                 }
                                 if (empty($firebase_response['name'])) {
                                     $failed++;
+                                    $invalidRegistration = FirebaseService::hasInvalidRegistration($firebase_response);
+                                    if ($invalidRegistration) {
+                                        // Clear only the rejected push token; published also controls API authentication.
+                                        // Match the original token so a concurrently refreshed token is preserved.
+                                        UserDevice::where('id', $getToken->id)
+                                            ->where('fcm_token', $token)
+                                            ->update(['fcm_token' => '']);
+                                        $invalidRegistrations++;
+                                    }
+                                    \Illuminate\Support\Facades\Log::warning('Notification device rejected.', [
+                                        'device_id' => $getToken->id,
+                                        'device_type' => $getToken->device_type,
+                                        'user_id' => $uId,
+                                        'status' => $firebase_response['error']['status'] ?? 'UNKNOWN',
+                                        'invalid_registration' => $invalidRegistration,
+                                    ]);
                                     continue;
                                 }
                                 $accepted++;
@@ -296,6 +329,9 @@ class NewsletterController extends Controller
             return redirect('admin/'.$this->data['controller_route'] . "/list")->with(
                 'error_message',
                 "Firebase accepted {$accepted} notification(s); {$failed} failed. " .
+                ($invalidRegistrations > 0
+                    ? "Cleared {$invalidRegistrations} invalid push token(s). Affected devices must register a fresh Firebase token. "
+                    : '') .
                 ($accepted === 0 && $failed === 0
                     ? 'No active device tokens were found.'
                     : 'Check the server log for Firebase errors. Retrying also resends to devices already accepted.')

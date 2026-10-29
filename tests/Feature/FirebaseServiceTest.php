@@ -15,9 +15,9 @@ class FirebaseServiceTest extends TestCase
     {
         parent::setUp();
         $client = Mockery::mock(Client::class);
-        $client->shouldReceive('setAuthConfig')->once();
-        $client->shouldReceive('addScope')->once();
-        $client->shouldReceive('fetchAccessTokenWithAssertion')->once()
+        $client->shouldReceive('setAuthConfig');
+        $client->shouldReceive('addScope');
+        $client->shouldReceive('fetchAccessTokenWithAssertion')
             ->andReturn(['access_token' => 'test-access-token']);
         $this->app->instance(Client::class, $client);
         Http::preventStrayRequests();
@@ -61,6 +61,46 @@ class FirebaseServiceTest extends TestCase
             'http_status' => 401,
             'status' => 'UNAUTHENTICATED',
             'error_codes' => ['THIRD_PARTY_AUTH_ERROR'],
+            'invalid_registration' => false,
+            'invalid_fields' => [],
+        ]);
+
+        $this->assertSame($error, FirebaseService::sendNotification('private-token', 'Title', 'Body'));
+    }
+
+    public function test_only_confirmed_invalid_registrations_are_retired(): void
+    {
+        $this->assertTrue(FirebaseService::hasInvalidRegistration(['error' => [
+            'status' => 'NOT_FOUND', 'details' => [['errorCode' => 'UNREGISTERED']],
+        ]]));
+        $this->assertTrue(FirebaseService::hasInvalidRegistration(['error' => [
+            'status' => 'INVALID_ARGUMENT',
+            'message' => 'The registration token is not a valid FCM registration token',
+        ]]));
+        $this->assertFalse(FirebaseService::hasInvalidRegistration(['error' => [
+            'status' => 'INVALID_ARGUMENT', 'details' => [['errorCode' => 'INVALID_ARGUMENT']],
+            'message' => 'Message too big',
+        ]]));
+        $this->assertFalse(FirebaseService::hasInvalidRegistration(['error' => [
+            'status' => 'NOT_FOUND', 'message' => 'Project not found',
+        ]]));
+        $this->assertFalse(FirebaseService::hasInvalidRegistration(['name' => 'projects/test/messages/1']));
+    }
+
+    public function test_payload_field_errors_are_logged_without_logging_their_values(): void
+    {
+        $error = ['error' => ['status' => 'INVALID_ARGUMENT', 'details' => [[
+            'fieldViolations' => [[
+                'field' => 'message.data[0].value', 'description' => 'Private content',
+            ]],
+        ]]]];
+        Http::fake(['fcm.googleapis.com/*' => Http::response($error, 400)]);
+        Log::shouldReceive('warning')->once()->with('Firebase rejected push notification.', [
+            'http_status' => 400,
+            'status' => 'INVALID_ARGUMENT',
+            'error_codes' => [],
+            'invalid_registration' => false,
+            'invalid_fields' => ['message.data[0].value'],
         ]);
 
         $this->assertSame($error, FirebaseService::sendNotification('private-token', 'Title', 'Body'));
