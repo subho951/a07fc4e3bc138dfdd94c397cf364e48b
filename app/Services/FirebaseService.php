@@ -80,6 +80,7 @@ class FirebaseService
                 'error_codes' => array_column($result['error']['details'] ?? [], 'errorCode'),
                 'invalid_registration' => self::hasInvalidRegistration($result ?? []),
                 'invalid_fields' => self::invalidFields($result ?? []),
+                'error_message' => self::redactDiagnostic($result['error']['message'] ?? '', [$token, $title, $body, $image]),
             ]);
             return $result ?: ['error' => ['status' => 'UNKNOWN']];
         }
@@ -100,6 +101,19 @@ class FirebaseService
         $message = rtrim(strtolower(trim($error['message'] ?? '')), '.');
         return ($error['status'] ?? '') === 'INVALID_ARGUMENT'
             && $message === 'the registration token is not a valid fcm registration token';
+    }
+
+    private static function redactDiagnostic(string $message, array $privateValues): string
+    {
+        foreach ($privateValues as $value) {
+            if (is_string($value) && $value !== '') {
+                $message = str_replace($value, '[REDACTED]', $message);
+            }
+        }
+        // Firebase may include a bad data value in its error message. Keep its
+        // field/type explanation, but drop the value following that explanation.
+        $message = preg_replace('/(Invalid value at .*?\([^)]*\)),[^\r\n]*/i', '$1 [REDACTED]', $message);
+        return mb_substr(preg_replace('/[\r\n\x00-\x1F]+/', ' ', $message), 0, 1000);
     }
 
     private static function invalidFields(array $result): array

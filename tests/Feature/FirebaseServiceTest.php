@@ -63,6 +63,7 @@ class FirebaseServiceTest extends TestCase
             'error_codes' => ['THIRD_PARTY_AUTH_ERROR'],
             'invalid_registration' => false,
             'invalid_fields' => [],
+            'error_message' => '',
         ]);
 
         $this->assertSame($error, FirebaseService::sendNotification('private-token', 'Title', 'Body'));
@@ -101,7 +102,34 @@ class FirebaseServiceTest extends TestCase
             'error_codes' => [],
             'invalid_registration' => false,
             'invalid_fields' => ['message.data[0].value'],
+            'error_message' => '',
         ]);
+
+        $this->assertSame($error, FirebaseService::sendNotification('private-token', 'Title', 'Body'));
+    }
+
+    public function test_firebase_error_message_is_logged_with_sensitive_values_redacted(): void
+    {
+        $error = ['error' => ['status' => 'INVALID_ARGUMENT',
+            'message' => 'Invalid token private-token for Title: Body',
+        ]];
+        Http::fake(['fcm.googleapis.com/*' => Http::response($error, 400)]);
+        Log::shouldReceive('warning')->once()->with('Firebase rejected push notification.', Mockery::on(
+            fn ($context) => $context['error_message'] === 'Invalid token [REDACTED] for [REDACTED]: [REDACTED]'
+        ));
+
+        $this->assertSame($error, FirebaseService::sendNotification('private-token', 'Title', 'Body'));
+    }
+
+    public function test_bad_data_value_is_removed_from_error_message(): void
+    {
+        $error = ['error' => ['status' => 'INVALID_ARGUMENT',
+            'message' => "Invalid value at 'message.data[0].value' (TYPE_STRING), private-value",
+        ]];
+        Http::fake(['fcm.googleapis.com/*' => Http::response($error, 400)]);
+        Log::shouldReceive('warning')->once()->with('Firebase rejected push notification.', Mockery::on(
+            fn ($context) => $context['error_message'] === "Invalid value at 'message.data[0].value' (TYPE_STRING) [REDACTED]"
+        ));
 
         $this->assertSame($error, FirebaseService::sendNotification('private-token', 'Title', 'Body'));
     }
